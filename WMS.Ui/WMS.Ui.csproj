@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Connected Services\" />
     <Folder Include="wwwroot\lib\sw-toolbox\" />
     <Folder Include="wwwroot\legal\" />
   </ItemGroup>
