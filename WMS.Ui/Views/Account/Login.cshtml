@@ -1,0 +1,41 @@
+﻿@model WMS.Ui.Models.Account.LoginViewModel
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> SignInManager
+
+<div class="card" id="classification">
+    <div class="card-header bg-secondary text-light">
+        <h1>Please Login</h1>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input class="form-control" asp-for="UserName" placeholder="User Name" aria-label="User Name" required maxlength="256" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input class="form-control" asp-for="Password" placeholder="Password" aria-label="Password" required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <p>
+                        Not a Registered User? <a asp-area="" asp-controller="Account" asp-action="Register">Register Here</a>
+                    </p>
+                    <p>
+                        <a asp-area="" asp-controller="Account" asp-action="RequestNewPassword">Reset Password</a>
+                    </p>
+                </div>
+
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+    <div class="card-footer"></div>
+</div>

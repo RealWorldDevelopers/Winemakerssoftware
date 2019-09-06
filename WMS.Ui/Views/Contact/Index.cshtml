@@ -1,0 +1,40 @@
+﻿@model WMS.Ui.Models.Contact.ContactViewModel
+
+<div class="card" id="contact">
+    <div class="card-header bg-secondary text-light">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="card-body">
+        <form asp-controller="Contact" asp-action="Email" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-sm-6">
+                    <input class="form-control" type="text" placeholder="User Name" required asp-for="User.UserName" aria-label="User Name" readonly>
+                    <input class="form-control" type="text" placeholder="First Name" required asp-for="User.FirstName" aria-label="First Name" readonly>
+                </div>
+                <div class="col-sm-6">
+                    <input class="form-control" type="email" placeholder="Email" required asp-for="User.Email" aria-label="Email" readonly>
+                    <input class="form-control" type="text" placeholder="Last Name" required asp-for="User.LastName" aria-label="Last Name" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input class="form-control" type="text" placeholder="Subject" aria-label="Subject" required asp-for="Subject" maxlength="100">
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <textarea class="form-control" rows="5" asp-for="Message" aria-label="Message" required placeholder="Message"></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-paper-plane"></i> SEND MESSAGE</button>
+                    <button class="btn btn-primary" type="reset"><i class="fa fa-refresh"></i> Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer"></div>
+</div>

@@ -1,0 +1,37 @@
+﻿@model WMS.Ui.Models.ApplicationRole
+
+<div class="card">
+    <div class="card-header bg-secondary text-light">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+    <div class="card-body">
+        <form asp-controller="Admin" asp-action="AddRole" method="POST" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="row">
+                <div class="col-sm-11"></div>
+                <div class="col-sm-1">
+                    <a asp-area="" asp-controller="Admin" asp-route-id="roles" asp-action="Index">Back</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input class="form-control" type="text" aria-label="Name" placeholder="Name" required asp-for="Name">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input class="form-control" type="text" aria-label="Description" placeholder="Description" required asp-for="Description">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-9"></div>
+                <div class="col-sm-3">
+                    <button class="btn btn-primary" type="reset">Cancel</button>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer"></div>
+</div>
+

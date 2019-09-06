@@ -1,0 +1,37 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<partial name="_Header" />
+
+<body>
+
+    <partial name="_Navbar" />
+    <br>
+
+    @Html.AntiForgeryToken()
+
+    <div id="loader" class="loader d-none">Loading...</div>
+
+    <div class="container body-content">
+        <partial name="_AlertsPartial" />
+        <div id="bodyContent" class="animate-bottom">
+
+            <environment include="Development">We are in Dev Environment</environment>
+
+            @RenderBody()
+
+            <partial name="_ModalImage" />
+            <partial name="_ModalYeast" />
+            <partial name="_ModalMessage" />
+        </div>
+    </div>
+
+    <partial name="_Footer" />
+
+    <partial name="_Javascripts" />
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+﻿@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> SignInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+<div class="text-right">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <form asp-area="" asp-controller="Account" asp-action="LogOut" method="post" id="logoutform">
+            <button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button>
+        </form>       
+    }
+    else
+    {
+        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Log In</a>
+    }
+</div>
+<div class="card">
+    <div class="card-header bg-secondary text-light">
+        <h1>What's New</h1>
+    </div>
+    <div class="card-body">
+        <h2>Information for Picking the Right Yeast</h2>
+        <p>Looking for information to help pair the right yeast.  See our <a href="/howto/yeast">Pick the Right Yeast.</a> section.</p>
+
+        <h3>Other Ideas</h3>
+        <ul class="list-group-flush">
+            <li class="list-group-item">Looking for a new recipe or got one you would like to share?  See our <a href="/recipes">Recipe </a> section.</li>
+            <li class="list-group-item">Looking to convert Metric to English?  Check our the <a href="/conversions">Conversions</a> section.</li>
+            <li class="list-group-item">Or just take a few moments and have a look around.  I am sure you will find something of interest.</li>
+        </ul>
+
+        <h3>Get Full Access for FREE</h3>
+        <p>
+            In an effort to keep this sight free of the growing number of bots and the increase in spam, we now limit some of this sights feature to only those who are registered users.
+            Get full access to all features of this site, it's <strong>SAFE</strong> and it's <strong>FREE</strong>.
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Register Now</a>
+
+        </p>
+
+    </div>
+    <div class="card-footer bg-secondary text-light"></div>
+</div>

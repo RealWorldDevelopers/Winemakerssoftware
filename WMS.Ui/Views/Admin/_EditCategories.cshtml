@@ -1,0 +1,30 @@
+﻿
+@model WMS.Ui.Models.Admin.CategoriesViewModel;
+
+<ul class="list-group-flush">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-2"><strong>Category</strong></div>
+            <div class="col-sm-6"><strong>Children</strong></div>
+            <div class="col-sm-4 text-right">
+                <a asp-area="" asp-controller="Admin" asp-action="AddCategory"><strong>Add</strong></a>
+            </div>
+        </div>
+    </li>
+
+    @foreach (var category in Model.Categories)
+    {
+        <li class="list-group-item">
+            <partial name="_CategoryListItem" model="category" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmEditCategory" asp-controller="Admin" asp-action="EditCategory" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="editCategoryId" />Hidden Label</label>
+</form>
+
+<form id="frmDeleteCategory" asp-controller="Admin" asp-action="DeleteCategory" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="deleteCategoryId" />Hidden Label</label>
+</form>

@@ -144,11 +144,11 @@ namespace WMS.Ui
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            // security headers
+            // security headers            
             app.UseSecurityHeadersMiddleware(new SecurityHeadersBuilder()
-                .AddDefaultSecurePolicy()
-                //.AddCustomHeader("X-My-Custom-Header", "So cool")
-                );
+                           .AddDefaultSecurePolicy()
+                           .AddStrictTransportSecurity()
+                           );
 
             // csp header
             app.UseCspMiddleware(builder =>

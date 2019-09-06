@@ -1,0 +1,25 @@
+﻿
+@model WMS.Ui.Models.Admin.RecipeViewModel
+
+<div class="row">
+    <div class="col-sm-2">@Model.Category.Literal</div>
+    <div class="col-sm-2">@Model.Variety.Literal</div>
+    <div class="col-sm-4">@Model.Title</div>
+    <div class="col-sm-2">
+        @if (Model.NeedsApproved)
+        {
+            <div class="badge badge-danger">Needs <br />Approval</div>
+        }
+        else
+        {
+            @if (!Model.Enabled)
+            {
+                <div class="badge badge-warning">Disabled</div>
+            }
+       }
+    </div>
+    <div class="col-sm-2 text-right">
+        <button class="btn btn-sm btn-primary" name="editRecipeButton" data-id="@Model.Id">Edit</button>
+        <button class="btn btn-sm btn-primary" name="deleteRecipeButton" data-id="@Model.Id">DELETE</button>
+    </div>
+</div>

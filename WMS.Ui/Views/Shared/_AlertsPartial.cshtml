@@ -1,0 +1,21 @@
+﻿@*
+    http://jameschambers.com/2014/06/day-14-bootstrap-alerts-and-mvc-framework-tempdata/
+*@
+
+@{ 
+    var alerts = TempData.ContainsKey(Alert.TempDataKey) ? (List<Alert>)TempData[Alert.TempDataKey] : new List<Alert>();
+
+    <div id="alertSection">
+        @foreach(var alert in alerts)
+        {
+            var dismissableClass = alert.Dismissable ? "alert-dismissable" : null;
+            <div class="alert alert-@alert.AlertStyle @dismissableClass">
+                @if (alert.Dismissable)
+                {
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                }
+                @Html.Raw(alert.Message)
+            </div>
+        }
+    </div>
+}
