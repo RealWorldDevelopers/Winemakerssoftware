@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -28,7 +28,7 @@ namespace WMS.Ui.Controllers
 
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly WMSContext _recipeContext;
         private readonly IEmailAgent _emailAgent;
         private readonly IFactory _modelFactory;
@@ -36,7 +36,7 @@ namespace WMS.Ui.Controllers
         private readonly Business.Recipe.Commands.IFactory _commandsFactory;
         private readonly Business.Recipe.Dto.IFactory _dtoFactory;
 
-        public RecipesController(IHostingEnvironment environment, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IMapper mapper, WMSContext dbContext,
+        public RecipesController(IWebHostEnvironment environment, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IMapper mapper, WMSContext dbContext,
             IConfiguration configuration, IOptions<AppSettings> appSettings, Business.Recipe.Queries.IFactory queryFactory, Business.Recipe.Commands.IFactory commandsFactory,
             Business.Recipe.Dto.IFactory dtoFactory, IFactory modelFactory, IEmailAgent emailAgent)
             : base(configuration, userManager, roleManager)

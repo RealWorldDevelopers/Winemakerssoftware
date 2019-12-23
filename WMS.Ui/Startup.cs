@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
@@ -19,10 +20,9 @@ namespace WMS.Ui
     public class Startup
     {
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-            var _environment = env;
+            Configuration = configuration;           
         }
 
         public IConfiguration Configuration { get; }
@@ -126,30 +126,33 @@ namespace WMS.Ui
             services.AddTransient<Business.Yeast.Dto.IFactory, Business.Yeast.Dto.Factory>();
 
             // misc services needed
-            services.AddAutoMapper();
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-            }
+            }          
 
+            // TODO move to core 3.0
+            //https://docs.microsoft.com/en-us/aspnet/core/migration/22-to-30?view=aspnetcore-3.0&tabs=visual-studio
+
+            // TODO use RWD toolbox version Headers
             // security headers            
             app.UseSecurityHeadersMiddleware(new SecurityHeadersBuilder()
                            .AddDefaultSecurePolicy()
                            .AddStrictTransportSecurity()
                            );
-
+            // TODO use RWD toolbox version CSP
             // csp header
             app.UseCspMiddleware(builder =>
             {
@@ -191,14 +194,13 @@ namespace WMS.Ui
 
             app.UseStaticFiles();
 
-            app.UseAuthentication();
+            app.UseAuthentication();        
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
+                endpoints.MapDefaultControllerRoute();
             });
 
         }

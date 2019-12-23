@@ -69,7 +69,6 @@ specialKeys.push(32); //(Space)
 
 
 function filterRecipes() {
-
     var input, filter, ul, li, li2, a, i;
     input = document.getElementById('recipeSearch');
     filter = input.value.toUpperCase();

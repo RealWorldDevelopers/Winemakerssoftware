@@ -19,12 +19,12 @@ namespace WMS.Ui.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private RWD.Toolbox.SMTP.IEmailAgent _emailAgent;
+        private readonly RWD.Toolbox.SMTP.IEmailAgent _emailAgent;
         private readonly AppSettings _appSettings;
 
-        public AccountController(IHostingEnvironment environment, IConfiguration configuration,
+        public AccountController(IWebHostEnvironment environment, IConfiguration configuration,
             UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, RWD.Toolbox.SMTP.IEmailAgent emailAgent) : base(configuration, userManager, roleManager)
         {
@@ -243,12 +243,12 @@ namespace WMS.Ui.Controllers
 
             if (result.Succeeded)
             {
-                Success("You Email is Confirmed.  Please Log In.", true);
+                Success("Your Email is Confirmed.  Please Log In.", true);
                 return View("Login");
             }
             else
             {
-                Danger("You Email could not be Confirmed.  Please register again.");
+                Danger("Your Email could not be Confirmed.  Please register again.");
                 return View("Register");
             }
         }

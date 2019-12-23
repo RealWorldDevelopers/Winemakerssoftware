@@ -64,6 +64,10 @@ ol, ul, dl {
     cursor: pointer;
 }
 
+.instructionText{
+     white-space:pre-wrap;
+}
+
 
 #caption, #yeastModal_title {
     display: block;

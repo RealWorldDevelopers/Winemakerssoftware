@@ -251,8 +251,8 @@ namespace WMS.Ui.Controllers
                     RecipeId = recipeId,
                     FileName = image.FileName,
                     Name = image.Name,
-                    Data = imageData,   
-                    Thumbnail=thumbData,
+                    Data = imageData,
+                    Thumbnail = thumbData,
                     Length = image.Length,
                     ContentType = image.ContentType
                 };
@@ -546,9 +546,9 @@ namespace WMS.Ui.Controllers
                 if (result.Succeeded)
                 {
                     if (timeOut.HasValue)
-                        result = await _userManager.SetLockoutEndDateAsync(user, timeOut);
+                        await _userManager.SetLockoutEndDateAsync(user, timeOut);
                     else
-                        result = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                        await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
                 }
             }
 
