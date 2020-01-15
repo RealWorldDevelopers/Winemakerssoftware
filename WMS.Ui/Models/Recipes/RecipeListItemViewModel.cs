@@ -1,4 +1,5 @@
 ﻿
+using System;
 
 namespace WMS.Ui.Models.Recipes
 {
@@ -9,7 +10,7 @@ namespace WMS.Ui.Models.Recipes
         public string Category { get; set; }
         public string Variety { get; set; }
         public RatingViewModel Rating { get; set; }       
-        public string RecipeUrl { get; set; }
+        public Uri RecipeUrl { get; set; }
         public string Description { get; set; }
         public string PicPath { get; set; }
     }

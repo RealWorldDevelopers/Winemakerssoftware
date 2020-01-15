@@ -2,9 +2,10 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 
 namespace WMS.Ui.Models.Recipes
 {
@@ -20,14 +21,14 @@ namespace WMS.Ui.Models.Recipes
 
         public Factory(IOptions<AppSettings> appSettings)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings?.Value;
             _recipeUrl = new Uri(_appSettings.URLs.RecipesRecipe, UriKind.Relative);
             _imagesUrl = new Uri(_appSettings.URLs.ImageRecipes, UriKind.Relative);
             _streamUrl = new Uri(_appSettings.URLs.Stream, UriKind.Relative);
             _streamThumbsUrl = new Uri(_appSettings.URLs.StreamThumbs, UriKind.Relative);
         }
 
-        public RatingViewModel CreateRatingModel(Business.Recipe.Dto.Rating rating)
+        public RatingViewModel CreateRatingModel(Business.Recipe.Dto.RatingDto rating)
         {
             double ratingValue = 0;
             if (rating != null)
@@ -36,44 +37,44 @@ namespace WMS.Ui.Models.Recipes
             var model = new RatingViewModel()
             {
                 Check = (ratingValue > 0 && ratingValue < 1) ? "checked" : "",
-                Check_1 = (ratingValue >= 1 && ratingValue < 1.5) ? "checked" : "",
-                Check_15 = (ratingValue >= 1.5 && ratingValue < 2) ? "checked" : "",
-                Check_2 = (ratingValue >= 2 && ratingValue < 2.5) ? "checked" : "",
-                Check_25 = (ratingValue >= 2.5 && ratingValue < 3) ? "checked" : "",
-                Check_3 = (ratingValue >= 3 && ratingValue < 3.5) ? "checked" : "",
-                Check_35 = (ratingValue >= 3.5 && ratingValue < 4) ? "checked" : "",
-                Check_4 = (ratingValue >= 4 && ratingValue < 4.5) ? "checked" : "",
-                Check_45 = (ratingValue >= 4.5 && ratingValue < 5) ? "checked" : "",
-                Check_5 = (ratingValue >= 5) ? "checked" : ""
+                Check1 = (ratingValue >= 1 && ratingValue < 1.5) ? "checked" : "",
+                Check15 = (ratingValue >= 1.5 && ratingValue < 2) ? "checked" : "",
+                Check2 = (ratingValue >= 2 && ratingValue < 2.5) ? "checked" : "",
+                Check25 = (ratingValue >= 2.5 && ratingValue < 3) ? "checked" : "",
+                Check3 = (ratingValue >= 3 && ratingValue < 3.5) ? "checked" : "",
+                Check35 = (ratingValue >= 3.5 && ratingValue < 4) ? "checked" : "",
+                Check4 = (ratingValue >= 4 && ratingValue < 4.5) ? "checked" : "",
+                Check45 = (ratingValue >= 4.5 && ratingValue < 5) ? "checked" : "",
+                Check5 = (ratingValue >= 5) ? "checked" : ""
             };
             return model;
         }
 
         public HitCounterViewModel CreateHitCounterModel(int hits)
         {
-            char[] nlst = hits.ToString().PadLeft(9, '0').ToCharArray();
+            char[] nlst = hits.ToString(CultureInfo.CurrentCulture).PadLeft(9, '0').ToCharArray();
             var model = new HitCounterViewModel
             {
-                Digit_9 = nlst[8].ToString(),
-                Digit_8 = nlst[7].ToString(),
-                Digit_7 = nlst[6].ToString(),
-                Digit_6 = nlst[5].ToString(),
-                Digit_5 = nlst[4].ToString(),
-                Digit_4 = nlst[3].ToString(),
-                Digit_3 = nlst[2].ToString(),
-                Digit_2 = nlst[1].ToString(),
-                Digit_1 = nlst[0].ToString()
+                Digit9 = nlst[8].ToString(CultureInfo.CurrentCulture),
+                Digit8 = nlst[7].ToString(CultureInfo.CurrentCulture),
+                Digit7 = nlst[6].ToString(CultureInfo.CurrentCulture),
+                Digit6 = nlst[5].ToString(CultureInfo.CurrentCulture),
+                Digit5 = nlst[4].ToString(CultureInfo.CurrentCulture),
+                Digit4 = nlst[3].ToString(CultureInfo.CurrentCulture),
+                Digit3 = nlst[2].ToString(CultureInfo.CurrentCulture),
+                Digit2 = nlst[1].ToString(CultureInfo.CurrentCulture),
+                Digit1 = nlst[0].ToString(CultureInfo.CurrentCulture)
             };
             return model;
         }
 
-        public ImageViewModel CreateImageModel(int id, string sourceUrl, string thumbUrl, string altTag, string title, string caption)
+        public ImageViewModel CreateImageModel(int id, Uri sourceUrl, Uri thumbUrl, string altTag, string title, string caption)
         {
             var model = new ImageViewModel
             {
                 Id = id,
                 Src = sourceUrl,
-                SrcThumb= thumbUrl,
+                SrcThumb = thumbUrl,
                 Alt = altTag,
                 Title = title,
                 Caption = caption
@@ -82,8 +83,11 @@ namespace WMS.Ui.Models.Recipes
             return model;
         }
 
-        public RecipeViewModel CreateRecipeModel(Business.Recipe.Dto.Recipe dto)
+        public RecipeViewModel CreateRecipeModel(Business.Recipe.Dto.RecipeDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var model = new RecipeViewModel
             {
                 Id = dto.Id,
@@ -99,12 +103,12 @@ namespace WMS.Ui.Models.Recipes
 
             if (dto.ImageFiles != null)
             {
-                model.Images = new List<ImageViewModel>();
+                model.Images.Clear();
                 foreach (var file in dto.ImageFiles)
                 {
                     var src = new Uri("/" + _streamUrl.ToString() + "/" + file.Id, UriKind.Relative);
-                    var thumb = new Uri("/" +_streamThumbsUrl.ToString() + "/" + file.Id, UriKind.Relative);
-                    var picModel = CreateImageModel(file.Id, src.ToString(), thumb.ToString(), "Recipe Image", "Wine Pic", "Wine Pic");
+                    var thumb = new Uri("/" + _streamThumbsUrl.ToString() + "/" + file.Id, UriKind.Relative);
+                    var picModel = CreateImageModel(file.Id, src, thumb, "Recipe Image", "Wine Image", file.Name);
                     model.Images.Add(picModel);
                 }
             }
@@ -117,18 +121,19 @@ namespace WMS.Ui.Models.Recipes
             return new RecipesViewModel();
         }
 
-        public Task<RecipeListItemViewModel> BuildRecipeListItemModel(Business.Recipe.Dto.Recipe recipeDto)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2008:Do not create tasks without passing a TaskScheduler", Justification = "<Pending>")]
+        public Task<RecipeListItemViewModel> BuildRecipeListItemModel(Business.Recipe.Dto.RecipeDto recipeDto)
         {
             Task<RecipeListItemViewModel> t = Task.Factory.StartNew<RecipeListItemViewModel>(() =>
             {
-                Uri recipeUri = new Uri(_recipeUrl + "/" + recipeDto.Id.ToString(), UriKind.Relative);
+                Uri recipeUri = new Uri(_recipeUrl + "/" + recipeDto.Id.ToString(CultureInfo.CurrentCulture), UriKind.Relative);
 
                 Uri picUri = new Uri(_imagesUrl + "/default.png", UriKind.Relative);
                 if (recipeDto.ImageFiles?.Count > 0)
                 {
                     var displayFileId = recipeDto.ImageFiles.First().Id;
-                    picUri = new Uri("/" +_streamThumbsUrl.ToString() + "/" + displayFileId, UriKind.Relative);
-                }               
+                    picUri = new Uri("/" + _streamThumbsUrl.ToString() + "/" + displayFileId, UriKind.Relative);
+                }
 
                 var model = new RecipeListItemViewModel
                 {
@@ -138,7 +143,7 @@ namespace WMS.Ui.Models.Recipes
                     Variety = recipeDto.Variety != null ? recipeDto.Variety.Literal : string.Empty,
                     Description = recipeDto.Description,
                     Rating = CreateRatingModel(recipeDto.Rating),
-                    RecipeUrl = recipeUri.ToString(),
+                    RecipeUrl = recipeUri,
                     PicPath = picUri.ToString()
                 };
                 return model;
@@ -146,11 +151,11 @@ namespace WMS.Ui.Models.Recipes
             return t;
         }
 
-        public List<RecipeListItemViewModel> BuildRecipeListItemModels(List<Business.Recipe.Dto.Recipe> dtoRecipeList)
+        public List<RecipeListItemViewModel> BuildRecipeListItemModels(List<Business.Recipe.Dto.RecipeDto> dtoRecipeList)
         {
             var modelList = new List<RecipeListItemViewModel>();
 
-            var recipeStack = new Stack<Business.Recipe.Dto.Recipe>(dtoRecipeList.Where(r => r.Enabled == true));
+            var recipeStack = new Stack<Business.Recipe.Dto.RecipeDto>(dtoRecipeList.Where(r => r.Enabled == true));
 
             // Create 1 per core, and then as they finish, create another:   
             List<Task<RecipeListItemViewModel>> tasks = new List<Task<RecipeListItemViewModel>>();
@@ -226,12 +231,12 @@ namespace WMS.Ui.Models.Recipes
             {
                 selectItem = new SelectListItem
                 {
-                    Value = dto.Id.ToString(),
+                    Value = dto.Id.ToString(CultureInfo.CurrentCulture),
                     Text = dto.Literal
                 };
                 if (dto.ParentId.HasValue && dtoParentList != null)
                 {
-                    var parent = dtoParentList.Where(p => p.Id == dto.ParentId.Value).FirstOrDefault();
+                    var parent = dtoParentList.FirstOrDefault(p => p.Id == dto.ParentId.Value);
                     if (group.Name != parent?.Literal)
                         group = new SelectListGroup { Name = parent.Literal };
 

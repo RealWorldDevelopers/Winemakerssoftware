@@ -2,7 +2,7 @@
 
 namespace WMS.Business.Yeast.Dto
 {
-    public class YeastPair
+    public class YeastPairDto
     {
         public int Id { get; set; }
         public int? Yeast { get; set; }

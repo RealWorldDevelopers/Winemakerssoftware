@@ -1,6 +1,6 @@
 ﻿
 using AutoMapper;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 
 namespace WMS.Business.Yeast.Commands
@@ -26,7 +26,7 @@ namespace WMS.Business.Yeast.Commands
         /// Instance of Create Yeast Command
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateYeastsCommand"/>>
-        public ICommand<Dto.Yeast> CreateYeastsCommand()
+        public ICommand<Dto.YeastDto> CreateYeastsCommand()
         {
             return new ModifyYeast(_yeastContext, _mapper);
         }
@@ -35,7 +35,7 @@ namespace WMS.Business.Yeast.Commands
         /// Instance of Create Yeast Pair Command
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateYeastPairCommand"/>>
-        public ICommand<Dto.YeastPair> CreateYeastPairCommand()
+        public ICommand<Dto.YeastPairDto> CreateYeastPairCommand()
         {
             return new ModifyYeastPair(_yeastContext, _mapper);
         }

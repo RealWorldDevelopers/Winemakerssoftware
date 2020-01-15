@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using RWD.Toolboox.Ui.Middleware.SecurityHeaders;
+using RWD.Toolbox.Ui.Middleware.CspHeader;
 using System;
+using System.Globalization;
 using System.Text;
 using WMS.Ui.Data;
-using WMS.Ui.Middleware.CspHeader;
-using WMS.Ui.Middleware.SecurityHeaders;
 using WMS.Ui.Models;
 
 namespace WMS.Ui
@@ -22,7 +25,7 @@ namespace WMS.Ui
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;           
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -69,8 +72,8 @@ namespace WMS.Ui
             var lockoutOptions = new LockoutOptions()
             {
                 AllowedForNewUsers = true,
-                DefaultLockoutTimeSpan = TimeSpan.FromHours(int.Parse(appSettings.SecRole.LockoutHours)),
-                MaxFailedAccessAttempts = int.Parse(appSettings.SecRole.MaxLoginAttempts)
+                DefaultLockoutTimeSpan = TimeSpan.FromHours(int.Parse(appSettings.SecRole.LockoutHours, CultureInfo.CurrentCulture)),
+                MaxFailedAccessAttempts = int.Parse(appSettings.SecRole.MaxLoginAttempts, CultureInfo.CurrentCulture)
             };
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -98,7 +101,7 @@ namespace WMS.Ui
 
 
             // email agent
-            var port = int.Parse(appSettings.SMTP.Port);
+            var port = int.Parse(appSettings.SMTP.Port, CultureInfo.CurrentCulture);
             var ssl = bool.Parse(appSettings.SMTP.SSL);
             services.AddTransient<RWD.Toolbox.SMTP.IEmailAgent>(s => new RWD.Toolbox.SMTP.EmailAgent(appSettings.SMTP.IP, port, ssl, appSettings.SMTP.UserName, appSettings.SMTP.UserPassword));
 
@@ -128,11 +131,19 @@ namespace WMS.Ui
             // misc services needed
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddMvc();
+            // application insights
+            services.AddApplicationInsightsTelemetry();
+
+            // localization
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+            services.AddMvc()
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization();           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -141,19 +152,15 @@ namespace WMS.Ui
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-            }          
+            }
 
-            // TODO move to core 3.0
-            //https://docs.microsoft.com/en-us/aspnet/core/migration/22-to-30?view=aspnetcore-3.0&tabs=visual-studio
-
-            // TODO use RWD toolbox version Headers
             // security headers            
             app.UseSecurityHeadersMiddleware(new SecurityHeadersBuilder()
                            .AddDefaultSecurePolicy()
                            .AddStrictTransportSecurity()
                            );
-            // TODO use RWD toolbox version CSP
-            // csp header
+
+            // content security header
             app.UseCspMiddleware(builder =>
             {
                 builder.Default_Src
@@ -192,11 +199,26 @@ namespace WMS.Ui
                 // builder.ReportUri = "api/CspReport/report";
             });
 
-            app.UseStaticFiles();
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en-US"), 
+                //new CultureInfo("es"), 
+                //new CultureInfo("fr"), 
+            };
 
-            app.UseAuthentication();        
+            app.UseRequestLocalization(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("en-US");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
 
+
+            app.UseStaticFiles();                       
+
+            app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

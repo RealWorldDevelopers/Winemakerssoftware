@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using WMS.Ui.Models;
@@ -23,22 +26,24 @@ namespace WMS.Ui.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RWD.Toolbox.SMTP.IEmailAgent _emailAgent;
         private readonly AppSettings _appSettings;
+        private readonly IStringLocalizer<AccountController> _localizer;
 
         public AccountController(IWebHostEnvironment environment, IConfiguration configuration,
             UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager,
-            IOptions<AppSettings> appSettings, RWD.Toolbox.SMTP.IEmailAgent emailAgent) : base(configuration, userManager, roleManager)
+            IOptions<AppSettings> appSettings, RWD.Toolbox.SMTP.IEmailAgent emailAgent, IStringLocalizer<AccountController> localizer, TelemetryClient telemetry) : base(configuration, userManager, roleManager, telemetry)
         {
+            _localizer = localizer;
             _hostingEnvironment = environment;
             _signInManager = signInManager;
             _emailAgent = emailAgent;
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings?.Value;
 
-            
+
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult AccessDenied(string returnUrl = null)
+        public IActionResult AccessDenied()
         {
             ViewData["Title"] = "Access Denied";
             return View();
@@ -50,10 +55,10 @@ namespace WMS.Ui.Controllers
         /// <param name="returnUrl">URL to proceed to on successful login as <see cref="string"/></param>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
+        public async Task<IActionResult> Login(Uri returnUrl = null)
         {
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme).ConfigureAwait(false);
 
             ViewData["Title"] = "Login";
             // ViewData["Menu"] = "navAccount";
@@ -69,40 +74,40 @@ namespace WMS.Ui.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model, Uri returnUrl = null)
         {
             ViewData["Title"] = "Login";
-           // ViewData["Menu"] = "navAccount";
+            // ViewData["Menu"] = "navAccount";
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.UserName);
+                var user = await UserManagerAgent.FindByNameAsync(model?.UserName).ConfigureAwait(false);
 
 
                 if (user != null)
                 {
                     // check that user has validated email address
-                    if (!await _userManager.IsEmailConfirmedAsync(user))
+                    if (!await UserManagerAgent.IsEmailConfirmedAsync(user).ConfigureAwait(false))
                     {
                         ModelState.AddModelError(string.Empty, "Email has not yet been verified!  Please check your Email Inbox and click Verify.");
                         return View(model);
                     }
 
-                    var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, isPersistent: true, lockoutOnFailure: false);
+                    var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, isPersistent: true, lockoutOnFailure: false).ConfigureAwait(false);
                     if (result.Succeeded)
                     {
-                        await _userManager.ResetAccessFailedCountAsync(user);
-                        return RedirectToLocal(returnUrl);
+                        await UserManagerAgent.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
+                        return RedirectToLocal(returnUrl?.ToString());
                     }
 
                     if (result.IsLockedOut)
                     {
-                        var availableNext = user.LockoutEnd.Value.ToLocalTime().ToString("g");
-                        ModelState.AddModelError("", string.Format("Due to multiple failed login attempts, your account has been locked out until {0}", availableNext));
+                        var availableNext = user.LockoutEnd.Value.ToLocalTime().ToString("g", CultureInfo.CurrentCulture);
+                        ModelState.AddModelError("", string.Format(CultureInfo.CurrentCulture, "Due to multiple failed login attempts, your account has been locked out until {0}", availableNext));
                     }
                     else
                     {
-                        await _userManager.AccessFailedAsync(user);
+                        await UserManagerAgent.AccessFailedAsync(user).ConfigureAwait(false);
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                         return View(model);
                     }
@@ -123,8 +128,8 @@ namespace WMS.Ui.Controllers
         public async Task<IActionResult> Logout()
         {
             ViewData["Title"] = "Logout";
-           // ViewData["Menu"] = "navAccount";
-            await _signInManager.SignOutAsync();
+            // ViewData["Menu"] = "navAccount";
+            await _signInManager.SignOutAsync().ConfigureAwait(false);
             return View();
         }
 
@@ -134,7 +139,7 @@ namespace WMS.Ui.Controllers
         /// <param name="returnUrl">URL to proceed to on successful login as <see cref="string"/></param>
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Register(string returnUrl = null)
+        public IActionResult Register(Uri returnUrl = null)
         {
             ViewData["Title"] = "Register";
             ViewData["ReturnUrl"] = returnUrl;
@@ -149,7 +154,7 @@ namespace WMS.Ui.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register(RegisterViewModel model, Uri returnUrl = null)
         {
             ViewData["Title"] = "Register";
             // ViewData["Menu"] = "navAccount";
@@ -158,32 +163,32 @@ namespace WMS.Ui.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.UserName,
+                    UserName = model?.UserName,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email
                 };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = await UserManagerAgent.CreateAsync(user, model.Password).ConfigureAwait(false);
                 if (result.Succeeded)
                 {
-                    if (!await _roleManager.RoleExistsAsync(_appSettings.SecRole.Level1))
+                    if (!await RoleManagerAgent.RoleExistsAsync(_appSettings.SecRole.Level1).ConfigureAwait(false))
                     {
                         ApplicationRole role = new ApplicationRole
                         {
                             Name = _appSettings.SecRole.Level1,
                             Description = "Perform basic operations."
                         };
-                        IdentityResult roleResult = await _roleManager.CreateAsync(role);
+                        IdentityResult roleResult = await RoleManagerAgent.CreateAsync(role).ConfigureAwait(false);
                         if (!roleResult.Succeeded)
                         {
                             ModelState.AddModelError(string.Empty, "Error while creating role!");
                             return View(model);
                         }
                     }
-                    _userManager.AddToRoleAsync(user, _appSettings.SecRole.Level1).Wait();
+                    UserManagerAgent.AddToRoleAsync(user, _appSettings.SecRole.Level1).Wait();
 
                     // send confirmation email
-                    string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    string confirmationToken = await UserManagerAgent.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
 
                     string confirmationLink = Url.Action("ConfirmEmail", "Account",
                         new { userid = user.Id, token = confirmationToken }, protocol: HttpContext.Request.Scheme);
@@ -191,7 +196,7 @@ namespace WMS.Ui.Controllers
                     string[] emailAddresses = { _appSettings.SMTP.AdminEmail, user.Email };
                     var emailName = string.IsNullOrWhiteSpace(user.FirstName) ? user.UserName : $"{user.FirstName} {user.LastName}".Trim();
                     await _emailAgent.SendEmailAsync(_appSettings.SMTP.FromEmail, _appSettings.SMTP.FromEmail, emailAddresses,
-                        "Welcome to Winemakers Software - Please verify your email.", CreateVerifyEmail(confirmationLink, emailName), true, null);
+                        "Welcome to Winemakers Software - Please verify your email.", CreateVerifyEmail(confirmationLink, emailName), true, null).ConfigureAwait(false);
 
                     // redirect to limbo page
                     return RedirectToAction("RegisterLimbo", "Account");
@@ -238,17 +243,17 @@ namespace WMS.Ui.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userid, string token)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(userid);
-            IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
+            ApplicationUser user = await UserManagerAgent.FindByIdAsync(userid).ConfigureAwait(false);
+            IdentityResult result = await UserManagerAgent.ConfirmEmailAsync(user, token).ConfigureAwait(false);
 
             if (result.Succeeded)
             {
-                Success("Your Email is Confirmed.  Please Log In.", true);
+                Success(_localizer["EmailConfirmSuccess"], true);
                 return View("Login");
             }
             else
             {
-                Danger("Your Email could not be Confirmed.  Please register again.");
+                Danger(_localizer["EmailConfirmFail"]);
                 return View("Register");
             }
         }
@@ -273,21 +278,24 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendPasswordResetLink(RequestPasswordResetViewModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            var user = await UserManagerAgent.FindByNameAsync(model.UserName).ConfigureAwait(false);
+            if (user == null || !await UserManagerAgent.IsEmailConfirmedAsync(user).ConfigureAwait(false))
             {
                 ViewBag.Message = "Error while resetting your password!";
                 return View("Error");
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var token = await UserManagerAgent.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
 
             var resetLink = Url.Action("ResetPassword", "Account", new { token }, protocol: HttpContext.Request.Scheme);
 
             // code to email the above link
             string[] emailAddresses = { _appSettings.SMTP.AdminEmail, user.Email };
             await _emailAgent.SendEmailAsync(_appSettings.SMTP.FromEmail, _appSettings.SMTP.FromEmail, emailAddresses,
-                "Winemakers Software - Password Reset.", CreatePasswordResetEmail(resetLink), true, null);
+                "Winemakers Software - Password Reset.", CreatePasswordResetEmail(resetLink), true, null).ConfigureAwait(false);
 
             // redirect to limbo page
             return RedirectToAction("PasswordLimbo", "Account");
@@ -315,17 +323,20 @@ namespace WMS.Ui.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
 
-            IdentityResult result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            var user = await UserManagerAgent.FindByNameAsync(model.UserName).ConfigureAwait(false);
+
+            IdentityResult result = await UserManagerAgent.ResetPasswordAsync(user, model.Token, model.Password).ConfigureAwait(false);
             if (result.Succeeded)
             {
-                Success("You password has been reset.  Please log in.", true);
+                Success(_localizer["PasswordResetSuccess"], true);
                 return View("Login");
             }
             else
             {
-                Danger("You password could not be reset.  Please request a new password again.");
+                Danger(_localizer["PasswordResetFail"]);
                 return View("RequestNewPassword");
             }
 
@@ -375,7 +386,7 @@ namespace WMS.Ui.Controllers
             var welcomeNameKey = _appSettings.EmailTemplate.WelcomeName;
             var welcomeNameValue = name;
             string welcomeText = System.IO.File.ReadAllText(welcomeTemplateFile)
-                .Replace(welcomeNameKey, welcomeNameValue);
+                .Replace(welcomeNameKey, welcomeNameValue, StringComparison.CurrentCultureIgnoreCase);
 
 
             var headerImageKey = _appSettings.EmailTemplate.BodyHeaderImage;
@@ -392,10 +403,10 @@ namespace WMS.Ui.Controllers
 
             string templateText = System.IO.File.ReadAllText(emailBodyTemplateFile);
             var body = templateText
-                .Replace(headerImageKey, headerImageValue)
-                .Replace(messageBodyKey, messageBodyValue)
-                .Replace(buttonHrefKey, buttonHrefValue)
-                .Replace(buttonTextKey, buttonTextValue);
+                .Replace(headerImageKey, headerImageValue,StringComparison.CurrentCultureIgnoreCase)
+                .Replace(messageBodyKey, messageBodyValue,StringComparison.CurrentCultureIgnoreCase)
+                .Replace(buttonHrefKey, buttonHrefValue,StringComparison.CurrentCultureIgnoreCase)
+                .Replace(buttonTextKey, buttonTextValue,StringComparison.CurrentCultureIgnoreCase);
 
             return body;
         }
@@ -433,10 +444,10 @@ namespace WMS.Ui.Controllers
 
             string templateText = System.IO.File.ReadAllText(emailBodyTemplateFile);
             var body = templateText
-                .Replace(headerImageKey, headerImageValue)
-                .Replace(messageBodyKey, messageBodyValue)
-                .Replace(buttonHrefKey, buttonHrefValue)
-                .Replace(buttonTextKey, buttonTextValue);
+                .Replace(headerImageKey, headerImageValue,StringComparison.CurrentCultureIgnoreCase)
+                .Replace(messageBodyKey, messageBodyValue,StringComparison.CurrentCultureIgnoreCase)
+                .Replace(buttonHrefKey, buttonHrefValue,StringComparison.CurrentCultureIgnoreCase)
+                .Replace(buttonTextKey, buttonTextValue,StringComparison.CurrentCultureIgnoreCase);
 
             return body;
         }

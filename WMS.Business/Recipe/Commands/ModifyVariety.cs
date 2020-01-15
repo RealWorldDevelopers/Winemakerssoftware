@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 using WMS.Data.Entities;
 
@@ -31,6 +33,9 @@ namespace WMS.Business.Recipe.Commands
         /// <inheritdoc cref="ICommand{T}.Add(T)"/>
         public ICode Add(ICode dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = _mapper.Map<Varieties>(dto);
 
             // add new recipe
@@ -51,13 +56,16 @@ namespace WMS.Business.Recipe.Commands
         /// <inheritdoc cref="ICommand{T}.AddAsync(T)"/>
         public async Task<ICode> AddAsync(ICode dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = _mapper.Map<Varieties>(dto);
 
             // add new recipe
             await _dbContext.Varieties.AddAsync(entity);
 
             // Save changes in database
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             //dto.Id = entity.Id;
             return dto;
@@ -71,7 +79,10 @@ namespace WMS.Business.Recipe.Commands
         /// <inheritdoc cref="ICommand{T}.Update(T)"/>
         public ICode Update(ICode dto)
         {
-            var entity = _dbContext.Varieties.Where(r => r.Id == dto.Id).First();
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var entity = _dbContext.Varieties.First(r => r.Id == dto.Id);
             entity.Description = dto.Description;
             entity.Enabled = dto.Enabled;
             entity.Variety = dto.Literal;
@@ -94,7 +105,10 @@ namespace WMS.Business.Recipe.Commands
         /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
         public async Task<ICode> UpdateAsync(ICode dto)
         {
-            var entity = _dbContext.Varieties.Where(r => r.Id == dto.Id).First();
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var entity  = await _dbContext.Varieties.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
             entity.Description = dto.Description;
             entity.Enabled = dto.Enabled;
             entity.Variety = dto.Literal;
@@ -104,7 +118,7 @@ namespace WMS.Business.Recipe.Commands
             _dbContext.Varieties.Update(entity);
 
             // Save changes in database
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return dto;
         }
@@ -134,14 +148,14 @@ namespace WMS.Business.Recipe.Commands
         /// <inheritdoc cref="ICommand{T}.DeleteAsync(T)"/>
         public async Task DeleteAsync(ICode dto)
         {
-            var entity = _dbContext.Varieties.FirstOrDefault(v => v.Id == dto.Id);
+            var entity = await _dbContext.Varieties.FirstOrDefaultAsync(v => v.Id == dto.Id).ConfigureAwait(false);
             if (entity != null)
             {
                 // add new recipe
                 _dbContext.Varieties.Remove(entity);
 
                 // Save changes in database
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 

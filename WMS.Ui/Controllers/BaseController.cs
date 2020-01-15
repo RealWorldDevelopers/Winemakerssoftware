@@ -10,7 +10,9 @@ using WMS.Ui.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using TinifyAPI;
-using Microsoft.Extensions.Options;
+using Microsoft.ApplicationInsights;
+using System.Globalization;
+using Microsoft.AspNetCore.Html;
 
 namespace WMS.Ui.Controllers
 {
@@ -19,16 +21,17 @@ namespace WMS.Ui.Controllers
     /// </summary>
     public class BaseController : Controller
     {
+        protected IConfiguration ConfigurationAgent { get; set; }
+        protected RoleManager<ApplicationRole> RoleManagerAgent { get; set; }
+        protected UserManager<ApplicationUser> UserManagerAgent { get; set; }
+        protected TelemetryClient LoggingAgent { get; set; }
 
-        protected readonly UserManager<ApplicationUser> _userManager;
-        protected readonly RoleManager<ApplicationRole> _roleManager;
-        protected readonly IConfiguration _configuration;
-
-        public BaseController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public BaseController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, TelemetryClient telemetry)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
+            UserManagerAgent = userManager;
+            RoleManagerAgent = roleManager;
+            ConfigurationAgent = configuration;
+            LoggingAgent = telemetry;
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace WMS.Ui.Controllers
         private void AddAlert(string alertStyle, string message, bool dismissable)
         {
             var alerts = TempData.ContainsKey(Alert.TempDataKey) ? (List<Alert>)TempData[Alert.TempDataKey] : new List<Alert>();
-            alerts.Add(new Alert { AlertStyle = alertStyle, Message = message, Dismissable = dismissable });
+            alerts.Add(new Alert { AlertStyle = alertStyle, Message = new HtmlString(message), Dismissable = dismissable });
             TempData[Alert.TempDataKey] = alerts;
         }
 
@@ -93,7 +96,7 @@ namespace WMS.Ui.Controllers
         /// <returns>JWT Token as <see cref="string"/></returns>
         protected async Task<string> CreateJwtTokenAsync(ApplicationUser user, double? expireMinutes = null)
         {
-            if (string.IsNullOrWhiteSpace(user.UserName))
+            if (string.IsNullOrWhiteSpace(user?.UserName))
                 return null;
 
             var claims = new List<Claim>
@@ -102,16 +105,16 @@ namespace WMS.Ui.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userClaims = await UserManagerAgent.GetClaimsAsync(user).ConfigureAwait(false);
+            var userRoles = await UserManagerAgent.GetRolesAsync(user).ConfigureAwait(false);
             claims.AddRange(userClaims);
             foreach (var userRole in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
-                var role = await _roleManager.FindByNameAsync(userRole);
+                var role = await RoleManagerAgent.FindByNameAsync(userRole).ConfigureAwait(false);
                 if (role != null)
                 {
-                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    var roleClaims = await RoleManagerAgent.GetClaimsAsync(role).ConfigureAwait(false);
                     foreach (Claim roleClaim in roleClaims)
                     {
                         claims.Add(roleClaim);
@@ -119,16 +122,16 @@ namespace WMS.Ui.Controllers
                 }
             }
 
-            double expirationMinutes = expireMinutes ?? double.Parse(_configuration["JwtToken:ExpireMinutes"]);
+            double expirationMinutes = expireMinutes ?? double.Parse(ConfigurationAgent["JwtToken:ExpireMinutes"], CultureInfo.CurrentCulture);
             var token = new JwtSecurityToken
             (
-                issuer: _configuration["JwtToken:Issuer"],
-                audience: _configuration["JwtToken:Audience"],
+                issuer: ConfigurationAgent["JwtToken:Issuer"],
+                audience: ConfigurationAgent["JwtToken:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
                 notBefore: DateTime.UtcNow,
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtToken:Key"])), SecurityAlgorithms.HmacSha256)
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationAgent["JwtToken:Key"])), SecurityAlgorithms.HmacSha256)
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -153,16 +156,16 @@ namespace WMS.Ui.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
-            double expirationMinutes = expireMinutes ?? double.Parse(_configuration["JwtToken:ExpireMinutes"]);
+            double expirationMinutes = expireMinutes ?? double.Parse(ConfigurationAgent["JwtToken:ExpireMinutes"], CultureInfo.CurrentCulture);
             var token = new JwtSecurityToken
             (
-                issuer: _configuration["JwtToken:Issuer"],
-                audience: _configuration["JwtToken:Audience"],
+                issuer: ConfigurationAgent["JwtToken:Issuer"],
+                audience: ConfigurationAgent["JwtToken:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
                 notBefore: DateTime.UtcNow,
                 signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtToken:Key"])), SecurityAlgorithms.HmacSha256)
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationAgent["JwtToken:Key"])), SecurityAlgorithms.HmacSha256)
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -181,9 +184,9 @@ namespace WMS.Ui.Controllers
             try
             {
                 // TinyPNG Developer API KEY  https://tinypng.com/developers              
-                Tinify.Key = _configuration["ApplicationSettings:TinyPNG:ApiKey"]; 
+                Tinify.Key = ConfigurationAgent["ApplicationSettings:TinyPNG:ApiKey"];
 
-                var source = await Tinify.FromBuffer(buffer);
+                var source = await Tinify.FromBuffer(buffer).ConfigureAwait(false);
 
                 Source resized;
                 if (maxWidth.HasValue && maxHeight.HasValue)
@@ -195,30 +198,28 @@ namespace WMS.Ui.Controllers
                 else
                     return buffer;
 
-                return await resized.ToBuffer();
+                return await resized.ToBuffer().ConfigureAwait(false);
 
             }
-            catch (AccountException ex)
+            catch (AccountException accountEx)
             {
                 // Verify API key and account limit.
-                var x = await Tinify.Validate();
+                var x = await Tinify.Validate().ConfigureAwait(false);
                 var compressionsThisMonth = Tinify.CompressionCount;
+
+                var properties = new Dictionary<string, string> {
+                    { "compressionsThisMonth", compressionsThisMonth.HasValue ? compressionsThisMonth.Value.ToString(CultureInfo.CurrentCulture) : "0" } };
+                LoggingAgent.TrackException(accountEx, properties);
             }
-            catch (ClientException ex)
+
+            catch (TinifyAPI.Exception tex)
             {
-                // TODO Check your source image and request options.                
-            }
-            catch (ServerException ex)
-            {
-                // TODO  Temporary issue with the Tinify API.
-            }
-            catch (ConnectionException ex)
-            {
-                // TODO  A network connection error occurred.
+                LoggingAgent.TrackException(tex);
             }
             catch (System.Exception ex)
             {
-                // TODO  Something else went wrong, unrelated to the Tinify API.
+                LoggingAgent.TrackException(ex);
+                throw;
             }
 
             // something went wrong, just return input value

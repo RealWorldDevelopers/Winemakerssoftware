@@ -1,4 +1,4 @@
-﻿namespace WMS.Business.Shared
+﻿namespace WMS.Business.Common
 {
     /// <summary>
     /// Data Transfer Object representing a Code Literal Type Table with an added optional foreign key property

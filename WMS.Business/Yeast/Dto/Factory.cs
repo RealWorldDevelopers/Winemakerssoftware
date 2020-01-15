@@ -1,4 +1,4 @@
-﻿using WMS.Business.Shared;
+﻿using WMS.Business.Common;
 
 namespace WMS.Business.Yeast.Dto
 {
@@ -21,9 +21,9 @@ namespace WMS.Business.Yeast.Dto
         }
 
         /// <inheritdoc cref="IFactory.CreateNewYeast"/>>
-        public Yeast CreateNewYeast(int id, int totalVotes, Code brand, Code style, string trademark, int? tempMin, int? tempMax, double? alcohol, string note)
+        public YeastDto CreateNewYeast(int id, int totalVotes, Code brand, Code style, string trademark, int? tempMin, int? tempMax, double? alcohol, string note)
         {
-            var dto = new Yeast
+            var dto = new YeastDto
             {
                 Id = id,
                 Brand = brand,

@@ -8,6 +8,9 @@ namespace WMS.Ui.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder == null)
+                throw new System.ArgumentNullException(nameof(migrationBuilder));
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -197,6 +200,9 @@ namespace WMS.Ui.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder == null)
+                throw new System.ArgumentNullException(nameof(migrationBuilder));
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

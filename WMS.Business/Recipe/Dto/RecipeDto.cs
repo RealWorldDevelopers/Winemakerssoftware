@@ -1,14 +1,19 @@
 ﻿
 using System.Collections.Generic;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 
 namespace WMS.Business.Recipe.Dto
 {
     /// <summary>
     /// Data Transfer Object representing a Recipe Table Entity
     /// </summary>
-    public class Recipe
+    public class RecipeDto
     {
+        public RecipeDto()
+        {
+            ImageFiles = new List<ImageFileDto>();
+        }
+
         /// <summary>
         /// Primary Key
         /// </summary>
@@ -52,7 +57,7 @@ namespace WMS.Business.Recipe.Dto
         /// <summary>
         /// Website users approval rating
         /// </summary>
-        public Rating Rating { get; set; }
+        public RatingDto Rating { get; set; }
 
         /// <summary>
         /// States if recipe able to be view and used
@@ -70,9 +75,9 @@ namespace WMS.Business.Recipe.Dto
         public int Hits { get; set; }
 
         /// <summary>
-        /// List of Image File Data <see cref="ImageFile"/>
+        /// List of Image File Data <see cref="ImageFileDto"/>
         /// </summary>
-        public List<ImageFile> ImageFiles { get; set; }
+        public List<ImageFileDto> ImageFiles { get; }
 
     }
 }

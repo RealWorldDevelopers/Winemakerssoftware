@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 
 namespace WMS.Business.Recipe.Queries
@@ -46,7 +46,7 @@ namespace WMS.Business.Recipe.Queries
         /// Instance of Create Recipe Query
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateRecipesCommand"/>>
-        public IQuery<Dto.Recipe> CreateRecipesQuery()
+        public IQuery<Dto.RecipeDto> CreateRecipesQuery()
         {
             return new GetRecipes(_recipeContext, _mapper);
         }
@@ -55,7 +55,7 @@ namespace WMS.Business.Recipe.Queries
         /// Instance of Create Rating Query
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateRatingsQuery"/>>
-        public IQuery<Dto.Rating> CreateRatingsQuery()
+        public IQuery<Dto.RatingDto> CreateRatingsQuery()
         {
             return new GetRatings(_recipeContext, _mapper);
         }

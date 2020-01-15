@@ -4,7 +4,7 @@ namespace WMS.Business.Recipe.Dto
     /// <summary>
     /// Data Transfer Object representing a Rating Table Entity
     /// </summary>
-    public class Rating
+    public class RatingDto
     {
         /// <summary>
         /// Primary Key
@@ -22,7 +22,7 @@ namespace WMS.Business.Recipe.Dto
         public double TotalValue { get; set; }
 
         /// <summary>
-        /// Foreign Key to a <see cref="Recipe"/>
+        /// Foreign Key to a <see cref="RecipeDto"/>
         /// </summary>
         public int RecipeId { get; set; }
 

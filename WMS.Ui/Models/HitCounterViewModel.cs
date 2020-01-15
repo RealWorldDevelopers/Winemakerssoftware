@@ -3,14 +3,14 @@ namespace WMS.Ui.Models
 {
     public class HitCounterViewModel
     {
-        public string Digit_1 {get;set;}
-        public string Digit_2 { get; set; }
-        public string Digit_3 { get; set; }
-        public string Digit_4 { get; set; }
-        public string Digit_5 { get; set; }
-        public string Digit_6 { get; set; }
-        public string Digit_7 { get; set; }
-        public string Digit_8 { get; set; }
-        public string Digit_9 { get; set; }
+        public string Digit1 {get;set;}
+        public string Digit2 { get; set; }
+        public string Digit3 { get; set; }
+        public string Digit4 { get; set; }
+        public string Digit5 { get; set; }
+        public string Digit6 { get; set; }
+        public string Digit7 { get; set; }
+        public string Digit8 { get; set; }
+        public string Digit9 { get; set; }
     }
 }

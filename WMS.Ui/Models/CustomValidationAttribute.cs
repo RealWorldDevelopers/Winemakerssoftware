@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace WMS.Ui.Models
 {
-    public class EnsureMinimumElementsAttribute : ValidationAttribute
+    public sealed class EnsureMinimumElementsAttribute : ValidationAttribute
     {
         private readonly int _minElements;
         public EnsureMinimumElementsAttribute(int minElements)
@@ -18,8 +18,7 @@ namespace WMS.Ui.Models
 
         public override bool IsValid(object value)
         {
-            var list = value as IList;
-            if (list != null)
+            if (value is IList list)
             {
                 return list.Count >= _minElements;
             }
@@ -27,7 +26,7 @@ namespace WMS.Ui.Models
         }
     }
 
-    public class EnsureMaximumElementsAttribute : ValidationAttribute
+    public sealed class EnsureMaximumElementsAttribute : ValidationAttribute
     {
         private readonly int _maxElements;
         public EnsureMaximumElementsAttribute(int maxElements)
@@ -37,8 +36,7 @@ namespace WMS.Ui.Models
 
         public override bool IsValid(object value)
         {
-            var list = value as IList;
-            if (list != null)
+            if (value is IList list)
             {
                 return list.Count <= _maxElements;
             }
@@ -46,7 +44,7 @@ namespace WMS.Ui.Models
         }
     }
 
-    public class EnsureFileExtensionsAttribute : ValidationAttribute
+    public sealed class EnsureFileExtensionsAttribute : ValidationAttribute
     {
         private readonly List<string> _allowedExtensions;
 
@@ -56,7 +54,10 @@ namespace WMS.Ui.Models
         /// <param name="allowedExtensions">Pipe Separated List of Acceptable File Extensions as <see cref="string"/></param>
         public EnsureFileExtensionsAttribute(string allowedExtensions)
         {
-            _allowedExtensions =  allowedExtensions.Split("|").ToList();
+            if (string.IsNullOrWhiteSpace(allowedExtensions))
+                throw new ArgumentNullException(nameof(allowedExtensions));
+
+            _allowedExtensions = allowedExtensions.Split("|").ToList();
         }
 
         /// <summary>
@@ -66,8 +67,7 @@ namespace WMS.Ui.Models
         /// <returns>Result of test as <see cref="bool"/></returns>
         public override bool IsValid(object value)
         {
-            var list = value as IList;
-            if(list!= null)
+            if (value is IList list)
             {
                 foreach (FormFile file in list)
                 {
@@ -75,13 +75,13 @@ namespace WMS.Ui.Models
                     if (!_allowedExtensions.Any(e => e.Equals(ext, StringComparison.OrdinalIgnoreCase)))
                         return false;
                 }
-            }          
-            
+            }
+
             return true;
         }
     }
 
-    public class EnsureFileSizeAttribute : ValidationAttribute
+    public sealed class EnsureFileSizeAttribute : ValidationAttribute
     {
         private readonly long _maxFileSizeBytes;
 
@@ -101,13 +101,12 @@ namespace WMS.Ui.Models
         /// <returns>Result of test as <see cref="bool"/></returns>
         public override bool IsValid(object value)
         {
-            var list = value as IList;
-            if (list != null)
+            if (value is IList list)
             {
                 foreach (FormFile file in list)
                 {
-                    if (file.Length > _maxFileSizeBytes) 
-                        return false;                    
+                    if (file.Length > _maxFileSizeBytes)
+                        return false;
                 }
             }
 

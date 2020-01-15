@@ -4,7 +4,11 @@ namespace WMS.Ui.Models.Admin
 {
     public class RolesViewModel
     {
-        public List<RoleViewModel> Roles { get; set; }
+        public RolesViewModel()
+        {
+            Roles = new List<RoleViewModel>();
+        }
+        public List<RoleViewModel> Roles { get; }
     }
 
 }

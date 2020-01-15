@@ -4,7 +4,11 @@ namespace WMS.Ui.Models.Admin
 {
     public class UsersViewModel
     {
-        public List<UserViewModel> Users { get; set; }
+        public UsersViewModel()
+        {
+            Users = new List<UserViewModel>();
+        }
+        public List<UserViewModel> Users { get; }
     }
 
 }

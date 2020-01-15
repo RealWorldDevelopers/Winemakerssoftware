@@ -13,11 +13,14 @@ using AutoMapper;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
 using WMS.Business.Recipe.Dto;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace WMS.Ui.Controllers
 {
@@ -27,21 +30,22 @@ namespace WMS.Ui.Controllers
         private readonly Models.Admin.IFactory _modelFactory;
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
-        private readonly Data.ApplicationDbContext _context;
         private readonly Business.Recipe.Queries.IFactory _recipeQueryFactory;
         private readonly Business.Recipe.Commands.IFactory _recipeCommandFactory;
         private readonly Business.Yeast.Queries.IFactory _yeastQueryFactory;
         private readonly Business.Yeast.Commands.IFactory _yeastCommandFactory;
 
+        private readonly IStringLocalizer<AdminController> _localizer;
+
         public AdminController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
             Business.Recipe.Queries.IFactory recipeQueryFactory, Business.Recipe.Commands.IFactory recipeCommandFactory, Business.Yeast.Queries.IFactory yeastQueryFactory,
-            Business.Yeast.Commands.IFactory yeastCommandFactory, Data.ApplicationDbContext context, IMapper mapper, Models.Admin.IFactory modelFactory,
-            IOptions<AppSettings> appSettings) : base(configuration, userManager, roleManager)
+            Business.Yeast.Commands.IFactory yeastCommandFactory, IMapper mapper, Models.Admin.IFactory modelFactory,
+            IOptions<AppSettings> appSettings, IStringLocalizer<AdminController> localizer, TelemetryClient telemetry) : base(configuration, userManager, roleManager, telemetry)
         {
+            _localizer = localizer;
             _modelFactory = modelFactory;
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings?.Value;
             _mapper = mapper;
-            _context = context;
             _recipeQueryFactory = recipeQueryFactory;
             _recipeCommandFactory = recipeCommandFactory;
             _yeastQueryFactory = yeastQueryFactory;
@@ -61,25 +65,25 @@ namespace WMS.Ui.Controllers
             // using TPL to parallel call gets
             List<Task> tasks = new List<Task>();
 
-            var t1 = Task.Run(async () => await getCategoriesQuery.ExecuteAsync());
+            var t1 = Task.Run(async () => await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false));
             tasks.Add(t1);
-            var cList = await t1;
+            var cList = await t1.ConfigureAwait(false);
 
-            var t2 = Task.Run(async () => await getVarietiesQuery.ExecuteAsync());
+            var t2 = Task.Run(async () => await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false));
             tasks.Add(t2);
-            var vList = await t2;
+            var vList = await t2.ConfigureAwait(false);
 
-            var t3 = Task.Run(async () => await getYeastQuery.ExecuteAsync());
+            var t3 = Task.Run(async () => await getYeastQuery.ExecuteAsync().ConfigureAwait(false));
             tasks.Add(t3);
-            var yList = await t3;
+            var yList = await t3.ConfigureAwait(false);
 
-            var t4 = Task.Run(async () => await getYeastPairs.ExecuteAsync());
+            var t4 = Task.Run(async () => await getYeastPairs.ExecuteAsync().ConfigureAwait(false));
             tasks.Add(t4);
-            var ypList = await t4;
+            var ypList = await t4.ConfigureAwait(false);
 
-            var t5 = Task.Run(async () => await getRecipesQuery.ExecuteAsync());
+            var t5 = Task.Run(async () => await getRecipesQuery.ExecuteAsync().ConfigureAwait(false));
             tasks.Add(t5);
-            var rList = await t5;
+            var rList = await t5.ConfigureAwait(false);
 
             Task.WaitAll(tasks.ToArray());
 
@@ -88,14 +92,14 @@ namespace WMS.Ui.Controllers
             var model = _modelFactory.CreateAdminModel(id);
 
             // make sure admin security role exist
-            if (!await _roleManager.RoleExistsAsync(_appSettings.SecRole.Admin))
+            if (!await RoleManagerAgent.RoleExistsAsync(_appSettings.SecRole.Admin).ConfigureAwait(false))
             {
                 ApplicationRole role = new ApplicationRole
                 {
                     Name = _appSettings.SecRole.Admin,
                     Description = "Perform all operations."
                 };
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
+                IdentityResult roleResult = await RoleManagerAgent.CreateAsync(role).ConfigureAwait(false);
                 if (!roleResult.Succeeded)
                 {
                     ModelState.AddModelError(string.Empty, "Error while creating role!");
@@ -104,27 +108,33 @@ namespace WMS.Ui.Controllers
             }
 
             // gather users data
-            var users = _userManager.Users.ToList();
-            model.UsersViewModel.Users = _mapper.Map<List<UserViewModel>>(users);
+            var users = UserManagerAgent.Users.ToList();
+            model.UsersViewModel.Users.Clear();
+            model.UsersViewModel.Users.AddRange(_mapper.Map<List<UserViewModel>>(users));
             foreach (var user in model.UsersViewModel.Users)
             {
-                user.IsAdmin = await _userManager.IsInRoleAsync(user, _appSettings.SecRole.Admin);
-                user.IsLockedOut = await _userManager.IsLockedOutAsync(user);
+                user.IsAdmin = await UserManagerAgent.IsInRoleAsync(user, _appSettings.SecRole.Admin).ConfigureAwait(false);
+                user.IsLockedOut = await UserManagerAgent.IsLockedOutAsync(user).ConfigureAwait(false);
             }
 
             // gather roles data
-            var roles = await _roleManager.Roles.OrderBy(r => r.Name).ToListAsync();
-            model.RolesViewModel.Roles = _mapper.Map<List<RoleViewModel>>(roles);
+            var roles = await RoleManagerAgent.Roles.OrderBy(r => r.Name).ToListAsync().ConfigureAwait(false);
+            model.RolesViewModel.Roles.Clear();
+            model.RolesViewModel.Roles.AddRange(_mapper.Map<List<RoleViewModel>>(roles));
 
             // gather category / variety data    
-            model.CategoriesViewModel.Categories = _modelFactory.CreateCategoryViewModel(cList);
-            model.VarietiesViewModel.Varieties = _modelFactory.CreateVarietyViewModel(vList);
+            model.CategoriesViewModel.Categories.Clear();
+            model.CategoriesViewModel.Categories.AddRange(_modelFactory.CreateCategoryViewModel(cList));
+            model.VarietiesViewModel.Varieties.Clear();
+            model.VarietiesViewModel.Varieties.AddRange(_modelFactory.CreateVarietyViewModel(vList));
 
             // gather yeast data   
-            model.YeastsViewModel.Yeasts = _modelFactory.CreateYeastViewModel(yList);
+            model.YeastsViewModel.Yeasts.Clear();
+            model.YeastsViewModel.Yeasts.AddRange(_modelFactory.CreateYeastViewModel(yList));
 
             // gather recipe data   
-            model.RecipesViewModel.Recipes = _modelFactory.CreateRecipeViewModel(rList);
+            model.RecipesViewModel.Recipes.Clear();
+            model.RecipesViewModel.Recipes.AddRange(_modelFactory.CreateRecipeViewModel(rList));
 
             return View(model);
 
@@ -142,10 +152,10 @@ namespace WMS.Ui.Controllers
             ViewData["Title"] = "Edit a Recipe";
 
             var recipeQry = _recipeQueryFactory.CreateRecipesQuery();
-            var dto = await recipeQry.ExecuteAsync(Id);
+            var dto = await recipeQry.ExecuteAsync(Id).ConfigureAwait(false);
             var model = _modelFactory.CreateRecipeViewModel(dto);
 
-            var user = await _userManager.FindByIdAsync(dto.SubmittedBy);
+            var user = await UserManagerAgent.FindByIdAsync(dto.SubmittedBy).ConfigureAwait(false);
             model.SubmittedBy = string.Concat(user.FirstName, " ", user.LastName, " (", user.Email, ")");
 
             return View("UpdateRecipe", model);
@@ -159,8 +169,11 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateRecipe(RecipeViewModel model)
         {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
             var qry = _recipeQueryFactory.CreateRecipesQuery();
-            var dto = await qry.ExecuteAsync(model.Id);
+            var dto = await qry.ExecuteAsync(model.Id).ConfigureAwait(false);
             dto.Title = model.Title;
             dto.Variety.Id = model.Variety.Id;
             dto.Description = model.Description;
@@ -171,7 +184,7 @@ namespace WMS.Ui.Controllers
             dto.NeedsApproved = model.NeedsApproved;
 
             var cmd = _recipeCommandFactory.CreateRecipesCommand();
-            await cmd.UpdateAsync(dto);
+            await cmd.UpdateAsync(dto).ConfigureAwait(false);
 
             return RedirectToAction("Index", "Admin", new { id = "recipes" });
         }
@@ -186,8 +199,8 @@ namespace WMS.Ui.Controllers
         {
             var cmd = _recipeCommandFactory.CreateRecipesCommand();
             var qry = _recipeQueryFactory.CreateRecipesQuery();
-            var dto = await qry.ExecuteAsync(Id);
-            await cmd.DeleteAsync(dto);
+            var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+            await cmd.DeleteAsync(dto).ConfigureAwait(false);
             return RedirectToAction("Index", "Admin", new { id = "recipes" });
         }
 
@@ -201,19 +214,19 @@ namespace WMS.Ui.Controllers
         public async Task<IActionResult> DeleteRecipeImage(int recipeId, int imageId)
         {
             var updateImageCommand = _recipeCommandFactory.CreateImageCommand();
-            var imageDto = new ImageFile
+            var imageDto = new ImageFileDto(null,null)
             {
                 Id = imageId,
                 RecipeId = recipeId
             };
-            await updateImageCommand.DeleteAsync(imageDto);
-            return await EditRecipe(recipeId);
+            await updateImageCommand.DeleteAsync(imageDto).ConfigureAwait(false);
+            return await EditRecipe(recipeId).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Add an Image and Map it to a Recipe
         /// </summary>
-        /// <param name="recipeId">REcipe Id as <see cref="int"/></param>
+        /// <param name="recipeId">Recipe Id as <see cref="int"/></param>
         /// <param name="image">Inbound Image File as <see cref="IFormFile"/></param>
         /// <returns></returns>
         [HttpPost]
@@ -229,38 +242,36 @@ namespace WMS.Ui.Controllers
                 // Max File Size per Image: 500 KB
                 if (image.Length > maxFileSizeBytes)
                 {
-                    Danger("File Too Big", true);
-                    return await EditRecipe(recipeId);
+                    Danger(_localizer["ErrorFileTooBig"], true);
+                    return await EditRecipe(recipeId).ConfigureAwait(false);
                 }
 
                 // Allowed Image Extensions: .jpg | .gif | .bmp | .jpeg | .png ONLY
                 var ext = Path.GetExtension(image.FileName);
                 if (!allowedExtensions.Any(e => e.Equals(ext, StringComparison.OrdinalIgnoreCase)))
                 {
-                    Danger("File Extension Not Supported", true);
-                    return await EditRecipe(recipeId);
+                    Danger(_localizer["ErrorFileExtensionWrong"], true);
+                    return await EditRecipe(recipeId).ConfigureAwait(false);
                 }
 
-                MemoryStream ms = new MemoryStream();
+                using MemoryStream ms = new MemoryStream();
                 image.OpenReadStream().CopyTo(ms);
-                var imageData = await ResizeImage(ms.ToArray(), 360, 480);
-                var thumbData = await ResizeImage(ms.ToArray(), 100, 150);
+                var imageData = await ResizeImage(ms.ToArray(), 360, 480).ConfigureAwait(false);
+                var thumbData = await ResizeImage(ms.ToArray(), 100, 150).ConfigureAwait(false);
 
-                var imageDto = new ImageFile
+                var imageDto = new ImageFileDto(thumbData, imageData)
                 {
                     RecipeId = recipeId,
                     FileName = image.FileName,
                     Name = image.Name,
-                    Data = imageData,
-                    Thumbnail = thumbData,
                     Length = image.Length,
                     ContentType = image.ContentType
                 };
 
-                await updateImageCommand.AddAsync(imageDto);
+                await updateImageCommand.AddAsync(imageDto).ConfigureAwait(false);
             }
 
-            return await EditRecipe(recipeId);
+            return await EditRecipe(recipeId).ConfigureAwait(false);
         }
 
         #endregion
@@ -288,7 +299,7 @@ namespace WMS.Ui.Controllers
             ViewData["Title"] = "Edit a Yeast";
 
             var yQry = _yeastQueryFactory.CreateYeastsQuery();
-            var dto = await yQry.ExecuteAsync(Id);
+            var dto = await yQry.ExecuteAsync(Id).ConfigureAwait(false);
             var model = _modelFactory.CreateYeastViewModel(dto);
             return View("UpdateYeast", model);
         }
@@ -301,12 +312,12 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateYeast(YeastViewModel model)
         {
-            var dto = _mapper.Map<Yeast>(model);
+            var dto = _mapper.Map<YeastDto>(model);
             var cmd = _yeastCommandFactory.CreateYeastsCommand();
             if (dto.Id == 0)
-                await cmd.AddAsync(dto);
+                await cmd.AddAsync(dto).ConfigureAwait(false);
             else
-                await cmd.UpdateAsync(dto);
+                await cmd.UpdateAsync(dto).ConfigureAwait(false);
 
             return RedirectToAction("Index", "Admin", new { id = "yeasts" });
         }
@@ -321,8 +332,8 @@ namespace WMS.Ui.Controllers
         {
             var cmd = _yeastCommandFactory.CreateYeastsCommand();
             var qry = _yeastQueryFactory.CreateYeastsQuery();
-            var dto = await qry.ExecuteAsync(Id);
-            await cmd.DeleteAsync(dto);
+            var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+            await cmd.DeleteAsync(dto).ConfigureAwait(false);
             return RedirectToAction("Index", "Admin", new { id = "yeasts" });
         }
 
@@ -336,10 +347,10 @@ namespace WMS.Ui.Controllers
             ViewData["Title"] = "Edit a Yeast";
 
             var pQry = _yeastQueryFactory.CreateYeastPairQuery();
-            var pDto = await pQry.ExecuteAsync(Id);
+            var pDto = await pQry.ExecuteAsync(Id).ConfigureAwait(false);
 
             var yQry = _yeastQueryFactory.CreateYeastsQuery();
-            var yDto = await yQry.ExecuteAsync(pDto.Yeast.Value);
+            var yDto = await yQry.ExecuteAsync(pDto.Yeast.Value).ConfigureAwait(false);
             var model = _modelFactory.CreateYeastViewModel(yDto);
             model.Pairing = _modelFactory.CreateYeastPairingViewModel(pDto);
 
@@ -357,8 +368,11 @@ namespace WMS.Ui.Controllers
             var cQuery = _recipeQueryFactory.CreateCategoriesQuery();
             var vQuery = _recipeQueryFactory.CreateVarietiesQuery();
 
-            var dto = new YeastPair();
-            var variety = await vQuery.ExecuteAsync(model.Variety.Id);
+            var dto = new YeastPairDto();
+            ICode variety = null;
+            if (model != null)
+                variety = await vQuery.ExecuteAsync(model.Variety.Id).ConfigureAwait(false);
+
             if (variety != null)
             {
                 dto.Variety = variety.Id;
@@ -366,19 +380,25 @@ namespace WMS.Ui.Controllers
             }
             else
             {
-                var cat = await cQuery.ExecuteAsync(model.Variety.Id);
+                ICode cat = null;
+                if (model != null)
+                    cat = await cQuery.ExecuteAsync(model.Variety.Id).ConfigureAwait(false);
                 dto.Category = cat.Id;
-                dto.Yeast = model.Yeast.Id;
+                dto.Yeast = model?.Yeast.Id;
             }
-            dto.Id = model.Id;
-            dto.Yeast = model.Yeast.Id;
-            dto.Note = model.Note;
+
+            if (model != null)
+            {
+                dto.Id = model.Id;
+                dto.Yeast = model.Yeast.Id;
+                dto.Note = model.Note;
+            }
 
             var cmd = _yeastCommandFactory.CreateYeastPairCommand();
             if (dto.Id == 0)
-                await cmd.AddAsync(dto);
+                await cmd.AddAsync(dto).ConfigureAwait(false);
             else
-                await cmd.UpdateAsync(dto);
+                await cmd.UpdateAsync(dto).ConfigureAwait(false);
 
             return RedirectToAction("Index", "Admin", new { id = "yeasts" });
         }
@@ -393,8 +413,8 @@ namespace WMS.Ui.Controllers
         {
             var cmd = _yeastCommandFactory.CreateYeastPairCommand();
             var qry = _yeastQueryFactory.CreateYeastPairQuery();
-            var dto = await qry.ExecuteAsync(Id);
-            await cmd.DeleteAsync(dto);
+            var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+            await cmd.DeleteAsync(dto).ConfigureAwait(false);
             return RedirectToAction("Index", "Admin", new { id = "yeasts" });
         }
 
@@ -423,9 +443,9 @@ namespace WMS.Ui.Controllers
             ViewData["Title"] = "Edit a Variety";
 
             var vQry = _recipeQueryFactory.CreateVarietiesQuery();
-            var dto = await vQry.ExecuteAsync(Id);
+            var dto = await vQry.ExecuteAsync(Id).ConfigureAwait(false);
             var cQry = _recipeQueryFactory.CreateCategoriesQuery();
-            var cats = await cQry.ExecuteAsync();
+            var cats = await cQry.ExecuteAsync().ConfigureAwait(false);
             var model = _modelFactory.CreateVarietyViewModel(dto, cats.FirstOrDefault(c => c.Id == dto.ParentId));
             return View("UpdateVariety", model);
         }
@@ -440,8 +460,8 @@ namespace WMS.Ui.Controllers
         {
             var cmd = _recipeCommandFactory.CreateVarietiesCommand();
             var qry = _recipeQueryFactory.CreateVarietiesQuery();
-            var dto = await qry.ExecuteAsync(Id);
-            await cmd.DeleteAsync(dto);
+            var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+            await cmd.DeleteAsync(dto).ConfigureAwait(false);
             return RedirectToAction("Index", "Admin", new { id = "varieties" });
         }
 
@@ -456,9 +476,9 @@ namespace WMS.Ui.Controllers
             var dto = _mapper.Map<ICode>(model);
             var cmd = _recipeCommandFactory.CreateVarietiesCommand();
             if (dto.Id == 0)
-                await cmd.AddAsync(dto);
+                await cmd.AddAsync(dto).ConfigureAwait(false);
             else
-                await cmd.UpdateAsync(dto);
+                await cmd.UpdateAsync(dto).ConfigureAwait(false);
 
             return RedirectToAction("Index", "Admin", new { id = "varieties" });
         }
@@ -488,7 +508,7 @@ namespace WMS.Ui.Controllers
             ViewData["Title"] = "Edit a Category";
 
             var qry = _recipeQueryFactory.CreateCategoriesQuery();
-            var dto = await qry.ExecuteAsync(Id);
+            var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
             var model = _modelFactory.CreateCategoryViewModel(dto);
             return View("UpdateCategory", model);
         }
@@ -503,8 +523,8 @@ namespace WMS.Ui.Controllers
         {
             var cmd = _recipeCommandFactory.CreateCategoriesCommand();
             var qry = _recipeQueryFactory.CreateCategoriesQuery();
-            var dto = await qry.ExecuteAsync(Id);
-            await cmd.DeleteAsync(dto);
+            var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+            await cmd.DeleteAsync(dto).ConfigureAwait(false);
             return RedirectToAction("Index", "Admin", new { id = "categories" });
         }
 
@@ -519,9 +539,9 @@ namespace WMS.Ui.Controllers
             var dto = _mapper.Map<ICode>(model);
             var cmd = _recipeCommandFactory.CreateCategoriesCommand();
             if (dto.Id == 0)
-                await cmd.AddAsync(dto);
+                await cmd.AddAsync(dto).ConfigureAwait(false);
             else
-                await cmd.UpdateAsync(dto);
+                await cmd.UpdateAsync(dto).ConfigureAwait(false);
 
             return RedirectToAction("Index", "Admin", new { id = "categories" });
         }
@@ -539,16 +559,16 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LockUser(string UserName, DateTimeOffset? timeOut = null)
         {
-            var user = await _userManager.FindByNameAsync(UserName);
-            if (!await _userManager.IsLockedOutAsync(user))
+            var user = await UserManagerAgent.FindByNameAsync(UserName).ConfigureAwait(false);
+            if (!await UserManagerAgent.IsLockedOutAsync(user).ConfigureAwait(false))
             {
-                var result = await _userManager.SetLockoutEnabledAsync(user, true);
+                var result = await UserManagerAgent.SetLockoutEnabledAsync(user, true).ConfigureAwait(false);
                 if (result.Succeeded)
                 {
                     if (timeOut.HasValue)
-                        await _userManager.SetLockoutEndDateAsync(user, timeOut);
+                        await UserManagerAgent.SetLockoutEndDateAsync(user, timeOut).ConfigureAwait(false);
                     else
-                        await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                        await UserManagerAgent.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue).ConfigureAwait(false);
                 }
             }
 
@@ -563,13 +583,13 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnlockUser(string UserName)
         {
-            var user = await _userManager.FindByNameAsync(UserName);
-            if (await _userManager.IsLockedOutAsync(user))
+            var user = await UserManagerAgent.FindByNameAsync(UserName).ConfigureAwait(false);
+            if (await UserManagerAgent.IsLockedOutAsync(user).ConfigureAwait(false))
             {
-                var result = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                var result = await UserManagerAgent.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow).ConfigureAwait(false);
                 if (result.Succeeded)
                 {
-                    await _userManager.ResetAccessFailedCountAsync(user);
+                    await UserManagerAgent.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
                 }
             }
 
@@ -585,11 +605,11 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string UserName)
         {
-            var user = await _userManager.FindByNameAsync(UserName);
+            var user = await UserManagerAgent.FindByNameAsync(UserName).ConfigureAwait(false);
             if (user != null)
             {
-                if (!await _userManager.IsInRoleAsync(user, _appSettings.SecRole.Admin))
-                    await _userManager.DeleteAsync(user);
+                if (!await UserManagerAgent.IsInRoleAsync(user, _appSettings.SecRole.Admin).ConfigureAwait(false))
+                    await UserManagerAgent.DeleteAsync(user).ConfigureAwait(false);
             }
 
             return RedirectToAction("Index", "Admin", new { id = "users" });
@@ -607,10 +627,10 @@ namespace WMS.Ui.Controllers
         {
             ViewData["Title"] = "Edit a User";
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await UserManagerAgent.FindByNameAsync(model?.UserName).ConfigureAwait(false);
             model = _mapper.Map<UserViewModel>(user);
-            model.MemberRoles = await _userManager.GetRolesAsync(user);
-            model.AllRoles = GetAllRolesAsSelectList();
+            model.MemberRoles.AddRange(await UserManagerAgent.GetRolesAsync(user).ConfigureAwait(false));
+            model.AllRoles.AddRange(GetAllRolesAsSelectList());
 
             return View(model);
         }
@@ -625,14 +645,14 @@ namespace WMS.Ui.Controllers
         {
             ViewData["Title"] = "Edit a User";
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await UserManagerAgent.FindByNameAsync(model?.UserName).ConfigureAwait(false);
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Email = model.Email;
-            await _userManager.UpdateAsync(user);
+            await UserManagerAgent.UpdateAsync(user).ConfigureAwait(false);
             model = _mapper.Map<UserViewModel>(user);
-            model.MemberRoles = await _userManager.GetRolesAsync(user);
-            model.AllRoles = GetAllRolesAsSelectList();
+            model.MemberRoles.AddRange(await UserManagerAgent.GetRolesAsync(user).ConfigureAwait(false));
+            model.AllRoles.AddRange(GetAllRolesAsSelectList());
 
             return View("EditUser", model);
 
@@ -648,12 +668,12 @@ namespace WMS.Ui.Controllers
         {
             ViewData["Title"] = "Add a User Role";
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (await _roleManager.RoleExistsAsync(model.NewRole) && !await _userManager.IsInRoleAsync(user, model.NewRole))
-                await _userManager.AddToRoleAsync(user, model.NewRole);
+            var user = await UserManagerAgent.FindByNameAsync(model?.UserName).ConfigureAwait(false);
+            if (await RoleManagerAgent.RoleExistsAsync(model.NewRole).ConfigureAwait(false) && !await UserManagerAgent.IsInRoleAsync(user, model.NewRole).ConfigureAwait(false))
+                await UserManagerAgent.AddToRoleAsync(user, model.NewRole).ConfigureAwait(false);
             model = _mapper.Map<UserViewModel>(user);
-            model.MemberRoles = await _userManager.GetRolesAsync(user);
-            model.AllRoles = GetAllRolesAsSelectList();
+            model.MemberRoles.AddRange(await UserManagerAgent.GetRolesAsync(user).ConfigureAwait(false));
+            model.AllRoles.AddRange(GetAllRolesAsSelectList());
 
             return View("EditUser", model);
 
@@ -669,12 +689,12 @@ namespace WMS.Ui.Controllers
         {
             ViewData["Title"] = "Edit a User";
 
-            var user = await _userManager.FindByNameAsync(model.UserName);
-            if (await _roleManager.RoleExistsAsync(model.NewRole) && await _userManager.IsInRoleAsync(user, model.NewRole))
-                await _userManager.RemoveFromRoleAsync(user, model.NewRole);
+            var user = await UserManagerAgent.FindByNameAsync(model?.UserName).ConfigureAwait(false);
+            if (await RoleManagerAgent.RoleExistsAsync(model.NewRole).ConfigureAwait(false) && await UserManagerAgent.IsInRoleAsync(user, model.NewRole).ConfigureAwait(false))
+                await UserManagerAgent.RemoveFromRoleAsync(user, model.NewRole).ConfigureAwait(false);
             model = _mapper.Map<UserViewModel>(user);
-            model.MemberRoles = await _userManager.GetRolesAsync(user);
-            model.AllRoles = GetAllRolesAsSelectList();
+            model.MemberRoles.AddRange(await UserManagerAgent.GetRolesAsync(user).ConfigureAwait(false));
+            model.AllRoles.AddRange(GetAllRolesAsSelectList());
 
             return View("EditUser", model);
         }
@@ -705,13 +725,16 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRole(ApplicationRole model)
         {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
             // Create Role
-            if (!await _roleManager.RoleExistsAsync(model.Name))
+            if (!await RoleManagerAgent.RoleExistsAsync(model.Name).ConfigureAwait(false))
             {
-                IdentityResult roleResult = await _roleManager.CreateAsync(model);
+                IdentityResult roleResult = await RoleManagerAgent.CreateAsync(model).ConfigureAwait(false);
                 if (!roleResult.Succeeded)
                 {
-                    Danger("Error while creating role!", true);
+                    Danger(_localizer["ErrorAddRole"], true);
                     return View(model);
                 }
             }
@@ -727,12 +750,12 @@ namespace WMS.Ui.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteRole(string roleName)
         {
-            var role = await _roleManager.FindByNameAsync(roleName);
+            var role = await RoleManagerAgent.FindByNameAsync(roleName).ConfigureAwait(false);
             if (role != null && role.Name != _appSettings.SecRole.Admin)
             {
-                IdentityResult roleResult = await _roleManager.DeleteAsync(role);
+                IdentityResult roleResult = await RoleManagerAgent.DeleteAsync(role).ConfigureAwait(false);
                 if (!roleResult.Succeeded)
-                    throw new Exception("Error while creating role!");
+                    throw new Exception(_localizer["ErrorDeleteRole"]);
 
             }
 
@@ -752,12 +775,12 @@ namespace WMS.Ui.Controllers
             List<SelectListItem> SelectRoleListItems =
                 new List<SelectListItem>();
 
-            var roles = _roleManager.Roles.OrderBy(x => x.Name).ToList();
+            var roles = RoleManagerAgent.Roles.OrderBy(x => x.Name).ToList();
 
             SelectRoleListItems.Add(
                 new SelectListItem
                 {
-                    Text = "Select",
+                    Text = _localizer["SelectTitle"],
                     Value = "0"
                 });
 
@@ -766,8 +789,8 @@ namespace WMS.Ui.Controllers
                 SelectRoleListItems.Add(
                     new SelectListItem
                     {
-                        Text = item.Name.ToString(),
-                        Value = item.Name.ToString()
+                        Text = item.Name.ToString(CultureInfo.CurrentCulture),
+                        Value = item.Name.ToString(CultureInfo.CurrentCulture)
                     });
             }
 

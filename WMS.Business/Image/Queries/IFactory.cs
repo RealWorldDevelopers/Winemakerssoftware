@@ -1,10 +1,10 @@
 ﻿using WMS.Business.Image.Dto;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 
 namespace WMS.Business.Image.Queries
 {
     public interface IFactory
     {
-        IQuery<Dto.Image> CreateImageQuery();
+        IQuery<Dto.ImageDto> CreateImageQuery();
     }
 }

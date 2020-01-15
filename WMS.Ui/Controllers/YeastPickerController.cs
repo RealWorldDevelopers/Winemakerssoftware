@@ -25,13 +25,13 @@ namespace WMS.Ui.Controllers
             ViewData["PageDesc"] = "A tool to assist with picking the correct yeast for your wine.";
 
             var getCategoriesQuery = _queryRecipeFactory.CreateCategoriesQuery();
-            var cList = await getCategoriesQuery.ExecuteAsync();
+            var cList = await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false);
 
             var getVarietiesQuery = _queryRecipeFactory.CreateVarietiesQuery();
-            var vList = await getVarietiesQuery.ExecuteAsync();
+            var vList = await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false);
 
             var getYeastsQuery = _queryYeastFactory.CreateYeastsQuery();
-            var yeastsDto = await getYeastsQuery.ExecuteAsync();
+            var yeastsDto = await getYeastsQuery.ExecuteAsync().ConfigureAwait(false);
 
             var yeastsModel = _modelFactory.CreateYeastModel(cList, vList, yeastsDto);
 

@@ -1,7 +1,5 @@
 ﻿
-
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace WMS.Ui.Models.Conversions
 {
@@ -32,7 +30,7 @@ namespace WMS.Ui.Models.Conversions
         public decimal Gallons { get; set; }
 
         [DisplayName("fluid ounces")]
-        public decimal Fluid_Ounces { get; set; }
+        public decimal FluidOunces { get; set; }
 
         [DisplayName("cups")]
         public decimal Cups { get; set; }

@@ -1,14 +1,16 @@
 ﻿
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 using WMS.Data.Entities;
 
 namespace WMS.Business.Yeast.Commands
 {
-    public class ModifyYeastPair : ICommand<Dto.YeastPair>
+    public class ModifyYeastPair : ICommand<Dto.YeastPairDto>
     {
         private readonly IMapper _mapper;
         private readonly WMSContext _dbContext;
@@ -20,13 +22,16 @@ namespace WMS.Business.Yeast.Commands
         }
 
         /// <summary>
-        /// Add a <see cref="Dto.YeastPair"/> to Database
+        /// Add a <see cref="Dto.YeastPairDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPair"/></param>
-        /// <returns><see cref="Dto.YeastPair"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPairDto"/></param>
+        /// <returns><see cref="Dto.YeastPairDto"/></returns>
         /// <inheritdoc cref="ICommand{T}.Add(T)"/>
-        public Dto.YeastPair Add(Dto.YeastPair dto)
+        public Dto.YeastPairDto Add(Dto.YeastPairDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = _mapper.Map<YeastPair>(dto);
 
             // add new recipe
@@ -40,34 +45,40 @@ namespace WMS.Business.Yeast.Commands
         }
 
         /// <summary>
-        /// Add a <see cref="Dto.YeastPair"/> to Database
+        /// Add a <see cref="Dto.YeastPairDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPair"/></param>
-        /// <returns><see cref="Task{Dto.YeastPair}"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPairDto"/></param>
+        /// <returns><see cref="Task{Dto.YeastPairDto}"/></returns>
         /// <inheritdoc cref="ICommand{T}.AddAsync(T)"/>
-        public async Task<Dto.YeastPair> AddAsync(Dto.YeastPair dto)
+        public async Task<Dto.YeastPairDto> AddAsync(Dto.YeastPairDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = _mapper.Map<YeastPair>(dto);
 
             // add new recipe
             await _dbContext.YeastPair.AddAsync(entity);
 
             // Save changes in database
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             //dto.Id = entity.Id;
             return dto;
         }
 
         /// <summary>
-        /// Update a <see cref="Dto.YeastPair"/> in the Database
+        /// Update a <see cref="Dto.YeastPairDto"/> in the Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPair"/></param>
-        /// <returns><see cref="Dto.YeastPair"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPairDto"/></param>
+        /// <returns><see cref="Dto.YeastPairDto"/></returns>
         /// <inheritdoc cref="ICommand{T}.Update(T)"/>
-        public Dto.YeastPair Update(Dto.YeastPair dto)
+        public Dto.YeastPairDto Update(Dto.YeastPairDto dto)
         {
-            var entity = _dbContext.YeastPair.Where(r => r.Id == dto.Id).First();
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var entity = _dbContext.YeastPair.First(r => r.Id == dto.Id);
             entity.Category = dto.Category;
             entity.Id = dto.Id;
             entity.Note = dto.Note;
@@ -84,14 +95,17 @@ namespace WMS.Business.Yeast.Commands
         }
 
         /// <summary>
-        /// Update a <see cref="Dto.YeastPair"/> in the Database
+        /// Update a <see cref="Dto.YeastPairDto"/> in the Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPair"/></param>
-        /// <returns><see cref="Task{Dto.YeastPair}"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPairDto"/></param>
+        /// <returns><see cref="Task{Dto.YeastPairDto}"/></returns>
         /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
-        public async Task<Dto.YeastPair> UpdateAsync(Dto.YeastPair dto)
+        public async Task<Dto.YeastPairDto> UpdateAsync(Dto.YeastPairDto dto)
         {
-            var entity = _dbContext.YeastPair.Where(r => r.Id == dto.Id).First();
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var entity = await _dbContext.YeastPair.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
             entity.Category = dto.Category;
             entity.Id = dto.Id;
             entity.Note = dto.Note;
@@ -102,17 +116,17 @@ namespace WMS.Business.Yeast.Commands
             _dbContext.YeastPair.Update(entity);
 
             // Save changes in database
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return dto;
         }
 
         /// <summary>
-        /// Remove a <see cref="Dto.YeastPair"/> to Database
+        /// Remove a <see cref="Dto.YeastPairDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPair"/></param>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPairDto"/></param>
         /// <inheritdoc cref="ICommand{T}.Delete(T)"/>
-        public void Delete(Dto.YeastPair dto)
+        public void Delete(Dto.YeastPairDto dto)
         {
             var entity = _dbContext.YeastPair.FirstOrDefault(v => v.Id == dto.Id);
             if (entity != null)
@@ -126,20 +140,20 @@ namespace WMS.Business.Yeast.Commands
         }
 
         /// <summary>
-        /// Remove a <see cref="Dto.YeastPair"/> to Database
+        /// Remove a <see cref="Dto.YeastPairDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPair"/></param>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.YeastPairDto"/></param>
         /// <inheritdoc cref="ICommand{T}.DeleteAsync(T)"/>
-        public async Task DeleteAsync(Dto.YeastPair dto)
+        public async Task DeleteAsync(Dto.YeastPairDto dto)
         {
-            var entity = _dbContext.YeastPair.FirstOrDefault(v => v.Id == dto.Id);
+            var entity = await _dbContext.YeastPair.FirstOrDefaultAsync(v => v.Id == dto.Id).ConfigureAwait(false);
             if (entity != null)
             {
                 // add new recipe
                 _dbContext.YeastPair.Remove(entity);
 
                 // Save changes in database
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 

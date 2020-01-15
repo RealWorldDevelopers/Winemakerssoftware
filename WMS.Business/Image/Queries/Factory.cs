@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 
 namespace WMS.Business.Image.Queries
@@ -28,7 +28,7 @@ namespace WMS.Business.Image.Queries
         /// Instance of Create Rating Query
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateRatingsQuery"/>>
-        public IQuery<Dto.Image> CreateImageQuery()
+        public IQuery<Dto.ImageDto> CreateImageQuery()
         {
             return new GetImages(_imageContext, _mapper);
         }

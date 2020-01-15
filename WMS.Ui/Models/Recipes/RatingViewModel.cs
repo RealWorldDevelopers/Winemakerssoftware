@@ -3,14 +3,14 @@
     public class RatingViewModel
     {
         public string Check { get; set; }
-        public string Check_1 { get; set; }
-        public string Check_15 { get; set; }
-        public string Check_2 { get; set; }
-        public string Check_25 { get; set; }
-        public string Check_3 { get; set; }
-        public string Check_35 { get; set; }
-        public string Check_4 { get; set; }
-        public string Check_45 { get; set; }
-        public string Check_5 { get; set; }
+        public string Check1 { get; set; }
+        public string Check15 { get; set; }
+        public string Check2 { get; set; }
+        public string Check25 { get; set; }
+        public string Check3 { get; set; }
+        public string Check35 { get; set; }
+        public string Check4 { get; set; }
+        public string Check45 { get; set; }
+        public string Check5 { get; set; }
     }
 }

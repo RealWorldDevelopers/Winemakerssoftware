@@ -1,5 +1,5 @@
 ﻿
-using WMS.Business.Shared;
+using WMS.Business.Common;
 
 namespace WMS.Business.Yeast.Queries
 {
@@ -24,13 +24,13 @@ namespace WMS.Business.Yeast.Queries
         /// Create a Yeast Query
         /// </summary>
         /// <returns><see cref="IQuery{Yeast}"/></returns>
-        IQuery<Dto.Yeast> CreateYeastsQuery();
+        IQuery<Dto.YeastDto> CreateYeastsQuery();
 
         /// <summary>
         /// Create a Yeast Pair Query
         /// </summary>
         /// <returns><see cref="IQuery{YeastPair}"/></returns>
-        IQuery<Dto.YeastPair> CreateYeastPairQuery();
+        IQuery<Dto.YeastPairDto> CreateYeastPairQuery();
 
     }
 }

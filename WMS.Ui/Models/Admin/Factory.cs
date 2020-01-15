@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using WMS.Business.Recipe.Dto;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
 
 namespace WMS.Ui.Models.Admin
@@ -16,8 +17,8 @@ namespace WMS.Ui.Models.Admin
 
         private readonly IQuery<ICode> _getCategoriesQuery;
         private readonly IQuery<ICode> _getVarietiesQuery;
-        private readonly IQuery<Yeast> _getYeastsQuery;
-        private readonly IQuery<YeastPair> _getYeastPairsQuery;
+        private readonly IQuery<YeastDto> _getYeastsQuery;
+        private readonly IQuery<YeastPairDto> _getYeastPairsQuery;
         private readonly IQuery<ICode> _getBrandsQuery;
         private readonly IQuery<ICode> _getStylesQuery;
 
@@ -25,17 +26,17 @@ namespace WMS.Ui.Models.Admin
         private readonly List<ICode> _varietiesDtoList;
         private readonly List<ICode> _brandsDtoList;
         private readonly List<ICode> _stylesDtoList;
-        private readonly List<Yeast> _yeastsDtoList;
-        private readonly List<YeastPair> _yeastPairingsDtoList;
+        private readonly List<YeastDto> _yeastsDtoList;
+        private readonly List<YeastPairDto> _yeastPairingsDtoList;
 
         public Factory(Business.Recipe.Queries.IFactory recipeQueryFactory, Business.Yeast.Queries.IFactory yeastQueryFactory)
         {
             _recipeQueryFactory = recipeQueryFactory;
             _yeastQueryFactory = yeastQueryFactory;
 
-            _getCategoriesQuery = _recipeQueryFactory.CreateCategoriesQuery();
+            _getCategoriesQuery = _recipeQueryFactory?.CreateCategoriesQuery();
             _getVarietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
-            _getYeastsQuery = _yeastQueryFactory.CreateYeastsQuery();
+            _getYeastsQuery = _yeastQueryFactory?.CreateYeastsQuery();
             _getYeastPairsQuery = _yeastQueryFactory.CreateYeastPairQuery();
             _getBrandsQuery = _yeastQueryFactory.CreateBrandsQuery();
             _getStylesQuery = _yeastQueryFactory.CreateStylesQuery();
@@ -65,39 +66,50 @@ namespace WMS.Ui.Models.Admin
 
         public RecipeViewModel CreateRecipeViewModel()
         {
-            var model = new RecipeViewModel();
-            model.Category = new CategoryViewModel();
-            model.Variety = new VarietyViewModel();
-            model.Images = new List<ImageViewModel>();
-            model.Varieties = CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, null);
+            var model = new RecipeViewModel
+            {
+                Category = new CategoryViewModel(),
+                Variety = new VarietyViewModel()
+            };
+            model.Varieties.Clear();
+            model.Varieties.AddRange(CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, null));
             return model;
         }
 
-        public RecipeViewModel CreateRecipeViewModel(Recipe recipeDto)
+        public RecipeViewModel CreateRecipeViewModel(RecipeDto recipeDto)
         {
-            var model = new RecipeViewModel();
-            model.Id = recipeDto.Id;
-            model.Hits = recipeDto.Hits;
-            model.Enabled = recipeDto.Enabled;
-            model.NeedsApproved = recipeDto.NeedsApproved;
+            if (recipeDto == null)
+                throw new ArgumentNullException(nameof(recipeDto));
+
+            var model = new RecipeViewModel
+            {
+                Id = recipeDto.Id,
+                Hits = recipeDto.Hits,
+                Enabled = recipeDto.Enabled,
+                NeedsApproved = recipeDto.NeedsApproved,
+                SubmittedBy = recipeDto.SubmittedBy,
+                Category = CreateCategoryViewModel(recipeDto.Category),
+                Variety = CreateVarietyViewModel(recipeDto.Variety, null),
+                Title = recipeDto.Title,
+                Ingredients = recipeDto.Ingredients,
+                Instructions = recipeDto.Instructions,
+                Description = recipeDto.Description
+            };
+            model.Images.Clear();
+            model.Images.AddRange(CreateImageViewModel(recipeDto.ImageFiles));
+            model.Varieties.Clear();
+            model.Varieties.AddRange(CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, null));
+
             if (recipeDto.Rating != null)
                 model.Rating = Math.Round(recipeDto.Rating.TotalValue / recipeDto.Rating.TotalVotes, 2);
-            model.SubmittedBy = recipeDto.SubmittedBy;
-            model.Category = CreateCategoryViewModel(recipeDto.Category);
-            model.Variety = CreateVarietyViewModel(recipeDto.Variety, null);
-            model.Title = recipeDto.Title;
-            model.Ingredients = recipeDto.Ingredients;
-            model.Instructions = recipeDto.Instructions;
-            model.Description = recipeDto.Description;
-            model.Images = CreateImageViewModel(recipeDto.ImageFiles);  
-            model.Varieties = CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, null);
+
             return model;
         }
 
-        public List<RecipeViewModel> CreateRecipeViewModel(List<Recipe> recipeDtoList)
+        public List<RecipeViewModel> CreateRecipeViewModel(List<RecipeDto> recipeDtoList)
         {
             var models = new List<RecipeViewModel>();
-            foreach (var recipe in recipeDtoList.OrderBy(r => r.Enabled).ThenBy(r=>r.NeedsApproved).
+            foreach (var recipe in recipeDtoList.OrderBy(r => r.Enabled).ThenBy(r => r.NeedsApproved).
                 ThenBy(r => r.Category.Literal).ThenBy(r => r.Variety.Literal).ThenBy(r => r.Description))
             {
                 models.Add(CreateRecipeViewModel(recipe));
@@ -106,34 +118,43 @@ namespace WMS.Ui.Models.Admin
         }
 
 
-        public ImageViewModel CreateImageViewModel(ImageFile imageDto)
+        public ImageViewModel CreateImageViewModel(ImageFileDto imageDto)
         {
-            var model = new ImageViewModel
+            if (imageDto == null)
+                throw new ArgumentNullException(nameof(imageDto));
+
+            var model = new ImageViewModel(imageDto.Data())
             {
-                Id=imageDto.Id,
-                ContentType= imageDto.ContentType,
-                Data=imageDto.Data,
-                FileName=imageDto.FileName,
-                Length=imageDto.Length,
-                Name=imageDto.Name,
-                RecipeId=imageDto.RecipeId
+                Id = imageDto.Id,
+                ContentType = imageDto.ContentType,
+                FileName = imageDto.FileName,
+                Length = imageDto.Length,
+                Name = imageDto.Name,
+                RecipeId = imageDto.RecipeId
             };
 
             return model;
         }
 
-        public List<ImageViewModel> CreateImageViewModel(List<ImageFile> imageDtoList)
+        public List<ImageViewModel> CreateImageViewModel(List<ImageFileDto> imageDtoList)
         {
             var models = new List<ImageViewModel>();
-            foreach (var img in imageDtoList)
+
+            if (imageDtoList != null)
             {
-                models.Add(CreateImageViewModel(img));
+                foreach (var img in imageDtoList)
+                {
+                    models.Add(CreateImageViewModel(img));
+                }
             }
             return models;
         }
 
         public CategoryViewModel CreateCategoryViewModel(ICode categoryDto)
         {
+            if (categoryDto == null)
+                throw new ArgumentNullException(nameof(categoryDto));
+
             var model = new CategoryViewModel
             {
                 Description = categoryDto.Description,
@@ -146,7 +167,7 @@ namespace WMS.Ui.Models.Admin
             var children = _varietiesDtoList.Where(v => v.ParentId == categoryDto.Id);
             if (children != null)
             {
-                model.Varieties = new List<VarietyViewModel>();
+                model.Varieties.Clear();
                 foreach (var dto in children)
                 {
                     var v = new VarietyViewModel
@@ -154,9 +175,11 @@ namespace WMS.Ui.Models.Admin
                         Description = dto.Description,
                         Enabled = dto.Enabled,
                         Id = dto.Id,
-                        Literal = dto.Literal,
-                        Categories = CreateSelectList("Parent Category", _categoriesDtoList)
+                        Literal = dto.Literal
                     };
+                    v.Categories.Clear();
+                    v.Categories.AddRange(CreateSelectList("Parent Category", _categoriesDtoList));
+
                     v.Parent = new CategoryViewModel
                     {
                         Description = categoryDto.Description,
@@ -185,23 +208,25 @@ namespace WMS.Ui.Models.Admin
 
         public VarietyViewModel CreateVarietyViewModel()
         {
-            var model = new VarietyViewModel
-            {
-                Categories = CreateSelectList("Parent Category", _categoriesDtoList)
-            };
+            var model = new VarietyViewModel();
+            model.Categories.AddRange(CreateSelectList("Parent Category", _categoriesDtoList));
             return model;
         }
 
         public VarietyViewModel CreateVarietyViewModel(ICode varietyDto, ICode parentDto)
         {
+            if (varietyDto == null)
+                throw new ArgumentNullException(nameof(varietyDto));
+
             var model = new VarietyViewModel
             {
                 Description = varietyDto.Description,
                 Enabled = varietyDto.Enabled,
                 Id = varietyDto.Id,
-                Literal = varietyDto.Literal,
-                Categories = CreateSelectList("Parent Category", _categoriesDtoList)
+                Literal = varietyDto.Literal
             };
+            model.Categories.AddRange(CreateSelectList("Parent Category", _categoriesDtoList));
+
             if (parentDto != null)
                 model.Parent = CreateCategoryViewModel(parentDto);
 
@@ -223,16 +248,17 @@ namespace WMS.Ui.Models.Admin
 
         public YeastViewModel CreateYeastViewModel()
         {
-            var model = new YeastViewModel
-            {
-                Brands = CreateSelectList("Brand", _brandsDtoList),
-                Styles = CreateSelectList("Style", _stylesDtoList)
-            };
+            var model = new YeastViewModel();
+            model.Brands.AddRange(CreateSelectList("Brand", _brandsDtoList));
+            model.Styles.AddRange(CreateSelectList("Style", _stylesDtoList));
             return model;
         }
 
-        public YeastViewModel CreateYeastViewModel(Yeast yeastDto)
+        public YeastViewModel CreateYeastViewModel(YeastDto yeastDto)
         {
+            if (yeastDto == null)
+                throw new ArgumentNullException(nameof(yeastDto));
+
             var model = new YeastViewModel
             {
                 Id = yeastDto.Id,
@@ -242,24 +268,27 @@ namespace WMS.Ui.Models.Admin
                 TempMax = yeastDto.TempMax,
                 TempMin = yeastDto.TempMin,
                 Alcohol = yeastDto.Alcohol,
-                Note = yeastDto.Note,
-                Brands = CreateSelectList("Brand", _brandsDtoList),
-                Styles = CreateSelectList("Style", _stylesDtoList),
-
+                Note = yeastDto.Note
             };
+            model.Brands.AddRange(CreateSelectList("Brand", _brandsDtoList));
+            model.Styles.AddRange(CreateSelectList("Style", _stylesDtoList));
 
-            var dto = new YeastPair { Yeast = yeastDto.Id };
+            var dto = new YeastPairDto { Yeast = yeastDto.Id };
             model.Pairing = CreateYeastPairingViewModel(dto);
             model.Pairing.Category = null;
             model.Pairing.Variety = null;
 
-            var pairs = _yeastPairingsDtoList.Where(p => p.Yeast.Value == yeastDto.Id);
+            var pairs = _yeastPairingsDtoList.Where(p => p.Yeast.Value == yeastDto.Id).ToList();
             if (pairs != null)
-                model.Pairings = CreateYeastPairingViewModel(pairs.ToList());
+            {
+                model.Pairings.Clear();
+                model.Pairings.AddRange(CreateYeastPairingViewModel(pairs));
+            }
+               
             return model;
         }
 
-        public List<YeastViewModel> CreateYeastViewModel(List<Yeast> yeastDtoList)
+        public List<YeastViewModel> CreateYeastViewModel(List<YeastDto> yeastDtoList)
         {
             var models = new List<YeastViewModel>();
             foreach (var yeast in yeastDtoList.OrderBy(y => y.Brand.Literal).ThenBy(y => y.Trademark))
@@ -271,6 +300,9 @@ namespace WMS.Ui.Models.Admin
 
         public YeastBrandViewModel CreateYeastBrandViewModel(ICode brandDto)
         {
+            if (brandDto == null)
+                throw new ArgumentNullException(nameof(brandDto));
+
             var model = new YeastBrandViewModel
             {
                 Description = brandDto.Description,
@@ -284,15 +316,21 @@ namespace WMS.Ui.Models.Admin
         public List<YeastBrandViewModel> CreateYeastBrandViewModel(List<ICode> brandDtoList)
         {
             var models = new List<YeastBrandViewModel>();
-            foreach (var brand in brandDtoList)
+            if (brandDtoList != null)
             {
-                models.Add(CreateYeastBrandViewModel(brand));
+                foreach (var brand in brandDtoList)
+                {
+                    models.Add(CreateYeastBrandViewModel(brand));
+                }
             }
             return models;
         }
 
         public YeastStyleViewModel CreateYeastStyleViewModel(ICode styleDto)
         {
+            if (styleDto == null)
+                throw new ArgumentNullException(nameof(styleDto));
+
             var model = new YeastStyleViewModel
             {
                 Description = styleDto.Description,
@@ -306,25 +344,34 @@ namespace WMS.Ui.Models.Admin
         public List<YeastStyleViewModel> CreateYeastStyleViewModel(List<ICode> styleDtoList)
         {
             var models = new List<YeastStyleViewModel>();
-            foreach (var style in styleDtoList)
+            if (styleDtoList != null)
             {
-                models.Add(CreateYeastStyleViewModel(style));
+                foreach (var style in styleDtoList)
+                {
+                    models.Add(CreateYeastStyleViewModel(style));
+                }
             }
             return models;
         }
 
-        public List<YeastPairingViewModel> CreateYeastPairingViewModel(List<YeastPair> pairingDtoList)
+        public List<YeastPairingViewModel> CreateYeastPairingViewModel(List<YeastPairDto> pairingDtoList)
         {
             var models = new List<YeastPairingViewModel>();
-            foreach (var p in pairingDtoList)
+            if (pairingDtoList != null)
             {
-                models.Add(CreateYeastPairingViewModel(p));
+                foreach (var p in pairingDtoList)
+                {
+                    models.Add(CreateYeastPairingViewModel(p));
+                }
             }
             return models.OrderBy(p => p.Category.Literal).ThenBy(p => p.Variety.Literal).ToList();
         }
 
-        public YeastPairingViewModel CreateYeastPairingViewModel(YeastPair pairingDto)
+        public YeastPairingViewModel CreateYeastPairingViewModel(YeastPairDto pairingDto)
         {
+            if (pairingDto == null)
+                throw new ArgumentNullException(nameof(pairingDto));
+
             var yeastDto = _yeastsDtoList.FirstOrDefault(y => y.Id == pairingDto.Yeast.Value);
             var yeastViewModel = new YeastViewModel
             {
@@ -354,16 +401,16 @@ namespace WMS.Ui.Models.Admin
                 varietyModel = CreateVarietyViewModel(varietyDto, null);
             }
 
-            var existingPairings = _yeastPairingsDtoList.Where(p => p.Yeast.Value == yeastModel.Id && p.Id != pairingDto.Id);
+            var existingPairings = _yeastPairingsDtoList.Where(p => p.Yeast.Value == yeastModel.Id && p.Id != pairingDto.Id).ToList();
             var model = new YeastPairingViewModel
             {
                 Id = pairingDto.Id,
                 Yeast = yeastModel,
                 Category = categoryModel,
                 Variety = varietyModel,
-                Note = pairingDto.Note,
-                Varieties = CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, existingPairings.ToList())
+                Note = pairingDto.Note
             };
+            model.Varieties.AddRange(CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, existingPairings));
 
             return model;
         }
@@ -391,7 +438,7 @@ namespace WMS.Ui.Models.Admin
                 {
                     selectItem = new SelectListItem
                     {
-                        Value = dto.Id.ToString(),
+                        Value = dto.Id.ToString(CultureInfo.CurrentCulture),
                         Text = dto.Literal
                     };
                     list.Add(selectItem);
@@ -401,7 +448,7 @@ namespace WMS.Ui.Models.Admin
             return list;
         }
 
-        public List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList, List<ICode> dtoParentList, List<YeastPair> existingPairings)
+        public static List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList, List<ICode> dtoParentList, List<YeastPairDto> existingPairings)
         {
             var list = new List<SelectListItem>();
             var group = new SelectListGroup { Name = "" };
@@ -431,13 +478,13 @@ namespace WMS.Ui.Models.Admin
                 selectItem = new SelectListItem
                 {
                     Disabled = disable,
-                    Value = dto.Id.ToString(),
+                    Value = dto.Id.ToString(CultureInfo.CurrentCulture),
                     Text = dto.Literal
                 };
 
                 if (dto.ParentId.HasValue && dtoParentList != null)
                 {
-                    var parent = dtoParentList.Where(p => p.Id == dto.ParentId.Value).FirstOrDefault();
+                    var parent = dtoParentList.FirstOrDefault(p => p.Id == dto.ParentId.Value);
                     if (group.Name != parent?.Literal)
                     {
                         disable = false;
@@ -452,7 +499,7 @@ namespace WMS.Ui.Models.Admin
                         var firstItem = new SelectListItem
                         {
                             Disabled = disable,
-                            Value = parent.Id.ToString(),
+                            Value = parent.Id.ToString(CultureInfo.CurrentCulture),
                             Text = "All(Any)" + parent.Literal,
                             Group = group
                         };

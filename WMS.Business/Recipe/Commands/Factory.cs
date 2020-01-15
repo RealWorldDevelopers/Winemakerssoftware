@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using WMS.Business.Recipe.Dto;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 
 namespace WMS.Business.Recipe.Commands
@@ -38,22 +38,22 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <inheritdoc cref="IFactory.CreateRecipesCommand"/>>
-        public ICommand<Dto.Recipe> CreateRecipesCommand()
+        public ICommand<Dto.RecipeDto> CreateRecipesCommand()
         {
             return new ModifyRecipes(_recipeContext, _mapper);
         }
 
         /// <inheritdoc cref="IFactory.CreateRatingsCommand"/>>
-        public ICommand<Rating> CreateRatingsCommand()
+        public ICommand<RatingDto> CreateRatingsCommand()
         {
             return new ModifyRatings(_recipeContext, _mapper);
         }
 
 
         /// <inheritdoc cref="IFactory.CreateImageCommand"/>>
-        public ICommand<ImageFile> CreateImageCommand()
+        public ICommand<ImageFileDto> CreateImageCommand()
         {
-            return new ModifyImages(_recipeContext, _mapper);
+            return new ModifyImages(_recipeContext);
         }
 
 

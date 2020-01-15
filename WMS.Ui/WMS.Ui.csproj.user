@@ -13,5 +13,6 @@
     <WebStackScaffolding_ViewDialogWidth>600</WebStackScaffolding_ViewDialogWidth>
     <NameOfLastUsedPublishProfile>WMSUi - Web Deploy</NameOfLastUsedPublishProfile>
     <ActiveDebugProfile>IIS Express</ActiveDebugProfile>
+    <AutoRefresh>true</AutoRefresh>
   </PropertyGroup>
 </Project>

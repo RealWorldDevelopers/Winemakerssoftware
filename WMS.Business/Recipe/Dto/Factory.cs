@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 
 namespace WMS.Business.Recipe.Dto
 {
@@ -20,11 +20,11 @@ namespace WMS.Business.Recipe.Dto
             };
             return dto;
         }
-       
+
         /// <inheritdoc cref="IFactory.CreateNewRating"/>>
-        public Rating CreateNewRating(int id, int totalVotes, double totalValue, int recipeId, string originIp)
+        public RatingDto CreateNewRating(int id, int totalVotes, double totalValue, int recipeId, string originIp)
         {
-            var dto = new Rating
+            var dto = new RatingDto
             {
                 Id = id,
                 TotalValue = totalValue,
@@ -36,10 +36,10 @@ namespace WMS.Business.Recipe.Dto
         }
 
         /// <inheritdoc cref="IFactory.CreateNewRecipe"/>>
-        public Recipe CreateNewRecipe(int id, string submittedBy, string title, ICode variety, string description,
-            string ingredients, string instructions, Rating rating, bool enabled, bool needsApproved, int hits, List<ImageFile> imageFiles)
+        public RecipeDto CreateNewRecipe(int id, string submittedBy, string title, ICode variety, string description,
+            string ingredients, string instructions, RatingDto rating, bool enabled, bool needsApproved, int hits, List<ImageFileDto> imageFiles)
         {
-            var dto = new Recipe
+            var dto = new RecipeDto
             {
                 Id = 0,
                 SubmittedBy = submittedBy,
@@ -51,25 +51,23 @@ namespace WMS.Business.Recipe.Dto
                 Rating = rating,
                 Enabled = enabled,
                 NeedsApproved = needsApproved,
-                Hits = hits,
-                ImageFiles = imageFiles
+                Hits = hits
             };
+            dto.ImageFiles.AddRange(imageFiles);
 
             return dto;
         }
 
         /// <inheritdoc cref="IFactory.CreateNewImageFile"/>>
-        public ImageFile CreateNewImageFile( int recipeId, string fileName, string name, byte[] data, byte[] thumb, long length, string contentType)
+        public ImageFileDto CreateNewImageFile(int recipeId, string fileName, string name, byte[] data, byte[] thumb, long length, string contentType)
         {
-            var dto = new ImageFile
-            {                
+            var dto = new ImageFileDto(thumb, data)
+            {
                 RecipeId = recipeId,
                 FileName = fileName,
-                Name=name,
-                Data=data,
-                Thumbnail = thumb,
-                Length=length,
-                ContentType=contentType
+                Name = name,
+                Length = length,
+                ContentType = contentType
             };
             return dto;
         }

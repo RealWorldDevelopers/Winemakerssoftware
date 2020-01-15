@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore;
+﻿
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
@@ -8,14 +8,15 @@ using Microsoft.Extensions.Hosting;
 
 namespace WMS.Ui
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            // BuildWebHost(args).Run();
+            // TODO DELETE BuildWebHost(args).Run();
             CreateHostBuilder(args).Build().Run();
         }   
 
+        // TODO Delete
         //public static IWebHost BuildWebHost(string[] args) =>
         //   WebHost.CreateDefaultBuilder(args)
         //       .ConfigureAppConfiguration((ctx, builder) =>

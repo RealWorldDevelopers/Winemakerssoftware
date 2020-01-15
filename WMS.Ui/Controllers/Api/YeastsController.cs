@@ -30,7 +30,7 @@ namespace WMS.Ui.Controllers.Api
         public async Task<IEnumerable<YeastPair>> GetPairsAsync()
         {
             var query = _queryFactory.CreateYeastPairQuery();
-            var dto = await query.ExecuteAsync();
+            var dto = await query.ExecuteAsync().ConfigureAwait(false);
             var pairs = _modelFactory.CreateYeastPairList(dto);
 
             return pairs;

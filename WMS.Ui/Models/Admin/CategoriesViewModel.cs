@@ -4,7 +4,12 @@ namespace WMS.Ui.Models.Admin
 {
     public class CategoriesViewModel
     {
-        public List<CategoryViewModel> Categories { get; set; }
+        public CategoriesViewModel()
+        {
+            Categories = new List<CategoryViewModel>();
+        }
+
+        public List<CategoryViewModel> Categories { get; }
     }
 
 }

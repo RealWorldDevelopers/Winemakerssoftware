@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -38,11 +39,11 @@ namespace WMS.Ui.Controllers.Api
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.UserName);
+                var user = await _userManager.FindByNameAsync(model?.UserName).ConfigureAwait(false);
                 if (user != null)
                 {
 
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false).ConfigureAwait(false);
 
                     if (!result.Succeeded)
                     {
@@ -55,7 +56,7 @@ namespace WMS.Ui.Controllers.Api
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                     };
 
-                    double expirationMinutes = double.Parse(_configuration["JwtToken:ExpireMinutes"]);
+                    double expirationMinutes = double.Parse(_configuration["JwtToken:ExpireMinutes"], CultureInfo.CurrentCulture);
                     var token = new JwtSecurityToken
                     (
                         issuer: _configuration["JwtToken:Issuer"],

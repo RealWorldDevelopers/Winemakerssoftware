@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace WMS.Business.Shared
+namespace WMS.Business.Common
 {
     /// <summary>
     /// Generic Entity Framework Query for SQL DB Entities

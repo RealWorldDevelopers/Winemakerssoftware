@@ -1,4 +1,4 @@
-﻿namespace WMS.Business.Shared
+﻿namespace WMS.Business.Common
 {  
     /// <inheritdoc cref="ICode"/>
     public class Code : ICode

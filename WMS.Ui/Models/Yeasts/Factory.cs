@@ -1,20 +1,19 @@
 ﻿
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
 
 namespace WMS.Ui.Models.Yeasts
 {
     public class Factory : IFactory
     {
-        public YeastsViewModel CreateYeastModel(List<ICode> dtoCategoryList, List<ICode> dtoVarietyList, List<Yeast> yeasts)
+        public YeastsViewModel CreateYeastModel(List<ICode> dtoCategoryList, List<ICode> dtoVarietyList, List<YeastDto> yeasts)
         {
-            var model = new YeastsViewModel
-            {
-                YeastsGroups = new List<YeastGroupListItemViewModel>()
-            };
+            var model = new YeastsViewModel();
 
             int curBrandId = 0;
             YeastGroupListItemViewModel curGroup = null;
@@ -27,8 +26,7 @@ namespace WMS.Ui.Models.Yeasts
                     curGroup = new YeastGroupListItemViewModel
                     {
                         BrandId = y.Brand.Id,
-                        GroupName = y.Brand.Literal,
-                        Yeasts = new List<YeastListItemViewModel>()
+                        GroupName = y.Brand.Literal
                     };
                     curBrandId = y.Brand.Id;
                 }
@@ -49,24 +47,26 @@ namespace WMS.Ui.Models.Yeasts
             return model;
         }
 
-        public YeastListItemViewModel CreateYeastListItemViewModel(Yeast dto)
+        public YeastListItemViewModel CreateYeastListItemViewModel(YeastDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
 
             var model = new YeastListItemViewModel
             {
                 Id = dto.Id,
                 Name = dto.Trademark,
                 Style = dto.Style.Literal,
-                TempMax = dto.TempMax.HasValue ? dto.TempMax.Value.FormatTempDisplay() : string.Empty, 
+                TempMax = dto.TempMax.HasValue ? dto.TempMax.Value.FormatTempDisplay() : string.Empty,
                 TempMin = dto.TempMin.HasValue ? dto.TempMin.Value.FormatTempDisplay() : string.Empty,
-                Alcohol = dto.Alcohol.HasValue ? dto.Alcohol.Value.FormatAsPercent() : string.Empty,  
+                Alcohol = dto.Alcohol.HasValue ? dto.Alcohol.Value.FormatAsPercent() : string.Empty,
                 Note = dto.Note,
                 Display = dto.Note.TruncateForDisplay(100)
             };
             return model;
         }
 
-        public List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList, List<ICode> dtoParentList)
+        public static List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList, List<ICode> dtoParentList)
         {
             var list = new List<SelectListItem>();
             var group = new SelectListGroup { Name = "" };
@@ -86,18 +86,18 @@ namespace WMS.Ui.Models.Yeasts
             {
                 selectItem = new SelectListItem
                 {
-                    Value = dto.Id.ToString(),
+                    Value = dto.Id.ToString(CultureInfo.CurrentCulture),
                     Text = dto.Literal
                 };
                 if (dto.ParentId.HasValue && dtoParentList != null)
                 {
-                    var parent = dtoParentList.Where(p => p.Id == dto.ParentId.Value).FirstOrDefault();
+                    var parent = dtoParentList.FirstOrDefault(p => p.Id == dto.ParentId.Value);
                     if (group.Name != parent?.Literal)
                     {
                         group = new SelectListGroup { Name = parent.Literal };
                         var firstItem = new SelectListItem
                         {
-                            Value = parent.Id.ToString(),
+                            Value = parent.Id.ToString(CultureInfo.CurrentCulture),
                             Text = "All(Any)" + parent.Literal,
                             Group = group
                         };
@@ -113,27 +113,28 @@ namespace WMS.Ui.Models.Yeasts
             return list;
         }
 
-        public List<YeastPair> CreateYeastPairList(List<Business.Yeast.Dto.YeastPair> dtoList)
-        {
+        public List<YeastPair> CreateYeastPairList(List<Business.Yeast.Dto.YeastPairDto> dtoList)
+        {    
             var list = new List<YeastPair>();
 
-            foreach (var dto in dtoList)
+            if (dtoList != null)
             {
-                var p = new YeastPair
+                foreach (var dto in dtoList)
                 {
-                    Id = dto.Id,
-                    Yeast = dto.Yeast,
-                    Category = dto.Category,
-                    Variety = dto.Variety,
-                    Note = dto.Note,
-                    Display = dto.Note.TruncateForDisplay(100)
-                };
-                list.Add(p);
+                    var p = new YeastPair
+                    {
+                        Id = dto.Id,
+                        Yeast = dto.Yeast,
+                        Category = dto.Category,
+                        Variety = dto.Variety,
+                        Note = dto.Note,
+                        Display = dto.Note.TruncateForDisplay(100)
+                    };
+                    list.Add(p);
+                }
             }
             return list;
         }
-
-       
 
     }
 

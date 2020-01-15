@@ -8,6 +8,11 @@ namespace WMS.Ui.Models.Recipes
 {
     public class AddRecipeViewModel
     {
+        public AddRecipeViewModel()
+        {
+            Images = new List<IFormFile>();
+        }
+
         public ApplicationUser User { get; set; }
 
         [Required(ErrorMessage = "Title is required")]
@@ -19,15 +24,15 @@ namespace WMS.Ui.Models.Recipes
         public string VarietyId { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
-        [StringLength(100, MinimumLength = 10, ErrorMessage = "Description much be at least 10 characters but no more than 100.")] 
+        [StringLength(100, MinimumLength = 10, ErrorMessage = "Description much be at least 10 characters but no more than 100.")]
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Instructions are required")]
-        [StringLength(5000, MinimumLength = 100, ErrorMessage = "Instructions should be between 100 and 5000 characters long.")] 
+        [StringLength(5000, MinimumLength = 100, ErrorMessage = "Instructions should be between 100 and 5000 characters long.")]
         public string Instructions { get; set; }
 
         [Required(ErrorMessage = "Ingredients are required")]
-        [StringLength(5000, MinimumLength = 100, ErrorMessage = "Ingredients should be between 100 and 5000 characters long.")] 
+        [StringLength(5000, MinimumLength = 100, ErrorMessage = "Ingredients should be between 100 and 5000 characters long.")]
         public string Ingredients { get; set; }
 
 
@@ -35,9 +40,9 @@ namespace WMS.Ui.Models.Recipes
 
 
         [EnsureMaximumElements(4, ErrorMessage = "Only 4 images may be submitted.")]
-        [EnsureFileExtensions(".jpg|.gif|.bmp|.jpeg|.png", ErrorMessage ="Invalid file type submitted")]
-        [EnsureFileSize(512000, ErrorMessage ="File size must be under 500 KB")]
-        public List<IFormFile> Images { get; set; }
+        [EnsureFileExtensions(".jpg|.gif|.bmp|.jpeg|.png", ErrorMessage = "Invalid file type submitted")]
+        [EnsureFileSize(512000, ErrorMessage = "File size must be under 500 KB")]
+        public List<IFormFile> Images { get; }
 
     }
 

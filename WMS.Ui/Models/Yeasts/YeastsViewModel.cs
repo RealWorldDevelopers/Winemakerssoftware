@@ -6,9 +6,13 @@ namespace WMS.Ui.Models.Yeasts
 {
     public class YeastsViewModel
     {
-      public List<YeastGroupListItemViewModel>  YeastsGroups { get; set; }
+        public YeastsViewModel()
+        {
+            YeastsGroups = new List<YeastGroupListItemViewModel>();
+        }
+        public List<YeastGroupListItemViewModel> YeastsGroups { get; }
 
         public IOrderedEnumerable<SelectListItem> YeastPairs { get; set; }
-     
+
     }
 }

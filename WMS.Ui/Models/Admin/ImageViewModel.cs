@@ -1,7 +1,14 @@
 ﻿namespace WMS.Ui.Models.Admin
 {
     public class ImageViewModel
-    {          
+    {
+        private readonly byte[] _data;
+
+        public ImageViewModel(byte[] data)
+        {
+            _data = data;
+        }
+
         /// <summary>
         /// Primary Key
         /// </summary>
@@ -25,7 +32,8 @@
         /// <summary>
         /// Image Content
         /// </summary>
-        public byte[] Data { get; set; }
+        public byte[] Data()
+        { return (byte[])_data.Clone(); }
 
         /// <summary>
         /// Size Property in Bytes

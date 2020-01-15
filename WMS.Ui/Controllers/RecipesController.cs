@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using RWD.Toolbox.SMTP;
 using System;
@@ -12,225 +12,222 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using WMS.Business.Shared;
-using WMS.Data;
+using WMS.Business.Common;
 using WMS.Ui.Models;
 using WMS.Ui.Models.Recipes;
 
 namespace WMS.Ui.Controllers
 {
-    /// <summary>
-    /// Main Controller for Recipe Functionality within the Project
-    /// </summary>
-    public class RecipesController : BaseController
-    {
-        // readonly string _imageContentFolder = @"images\recipes";
+   /// <summary>
+   /// Main Controller for Recipe Functionality within the Project
+   /// </summary>
+   public class RecipesController : BaseController
+   {
+      private readonly IStringLocalizer<RecipesController> _localizer;
 
-        private readonly AppSettings _appSettings;
-        private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly WMSContext _recipeContext;
-        private readonly IEmailAgent _emailAgent;
-        private readonly IFactory _modelFactory;
-        private readonly Business.Recipe.Queries.IFactory _queryFactory;
-        private readonly Business.Recipe.Commands.IFactory _commandsFactory;
-        private readonly Business.Recipe.Dto.IFactory _dtoFactory;
+      private readonly AppSettings _appSettings;
+      private readonly IEmailAgent _emailAgent;
+      private readonly IFactory _modelFactory;
+      private readonly Business.Recipe.Queries.IFactory _queryFactory;
+      private readonly Business.Recipe.Commands.IFactory _commandsFactory;
+      private readonly Business.Recipe.Dto.IFactory _dtoFactory;
 
-        public RecipesController(IWebHostEnvironment environment, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IMapper mapper, WMSContext dbContext,
-            IConfiguration configuration, IOptions<AppSettings> appSettings, Business.Recipe.Queries.IFactory queryFactory, Business.Recipe.Commands.IFactory commandsFactory,
-            Business.Recipe.Dto.IFactory dtoFactory, IFactory modelFactory, IEmailAgent emailAgent)
-            : base(configuration, userManager, roleManager)
-        {
-            _hostingEnvironment = environment;
-            _mapper = mapper;
-            _recipeContext = dbContext;
-            _appSettings = appSettings.Value;
-            _emailAgent = emailAgent;
-            _modelFactory = modelFactory;
-            _queryFactory = queryFactory;
-            _commandsFactory = commandsFactory;
-            _dtoFactory = dtoFactory;
-        }
+      public RecipesController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration,
+          IOptions<AppSettings> appSettings, Business.Recipe.Queries.IFactory queryFactory, Business.Recipe.Commands.IFactory commandsFactory,
+          Business.Recipe.Dto.IFactory dtoFactory, IFactory modelFactory, IEmailAgent emailAgent,
+          IStringLocalizer<RecipesController> localizer, TelemetryClient telemetry)
+          : base(configuration, userManager, roleManager, telemetry)
+      {
+         _appSettings = appSettings?.Value;
+         _localizer = localizer;
+         _emailAgent = emailAgent;
+         _modelFactory = modelFactory;
+         _queryFactory = queryFactory;
+         _commandsFactory = commandsFactory;
+         _dtoFactory = dtoFactory;
+      }
 
 
-        /// <summary>
-        /// Main Entry point of the Recipes Section
-        /// </summary>
-        public async Task<IActionResult> Index()
-        {
-            ViewData["Title"] = "Recipes";
-            ViewData["PageDesc"] = "View a collection of recipes.";
+      /// <summary>
+      /// Main Entry point of the Recipes Section
+      /// </summary>
+      public async Task<IActionResult> Index()
+      {
+         ViewData["Title"] = "Recipes";
+         ViewData["PageDesc"] = "View a collection of recipes.";
 
-            var getRecipesQuery = _queryFactory.CreateRecipesQuery();
-            var recipesDto = await getRecipesQuery.ExecuteAsync();
+         var getRecipesQuery = _queryFactory.CreateRecipesQuery();
+         var recipesDto = await getRecipesQuery.ExecuteAsync().ConfigureAwait(false);
 
-            var recipesModel = _modelFactory.CreateRecipesModel();
-            var recipeItemsModel = _modelFactory.BuildRecipeListItemModels(recipesDto);
-            recipesModel.Recipes = recipeItemsModel
-                .OrderByDescending(r => r.Category)
-                .ThenBy(r => r.Variety)
-                .ThenBy(r => r.Description);
+         var recipesModel = _modelFactory.CreateRecipesModel();
+         var recipeItemsModel = _modelFactory.BuildRecipeListItemModels(recipesDto);
+         recipesModel.Recipes = recipeItemsModel
+             .OrderByDescending(r => r.Category)
+             .ThenBy(r => r.Variety)
+             .ThenBy(r => r.Description);
 
-            return View(recipesModel);
-        }
-
-
-        /// <summary>
-        /// Details Page of a Single Recipe
-        /// </summary>
-        /// <param name="id">Primary Key of Recipe as <see cref="int"/></param>
-        public async Task<IActionResult> Recipe(int id)
-        {
-            ViewData["Title"] = "Recipe";
-            ViewData["PageDesc"] = "View details of a single recipe.";
-
-            var getRecipesQuery = _queryFactory.CreateRecipesQuery();
-            var recipeDto = await getRecipesQuery.ExecuteAsync(id);
-
-            var submittedBy = await _userManager.FindByIdAsync(recipeDto.SubmittedBy);
-            var recipeModel = _modelFactory.CreateRecipeModel(recipeDto);
-            recipeModel.User = submittedBy;
-            recipeModel.HitCounterJwt = CreateJwtToken("Guest", 5);
-            recipeModel.RatingJwt = CreateJwtToken("Guest", 15);
-
-            return View(recipeModel);
-        }
+         return View(recipesModel);
+      }
 
 
-        /// <summary>
-        /// Opening Page for Entering New Recipes
-        /// </summary>
-        public async Task<IActionResult> Add()
-        {
-            ViewData["Title"] = "Recipes - Add";
-            ViewData["PageDesc"] = "Add a new recipe to the collection.";
+      /// <summary>
+      /// Details Page of a Single Recipe
+      /// </summary>
+      /// <param name="id">Primary Key of Recipe as <see cref="int"/></param>
+      public async Task<IActionResult> Recipe(int id)
+      {
+         ViewData["Title"] = "Recipe";
+         ViewData["PageDesc"] = "View details of a single recipe.";
 
-            var getCategoriesQuery = _queryFactory.CreateCategoriesQuery();
-            var cList = await getCategoriesQuery.ExecuteAsync();
+         var getRecipesQuery = _queryFactory.CreateRecipesQuery();
+         var recipeDto = await getRecipesQuery.ExecuteAsync(id).ConfigureAwait(false);
 
-            var getVarietiesQuery = _queryFactory.CreateVarietiesQuery();
-            var vList = await getVarietiesQuery.ExecuteAsync();
+         var submittedBy = await UserManagerAgent.FindByIdAsync(recipeDto.SubmittedBy).ConfigureAwait(false);
+         var recipeModel = _modelFactory.CreateRecipeModel(recipeDto);
+         recipeModel.User = submittedBy;
+         recipeModel.HitCounterJwt = CreateJwtToken("Guest", 5);
+         recipeModel.RatingJwt = CreateJwtToken("Guest", 15);
 
-            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
-            addRecipeModel.User = await _userManager.GetUserAsync(User);
+         return View(recipeModel);
+      }
 
+
+      /// <summary>
+      /// Opening Page for Entering New Recipes
+      /// </summary>
+      public async Task<IActionResult> Add()
+      {
+         ViewData["Title"] = "Recipes - Add";
+         ViewData["PageDesc"] = "Add a new recipe to the collection.";
+
+         var getCategoriesQuery = _queryFactory.CreateCategoriesQuery();
+         var cList = await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var getVarietiesQuery = _queryFactory.CreateVarietiesQuery();
+         var vList = await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
+         addRecipeModel.User = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+
+         return View(addRecipeModel);
+      }
+
+      /// <summary>
+      /// Submit Method of Add a New Recipe 
+      /// </summary>
+      /// <param name="model">Details from Add Recipe Page as <see cref="AddRecipeViewModel"/></param>
+      /// <returns>Returns to Empty Add Recipe Entry Page with Success or Failure Alert Message</returns>
+      [Authorize(Roles = "GeneralUser")]
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> Add(AddRecipeViewModel model)
+      {
+         ViewData["Title"] = "Recipes";
+         ViewData["PageDesc"] = "Add a new recipe to the collection.";
+
+         var getCategoriesQuery = _queryFactory.CreateCategoriesQuery();
+         var cList = await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var getVarietiesQuery = _queryFactory.CreateVarietiesQuery();
+         var vList = await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         // must be logged in to continue
+         var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         if (submittedBy == null)
+         {
+            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, model);
+            Warning(_localizer["AddGeneralError"], false);
             return View(addRecipeModel);
-        }
+         }
 
-        /// <summary>
-        /// Submit Method of Add a New Recipe 
-        /// </summary>
-        /// <param name="model">Details from Add Recipe Page as <see cref="AddRecipeViewModel"/></param>
-        /// <returns>Returns to Empty Add Recipe Entry Page with Success or Failure Alert Message</returns>
-        [Authorize(Roles = "GeneralUser")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(AddRecipeViewModel model)
-        {
-            ViewData["Title"] = "Recipes";
-            ViewData["PageDesc"] = "Add a new recipe to the collection.";
+         // using model validation attributes, if model state says errors do nothing           
+         if (!ModelState.IsValid)
+         {
+            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, model);
+            Warning(_localizer["AddGeneralError"], true);
+            return View(addRecipeModel);
+         }
 
-            var getCategoriesQuery = _queryFactory.CreateCategoriesQuery();
-            var cList = await getCategoriesQuery.ExecuteAsync();
+         // validate model.VarietyId then proceed
+         ICode variety = null;
+         if (int.TryParse(model?.VarietyId, out int varietyId))
+            variety = vList.FirstOrDefault(c => c.Id == varietyId);
 
-            var getVarietiesQuery = _queryFactory.CreateVarietiesQuery();
-            var vList = await getVarietiesQuery.ExecuteAsync();
+         // validate model.CategoryId then proceed
+         ICode category = null;
+         if (variety != null && variety.ParentId.HasValue)
+            category = cList.FirstOrDefault(c => c.Id == variety.ParentId.Value);
 
-            // must be logged in to continue
-            var submittedBy = await _userManager.GetUserAsync(User);
-            if (submittedBy == null)
+
+         // convert add model to recipe dto
+         var recipeDto = new Business.Recipe.Dto.RecipeDto
+         {
+            Description = model.Description,
+            Enabled = false,
+            Hits = 0,
+            Ingredients = model.Ingredients,
+            Instructions = model.Instructions,
+            NeedsApproved = true,
+            Rating = null,
+            SubmittedBy = submittedBy.Id,
+            Title = model.Title,
+            Variety = variety
+         };
+
+         //recipeDto.Id = 1;  // for testing only
+         var updateRecipesCommand = _commandsFactory.CreateRecipesCommand();
+         recipeDto = await updateRecipesCommand.AddAsync(recipeDto).ConfigureAwait(false);
+
+         // process uploaded files
+         if (model.Images != null)
+         {
+            var updateImageCommand = _commandsFactory.CreateImageCommand();
+            long maxFileSizeBytes = 512000;
+            List<string> allowedExtensions = new List<string> { ".jpg", ".jpeg", ".bmp", ".png", ".gif" };
+            int maxUploads = 4;
+            int uploadCount = 1;
+
+            foreach (FormFile file in model.Images)
             {
-                var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, model);
-                Warning("Sorry, something went wrong.  Please refresh your screen and try again.", false);
-                return View(addRecipeModel);
-            }
+               // Max File Size per Image: 500 KB
+               if (file.Length > maxFileSizeBytes)
+                  continue;
+               // Allowed Image Extensions: .jpg | .gif | .bmp | .jpeg | .png ONLY
+               var ext = Path.GetExtension(file.FileName);
+               if (!allowedExtensions.Any(e => e.Equals(ext, StringComparison.OrdinalIgnoreCase)))
+                  continue;
+               // Pictures Max 4
+               if (uploadCount > maxUploads)
+                  break;
 
-            // using model validation attributes, if model state says errors do nothing           
-            if (!ModelState.IsValid)
-            {
-                var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, model);
-                Warning("Sorry, something went wrong.  Please review your entry and try again.", true);
-                return View(addRecipeModel);
-            }
-
-            // validate model.VarietyId then proceed
-            ICode variety = null;
-            if (int.TryParse(model.VarietyId, out int varietyId))
-                variety = vList.Where(c => c.Id == varietyId).FirstOrDefault();
-
-            // validate model.CategoryId then proceed
-            ICode category = null;
-            if (variety != null && variety.ParentId.HasValue)
-                category = cList.Where(c => c.Id == variety.ParentId.Value).FirstOrDefault();
-
-
-            // convert add model to recipe dto
-            var recipeDto = new Business.Recipe.Dto.Recipe
-            {
-                Description = model.Description,
-                Enabled = false,
-                Hits = 0,
-                Ingredients = model.Ingredients,
-                Instructions = model.Instructions,
-                NeedsApproved = true,
-                Rating = null,
-                SubmittedBy = submittedBy.Id,
-                Title = model.Title,
-                Variety = variety
-            };
-
-            //recipeDto.Id = 1;  // for testing only
-            var updateRecipesCommand = _commandsFactory.CreateRecipesCommand();
-            recipeDto = await updateRecipesCommand.AddAsync(recipeDto);
-
-            // process uploaded files
-            if (model.Images != null)
-            {
-                var updateImageCommand = _commandsFactory.CreateImageCommand();
-                long maxFileSizeBytes = 512000;
-                List<string> allowedExtensions = new List<string> { ".jpg", ".jpeg", ".bmp", ".png", ".gif" };
-                int maxUploads = 4;
-                int uploadCount = 1;
-
-                foreach (FormFile file in model.Images)
-                {
-                    // Max File Size per Image: 500 KB
-                    if (file.Length > maxFileSizeBytes)
-                        continue;
-                    // Allowed Image Extensions: .jpg | .gif | .bmp | .jpeg | .png ONLY
-                    var ext = Path.GetExtension(file.FileName);
-                    if (!allowedExtensions.Any(e => e.Equals(ext, StringComparison.OrdinalIgnoreCase)))
-                        continue;
-                    // Pictures Max 4
-                    if (uploadCount > maxUploads)
-                        break;
-
-                    MemoryStream ms = new MemoryStream();
-                    file.OpenReadStream().CopyTo(ms);
-                    var imageData = await ResizeImage(ms.ToArray(), 360, 480);
-                    var thumbData = await ResizeImage(ms.ToArray(), 100, 150);
-                    var imageDto = _dtoFactory.CreateNewImageFile(recipeDto.Id, file.FileName, file.Name, imageData, thumbData, file.Length, file.ContentType);
-                    await updateImageCommand.AddAsync(imageDto);
-                    uploadCount++;
-                }
+               using MemoryStream ms = new MemoryStream();
+               file.OpenReadStream().CopyTo(ms);
+               var imageData = await ResizeImage(ms.ToArray(), 360, 480).ConfigureAwait(false);
+               var thumbData = await ResizeImage(ms.ToArray(), 100, 150).ConfigureAwait(false);
+               var imageDto = _dtoFactory.CreateNewImageFile(recipeDto.Id, file.FileName, file.Name, imageData, thumbData, file.Length, file.ContentType);
+               await updateImageCommand.AddAsync(imageDto).ConfigureAwait(false);
+               uploadCount++;
 
             }
 
-            // notify admin that new recipe is in the approval queue          
-            await _emailAgent.SendEmailAsync(_appSettings.SMTP.FromEmail, _appSettings.SMTP.FromEmail, _appSettings.SMTP.AdminEmail,
-                "There is a new recipe is in the approval queue.", "A new recipe has been submitted and needs approved.", false, null);
+         }
 
-            // tell user good job and clear or go to thank you page           
-            ModelState.Clear();
-            var addNewRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
-            addNewRecipeModel.User = submittedBy;
+         // notify admin that new recipe is in the approval queue          
+         await _emailAgent.SendEmailAsync(_appSettings.SMTP.FromEmail, _appSettings.SMTP.FromEmail, _appSettings.SMTP.AdminEmail,
+             "There is a new recipe is in the approval queue.", "A new recipe has been submitted and needs approved.", false, null).ConfigureAwait(false);
 
-            Success("CONGRATULATIONS. Your recipe has been successfully submitted for review.", true);
+         // tell user good job and clear or go to thank you page           
+         ModelState.Clear();
+         var addNewRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
+         addNewRecipeModel.User = submittedBy;
 
-            return View(addNewRecipeModel);
+         // TODO DELETE const string msg = "CONGRATULATIONS. Your recipe has been successfully submitted for review.";
+         Success(_localizer["AddSuccess"], true);
+
+         return View(addNewRecipeModel);
 
 
-        }
+      }
 
-    }
+   }
 }

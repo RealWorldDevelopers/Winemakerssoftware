@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using WMS.Business.Recipe.Dto;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
 
 namespace WMS.Ui.Models.Admin
@@ -12,14 +12,14 @@ namespace WMS.Ui.Models.Admin
 
         RecipeViewModel CreateRecipeViewModel();
 
-        RecipeViewModel CreateRecipeViewModel(Recipe recipeDto);
+        RecipeViewModel CreateRecipeViewModel(RecipeDto recipeDto);
 
-        List<RecipeViewModel> CreateRecipeViewModel(List<Recipe> recipeDtoList);
+        List<RecipeViewModel> CreateRecipeViewModel(List<RecipeDto> recipeDtoList);
 
 
-        ImageViewModel CreateImageViewModel(ImageFile imageDto);
+        ImageViewModel CreateImageViewModel(ImageFileDto imageDto);
 
-        List<ImageViewModel> CreateImageViewModel(List<ImageFile> imageDtoList);
+        List<ImageViewModel> CreateImageViewModel(List<ImageFileDto> imageDtoList);
 
 
         CategoryViewModel CreateCategoryViewModel(ICode categoryDto);
@@ -37,9 +37,9 @@ namespace WMS.Ui.Models.Admin
 
         YeastViewModel CreateYeastViewModel();
 
-        YeastViewModel CreateYeastViewModel(Yeast yeastDto);
+        YeastViewModel CreateYeastViewModel(YeastDto yeastDto);
 
-        List<YeastViewModel> CreateYeastViewModel(List<Yeast> yeastDtoList);
+        List<YeastViewModel> CreateYeastViewModel(List<YeastDto> yeastDtoList);
 
         YeastBrandViewModel CreateYeastBrandViewModel(ICode brandDto);
 
@@ -49,9 +49,9 @@ namespace WMS.Ui.Models.Admin
 
         List<YeastStyleViewModel> CreateYeastStyleViewModel(List<ICode> styleDtoList);
 
-        YeastPairingViewModel CreateYeastPairingViewModel(YeastPair pairingDto);
+        YeastPairingViewModel CreateYeastPairingViewModel(YeastPairDto pairingDto);
 
-        List<YeastPairingViewModel> CreateYeastPairingViewModel(List<YeastPair> pairingDtoList);
+        List<YeastPairingViewModel> CreateYeastPairingViewModel(List<YeastPairDto> pairingDtoList);
 
 
 

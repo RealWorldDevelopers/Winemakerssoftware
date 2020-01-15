@@ -4,7 +4,11 @@ namespace WMS.Ui.Models.Admin
 {
     public class RecipesViewModel
     {
-        public List<RecipeViewModel> Recipes { get; set; }
+        public RecipesViewModel()
+        {
+            Recipes = new List<RecipeViewModel>();
+        }
+        public List<RecipeViewModel> Recipes { get; }
     }
 
 }

@@ -6,6 +6,12 @@ namespace WMS.Ui.Models.Admin
 {
     public class RecipeViewModel
     {
+        public RecipeViewModel()
+        {
+            Images = new List<ImageViewModel>();
+            Varieties = new List<SelectListItem>();
+        }
+
         public int Id { get; set; }
         public bool Enabled { get; set; }
         public bool NeedsApproved { get; set; }
@@ -17,9 +23,11 @@ namespace WMS.Ui.Models.Admin
         public string Instructions { get; set; }
         public string Description { get; set; }
         public CategoryViewModel Category { get; set; }
-        public VarietyViewModel Variety { get; set; }       
-        public List<ImageViewModel> Images { get; set; }
-        public List<SelectListItem> Varieties { get; set; }
+        public VarietyViewModel Variety { get; set; }
+
+        public List<ImageViewModel> Images { get; }
+
+        public List<SelectListItem> Varieties { get; }
     }
 
 }

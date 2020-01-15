@@ -1,5 +1,5 @@
 ﻿using WMS.Business.Recipe.Dto;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 
 namespace WMS.Business.Recipe.Queries
 {
@@ -18,13 +18,13 @@ namespace WMS.Business.Recipe.Queries
         /// Create a Rating Query
         /// </summary>
         /// <returns><see cref="IQuery{Rating}"/></returns>
-        IQuery<Rating> CreateRatingsQuery();
+        IQuery<RatingDto> CreateRatingsQuery();
 
         /// <summary>
         /// Create a Recipe Query
         /// </summary>
         /// <returns><see cref="IQuery{Recipe}"/></returns>
-        IQuery<Dto.Recipe> CreateRecipesQuery();
+        IQuery<Dto.RecipeDto> CreateRecipesQuery();
 
         /// <summary>
         /// Create a Variety Query

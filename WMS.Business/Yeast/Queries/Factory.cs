@@ -1,6 +1,6 @@
 ﻿
 using AutoMapper;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 
 namespace WMS.Business.Yeast.Queries
@@ -25,7 +25,7 @@ namespace WMS.Business.Yeast.Queries
         /// Instance of Create Yeast Query
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateVarietiesQuery"/>>
-        public IQuery<Dto.Yeast> CreateYeastsQuery()
+        public IQuery<Dto.YeastDto> CreateYeastsQuery()
         {
             return new GetYeasts(_yeastContext, _mapper);
         }
@@ -34,7 +34,7 @@ namespace WMS.Business.Yeast.Queries
         /// Instance of Create Yeast Pair Query
         /// </summary>
         /// <inheritdoc cref="IFactory.CreateYeastPairQuery"/>>
-        public IQuery<Dto.YeastPair> CreateYeastPairQuery()
+        public IQuery<Dto.YeastPairDto> CreateYeastPairQuery()
         {
             return new GetYeastPairs(_yeastContext, _mapper);
         }

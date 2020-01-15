@@ -6,6 +6,9 @@ namespace WMS.Ui.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder == null)
+                throw new System.ArgumentNullException(nameof(migrationBuilder));
+
             migrationBuilder.AddColumn<string>(
                 name: "Description",
                 table: "AspNetRoles",
@@ -14,6 +17,9 @@ namespace WMS.Ui.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder == null)
+                throw new System.ArgumentNullException(nameof(migrationBuilder));
+
             migrationBuilder.DropColumn(
                 name: "Description",
                 table: "AspNetRoles");

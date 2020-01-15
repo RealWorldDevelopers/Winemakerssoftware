@@ -1,11 +1,11 @@
-﻿using WMS.Business.Shared;
+﻿using WMS.Business.Common;
 
 namespace WMS.Business.Yeast.Dto
 {
     /// <summary>
     /// Data Transfer Object representing a Code Literal Type Table with an added optional foreign key property
     /// </summary>
-    public class Yeast
+    public class YeastDto
     {
         public int Id { get; set; }
         public ICode Brand { get; set; }

@@ -2,18 +2,154 @@
 @model WMS.Ui.Models.Calculations.CalculationsViewModel
 
 <div class="card">
-    <div class="card-header bg-secondary text-light">
-        <h1>Calculations</h1>
-    </div>
-    <div class="card-body">
-        sw add to cache <br />
+   <div class="card-header bg-secondary text-light">
+      <h1>Calculations</h1>
+   </div>
+   <div class="card-body">
 
-        check with lighthous <br />
+      <div class="card">
+         <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
+         <div class="card-body card-text text-left">
 
-        check with wave <br />
-    </div>
-    <div class="card-footer bg-secondary text-light"></div>
+            <fieldset>
+               <legend class="card-title h2">Calculator Group</legend>
+               @foreach (var calcGroup in Model.CalculatorGroups)
+               {
+                  <div class="form-check-inline">
+                     <label class="form-check-label">
+                        <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.GroupName
+                     </label>
+                  </div>
+               }
+            </fieldset>
+            <br /> <br />
+
+         </div>
+      </div>
+
+      <br />
+
+      @*<div class="card-columns">*@
+
+
+      <div name="calcSugar" class="card">
+         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-body">
+            <h3 class="card-title">Chaptalization Sugar</h3>
+            <p class="card-text">
+               Chaptalization is the process of adding sugar to unfermented grape must in order to increase the alcohol content after fermentation.
+            </p>
+
+            <form id="frmChaptalization">
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomSugar" value="brix">Brix
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomSugar" checked value="sg">Specific Gravity
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomVolume" value="metric">kg per liter
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomVolume" checked value="imperial">lbs per gal
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="ChaptalizationCalculator.Volume"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Volume" required maxlength="10" />
+                     <span asp-validation-for="ChaptalizationCalculator.Volume" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomVolume">Gallons</label>
+                  </div>
+               </div>
+
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="ChaptalizationCalculator.CurrentReading"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.CurrentReading" required maxlength="10" />
+                     <span asp-validation-for="ChaptalizationCalculator.CurrentReading" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomSugar">SG</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="ChaptalizationCalculator.Goal"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Goal" required maxlength="10" />
+                     <span asp-validation-for="ChaptalizationCalculator.Goal" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomSugar">SG</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="ChaptalizationCalculator.Sugar"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Sugar" readonly />
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomWeight">Pounds</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8">
+                     <button id="btnCalcSugar" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+            </form>
+
+         </div>
+      </div>
+
+      @*</div>*@
+
+   </div>
+   <div class="card-footer bg-secondary text-light"></div>
+
 </div>
+
+@section Scripts{
+   <script src="~/js/calculations.js" asp-append-version="true" type="text/javascript"></script>
+}
 
 
 

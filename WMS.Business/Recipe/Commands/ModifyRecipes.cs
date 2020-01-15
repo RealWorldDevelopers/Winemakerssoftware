@@ -1,8 +1,10 @@
 ﻿
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using WMS.Business.Shared;
+using WMS.Business.Common;
 using WMS.Data;
 using WMS.Data.Entities;
 
@@ -11,11 +13,11 @@ namespace WMS.Business.Recipe.Commands
     /// <summary>
     /// Recipe Command Instance
     /// </summary>
-    public class ModifyRecipes : ICommand<Dto.Recipe>
+    public class ModifyRecipes : ICommand<Dto.RecipeDto>
     {
 
         private readonly IMapper _mapper;
-        private readonly Data.WMSContext _dbContext;
+        private readonly WMSContext _dbContext;
 
         /// <summary>
         /// Recipe Command Constructor
@@ -29,13 +31,16 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Add a <see cref="Dto.Recipe"/> to Database
+        /// Add a <see cref="Dto.RecipeDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.Recipe"/></param>
-        /// <returns><see cref="Dto.Recipe"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.RecipeDto"/></param>
+        /// <returns><see cref="Dto.RecipeDto"/></returns>
         /// <inheritdoc cref="ICommand{T}.Add(T)"/>
-        public Dto.Recipe Add(Dto.Recipe dto)
+        public Dto.RecipeDto Add(Dto.RecipeDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = _mapper.Map<Recipes>(dto);
 
             // add new recipe
@@ -49,31 +54,34 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Add a <see cref="Dto.Recipe"/> to Database
+        /// Add a <see cref="Dto.RecipeDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.Recipe"/></param>
-        /// <returns><see cref="Task{Dto.Recipe}"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.RecipeDto"/></param>
+        /// <returns><see cref="Task{Dto.RecipeDto}"/></returns>
         /// <inheritdoc cref="ICommand{T}.AddAsync(T)"/>
-        public async Task<Dto.Recipe> AddAsync(Dto.Recipe dto)
+        public async Task<Dto.RecipeDto> AddAsync(Dto.RecipeDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = _mapper.Map<Recipes>(dto);
 
             // add new recipe
             await _dbContext.Recipes.AddAsync(entity);
 
             // Save changes in database
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             dto.Id = entity.Id;
             return dto;
         }
 
         /// <summary>
-        /// Delete a <see cref="Dto.Recipe"/> to Database
+        /// Delete a <see cref="Dto.RecipeDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.Recipe"/></param>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.RecipeDto"/></param>
         /// <inheritdoc cref="ICommand{T}.Delete(T)"/>
-        public void Delete(Dto.Recipe dto)
+        public void Delete(Dto.RecipeDto dto)
         {
             var entity = _dbContext.Recipes.FirstOrDefault(r => r.Id == dto.Id);
             if (entity != null)
@@ -87,32 +95,35 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Delete a <see cref="Dto.Recipe"/> to Database
+        /// Delete a <see cref="Dto.RecipeDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.Recipe"/></param>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.RecipeDto"/></param>
         /// <inheritdoc cref="ICommand{T}.DeleteAsync(T)"/>
-        public async Task DeleteAsync(Dto.Recipe dto)
+        public async Task DeleteAsync(Dto.RecipeDto dto)
         {
-            var entity = _dbContext.Recipes.FirstOrDefault(r => r.Id == dto.Id);
+            var entity = await _dbContext.Recipes.FirstOrDefaultAsync(r => r.Id == dto.Id).ConfigureAwait(false);
             if (entity != null)
             {
                 // add new recipe
                 _dbContext.Recipes.Remove(entity);
 
                 // Save changes in database
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
         }
 
         /// <summary>
-        /// Update a <see cref="Dto.Recipe"/> in the Database
+        /// Update a <see cref="Dto.RecipeDto"/> in the Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.Recipe"/></param>
-        /// <returns><see cref="Dto.Recipe"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.RecipeDto"/></param>
+        /// <returns><see cref="Dto.RecipeDto"/></returns>
         /// <inheritdoc cref="ICommand{T}.Update(T)"/>
-        public Dto.Recipe Update(Dto.Recipe dto)
+        public Dto.RecipeDto Update(Dto.RecipeDto dto)
         {
-            var entity = _dbContext.Recipes.Where(r => r.Id == dto.Id).First();
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var entity = _dbContext.Recipes.First(r => r.Id == dto.Id);
             entity.Description = dto.Description;
             entity.Enabled = dto.Enabled;
             entity.Hits = dto.Hits;
@@ -131,14 +142,17 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Update a <see cref="Dto.Recipe"/> in the Database
+        /// Update a <see cref="Dto.RecipeDto"/> in the Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="Dto.Recipe"/></param>
-        /// <returns><see cref="Task{Dto.Recipe}"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="Dto.RecipeDto"/></param>
+        /// <returns><see cref="Task{Dto.RecipeDto}"/></returns>
         /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
-        public async Task<Dto.Recipe> UpdateAsync(Dto.Recipe dto)
+        public async Task<Dto.RecipeDto> UpdateAsync(Dto.RecipeDto dto)
         {
-            var entity = _dbContext.Recipes.Where(r => r.Id == dto.Id).First();
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var entity = await _dbContext.Recipes.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
             entity.Description = dto.Description;
             entity.Enabled = dto.Enabled;
             entity.NeedsApproved = dto.NeedsApproved;
@@ -152,7 +166,7 @@ namespace WMS.Business.Recipe.Commands
             _dbContext.Recipes.Update(entity);
 
             // Save changes in database
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return dto;
         }

@@ -4,7 +4,11 @@ namespace WMS.Ui.Models.Admin
 {
     public class VarietiesViewModel
     {
-        public List<VarietyViewModel> Varieties { get; set; }
+        public VarietiesViewModel()
+        {
+            Varieties = new List<VarietyViewModel>();
+        }
+        public List<VarietyViewModel> Varieties { get; }
     }
 
 }
