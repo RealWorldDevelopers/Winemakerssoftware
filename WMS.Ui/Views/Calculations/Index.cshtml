@@ -7,25 +7,30 @@
    </div>
    <div class="card-body">
 
-      <div class="card">
-         <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
-         <div class="card-body card-text text-left">
+      <!-- // TODO remove when all calcs are in -->
+      <environment include="Development">
 
-            <fieldset>
-               <legend class="card-title h2">Calculator Group</legend>
-               @foreach (var calcGroup in Model.CalculatorGroups)
-               {
-                  <div class="form-check-inline">
-                     <label class="form-check-label">
-                        <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.GroupName
-                     </label>
-                  </div>
-               }
-            </fieldset>
-            <br /> <br />
+         <div class="card">
+            <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
+            <div class="card-body card-text text-left">
 
+               <fieldset>
+                  <legend class="card-title h2">Calculator Group</legend>
+                  @foreach (var calcGroup in Model.CalculatorGroups)
+                  {
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.GroupName
+                        </label>
+                     </div>
+                  }
+               </fieldset>
+               <br /> <br />
+
+            </div>
          </div>
-      </div>
+
+      </environment>
 
       <br />
 

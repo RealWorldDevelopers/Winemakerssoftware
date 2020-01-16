@@ -1,5 +1,4 @@
 ﻿
-
 namespace WMS.Business.Yeast.Dto
 {
     public class YeastPairDto

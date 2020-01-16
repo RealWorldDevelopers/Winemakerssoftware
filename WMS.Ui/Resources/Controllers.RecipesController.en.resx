@@ -126,9 +126,21 @@
     <comment>Alert Message for Successful Add of Recipe</comment>
   </data>
   <data name="PageDesc" xml:space="preserve">
-    <value />
+    <value>View a collection of recipes.</value>
+  </data>
+  <data name="PageDescAdd" xml:space="preserve">
+    <value>Add a new recipe to the collection.</value>
+  </data>
+  <data name="PageDescDetails" xml:space="preserve">
+    <value>View details of a single recipe.</value>
   </data>
   <data name="PageTitle" xml:space="preserve">
-    <value />
+    <value>Recipes</value>
+  </data>
+  <data name="PageTitleAdd" xml:space="preserve">
+    <value>Recipes - Add</value>
+  </data>
+  <data name="PageTitleDetails" xml:space="preserve">
+    <value>Recipe</value>
   </data>
 </root>

@@ -51,7 +51,7 @@
          var start = $('#ChaptalizationCalculator_CurrentReading').val();
          var end = $('#ChaptalizationCalculator_Goal').val();
          var vol = $('#ChaptalizationCalculator_Volume').val();
-
+         
          var gal = vol;
          if (useMetric) {
             gal = LitersToGallons(vol);

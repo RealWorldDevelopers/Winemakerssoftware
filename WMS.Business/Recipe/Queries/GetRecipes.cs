@@ -37,11 +37,12 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<RecipeDto> Execute()
       {
+         // NOTE: Not loading images on purpose to avoid slowing down first page loading
+
          var recipes = _dbContext.Recipes.Include("PicturesXref").Include("Ratings").ToList();
          var list = _mapper.Map<List<RecipeDto>>(recipes);
          var categories = _dbContext.Categories.ToList();
          var varieties = _dbContext.Varieties.ToList();
-
 
          foreach (var item in list)
          {
@@ -66,14 +67,14 @@ namespace WMS.Business.Recipe.Queries
       public RecipeDto Execute(int id)
       {
          var recipe = _dbContext.Recipes
-             .Include("PicturesXref")
-             .Include("Ratings")
-             .FirstOrDefault(r => r.Id == id);
+          .Include("PicturesXref")
+          .Include("Ratings")
+          .FirstOrDefault(r => r.Id == id);
 
          var dto = _mapper.Map<RecipeDto>(recipe);
-         var img = recipe.PicturesXref.Where(p => p.RecipeId == id).ToList();
-        // dto.ImageFiles = _mapper.Map<List<Dto.ImageFile>>(img);
-         var dtoList = _mapper.Map<List<ImageFileDto>>(img);
+
+         var imgs = recipe.PicturesXref.Where(p => p.RecipeId == id).ToList();
+         var dtoList = _mapper.Map<List<ImageFileDto>>(imgs);
          dto.ImageFiles.Clear();
          dto.ImageFiles.AddRange(dtoList);
 
@@ -81,8 +82,7 @@ namespace WMS.Business.Recipe.Queries
          {
             var code = _dbContext.Varieties.SingleOrDefault(a => a.Id == dto.Variety.Id);
             dto.Variety.Literal = code.Variety;
-            var cat = _dbContext.Categories.SingleOrDefault(a => a.Id == code.CategoryId);
-            dto.Category = _mapper.Map<ICode>(cat);
+            dto.Category = _dbContext.Categories.ProjectTo<ICode>(_mapper.ConfigurationProvider).SingleOrDefault(a => a.Id == code.CategoryId);
          }
 
          return dto;
@@ -95,6 +95,8 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<RecipeDto>> ExecuteAsync()
       {
+         // NOTE: Not loading images on purpose to avoid slowing down first page loading
+
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
          var t1 = Task.Run(async () =>
@@ -142,8 +144,6 @@ namespace WMS.Business.Recipe.Queries
          var dto = _mapper.Map<RecipeDto>(recipe);
 
          var img = recipe.PicturesXref.Where(p => p.RecipeId == id).ToList();
-
-         //dto.ImageFiles = _mapper.Map<List<Dto.ImageFile>>(img);
          var dtoList = _mapper.Map<List<ImageFileDto>>(img);
          dto.ImageFiles.Clear();
          dto.ImageFiles.AddRange(dtoList);
@@ -152,8 +152,8 @@ namespace WMS.Business.Recipe.Queries
          {
             var code = await _dbContext.Varieties.SingleOrDefaultAsync(a => a.Id == dto.Variety.Id).ConfigureAwait(false);
             dto.Variety.Literal = code.Variety;
-            var cat = await _dbContext.Categories.SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);
-            dto.Category = _mapper.Map<ICode>(cat);
+            dto.Category = await _dbContext.Categories.ProjectTo<ICode>(_mapper.ConfigurationProvider)
+               .SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);            
          }
 
          return dto;

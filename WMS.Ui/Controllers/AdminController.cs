@@ -109,8 +109,7 @@ namespace WMS.Ui.Controllers
          }
 
          // gather users data
-         var users = UserManagerAgent.Users.ToList();
-        // model.UsersViewModel.Users = _mapper.Map<List<UserViewModel>>(users);         
+         var users = UserManagerAgent.Users.ToList();         
          var userVms = _mapper.Map<List<UserViewModel>>(users);
          model.UsersViewModel.Users.Clear();
          model.UsersViewModel.Users.AddRange(userVms);
@@ -123,7 +122,6 @@ namespace WMS.Ui.Controllers
 
          // gather roles data
          var roles = await RoleManagerAgent.Roles.OrderBy(r => r.Name).ToListAsync().ConfigureAwait(false);
-         // model.RolesViewModel.Roles = _mapper.Map<List<RoleViewModel>>(roles);
          var roleVms = _mapper.Map<List<RoleViewModel>>(roles);
          model.RolesViewModel.Roles.Clear();
          model.RolesViewModel.Roles.AddRange(roleVms);

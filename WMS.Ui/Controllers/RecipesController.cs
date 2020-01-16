@@ -23,14 +23,13 @@ namespace WMS.Ui.Controllers
    /// </summary>
    public class RecipesController : BaseController
    {
-      private readonly IStringLocalizer<RecipesController> _localizer;
-
       private readonly AppSettings _appSettings;
       private readonly IEmailAgent _emailAgent;
       private readonly IFactory _modelFactory;
       private readonly Business.Recipe.Queries.IFactory _queryFactory;
       private readonly Business.Recipe.Commands.IFactory _commandsFactory;
       private readonly Business.Recipe.Dto.IFactory _dtoFactory;
+      private readonly IStringLocalizer<RecipesController> _localizer;
 
       public RecipesController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration,
           IOptions<AppSettings> appSettings, Business.Recipe.Queries.IFactory queryFactory, Business.Recipe.Commands.IFactory commandsFactory,
@@ -53,11 +52,12 @@ namespace WMS.Ui.Controllers
       /// </summary>
       public async Task<IActionResult> Index()
       {
-         ViewData["Title"] = "Recipes";
-         ViewData["PageDesc"] = "View a collection of recipes.";
+         ViewData["Title"] = _localizer["PageTitle"];
+         ViewData["PageDesc"] = _localizer["PageDesc"];
 
          var getRecipesQuery = _queryFactory.CreateRecipesQuery();
-         var recipesDto = await getRecipesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var recipesDto = await getRecipesQuery.ExecuteAsync().ConfigureAwait(false);         
 
          var recipesModel = _modelFactory.CreateRecipesModel();
          var recipeItemsModel = _modelFactory.BuildRecipeListItemModels(recipesDto);
@@ -76,12 +76,11 @@ namespace WMS.Ui.Controllers
       /// <param name="id">Primary Key of Recipe as <see cref="int"/></param>
       public async Task<IActionResult> Recipe(int id)
       {
-         ViewData["Title"] = "Recipe";
-         ViewData["PageDesc"] = "View details of a single recipe.";
+         ViewData["Title"] = _localizer["PageTitleDetails"];
+         ViewData["PageDesc"] = _localizer["PageDescDetails"];
 
          var getRecipesQuery = _queryFactory.CreateRecipesQuery();
          var recipeDto = await getRecipesQuery.ExecuteAsync(id).ConfigureAwait(false);
-
          var submittedBy = await UserManagerAgent.FindByIdAsync(recipeDto.SubmittedBy).ConfigureAwait(false);
          var recipeModel = _modelFactory.CreateRecipeModel(recipeDto);
          recipeModel.User = submittedBy;
@@ -97,8 +96,8 @@ namespace WMS.Ui.Controllers
       /// </summary>
       public async Task<IActionResult> Add()
       {
-         ViewData["Title"] = "Recipes - Add";
-         ViewData["PageDesc"] = "Add a new recipe to the collection.";
+         ViewData["Title"] = _localizer["PageTitleAdd"];
+         ViewData["PageDesc"] = _localizer["PageDescAdd"];
 
          var getCategoriesQuery = _queryFactory.CreateCategoriesQuery();
          var cList = await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false);
@@ -122,8 +121,8 @@ namespace WMS.Ui.Controllers
       [ValidateAntiForgeryToken]
       public async Task<IActionResult> Add(AddRecipeViewModel model)
       {
-         ViewData["Title"] = "Recipes";
-         ViewData["PageDesc"] = "Add a new recipe to the collection.";
+         ViewData["Title"] = _localizer["PageTitle"];
+         ViewData["PageDesc"] = _localizer["PageDesc"];
 
          var getCategoriesQuery = _queryFactory.CreateCategoriesQuery();
          var cList = await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false);
@@ -212,16 +211,18 @@ namespace WMS.Ui.Controllers
 
          }
 
+         var subjectLine = "There is a new recipe is in the approval queue.";
+         var bodyContent = "A new recipe has been submitted and needs approved.";
+
          // notify admin that new recipe is in the approval queue          
          await _emailAgent.SendEmailAsync(_appSettings.SMTP.FromEmail, _appSettings.SMTP.FromEmail, _appSettings.SMTP.AdminEmail,
-             "There is a new recipe is in the approval queue.", "A new recipe has been submitted and needs approved.", false, null).ConfigureAwait(false);
+             subjectLine, bodyContent, false, null).ConfigureAwait(false);
 
          // tell user good job and clear or go to thank you page           
          ModelState.Clear();
          var addNewRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
          addNewRecipeModel.User = submittedBy;
 
-         // TODO DELETE const string msg = "CONGRATULATIONS. Your recipe has been successfully submitted for review.";
          Success(_localizer["AddSuccess"], true);
 
          return View(addNewRecipeModel);
