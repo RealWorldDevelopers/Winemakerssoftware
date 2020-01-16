@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
+using WMS.Business.Image.Dto;
 using WMS.Data;
 
 namespace WMS.Business.Image.Queries
@@ -34,12 +35,11 @@ namespace WMS.Business.Image.Queries
       /// </summary>
       /// <returns>Images as <see cref="List{Dto.ImageDto}"/></returns>
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<Dto.ImageDto> Execute()
+      public List<ImageDto> Execute()
       {
-         var dtoList = _dbContext.Images
-            .ProjectTo<Dto.ImageDto>(_mapper.ConfigurationProvider).ToList();
-         
-         return dtoList;
+         var images = _dbContext.Images.ToList();
+         var list = _mapper.Map<List<ImageDto>>(images);
+         return list;
       }
 
       /// <summary>
@@ -50,10 +50,9 @@ namespace WMS.Business.Image.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public Dto.ImageDto Execute(int id)
       {
-         var dto = _dbContext.Images
-            .ProjectTo<Dto.ImageDto>(_mapper.ConfigurationProvider)
+         var image = _dbContext.Images
             .FirstOrDefault(r => r.Id == id);
-
+         var dto = _mapper.Map<ImageDto>(image);
          return dto;
       }
 
@@ -64,11 +63,9 @@ namespace WMS.Business.Image.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<Dto.ImageDto>> ExecuteAsync()
       {
-         var dtoList = await _dbContext.Images
-            .ProjectTo<Dto.ImageDto>(_mapper.ConfigurationProvider)
-            .ToListAsync().ConfigureAwait(false);
-         
-         return dtoList;
+         var images = await _dbContext.Images.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<ImageDto>>(images);
+         return list;
       }
 
       /// <summary>
@@ -79,11 +76,10 @@ namespace WMS.Business.Image.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<Dto.ImageDto> ExecuteAsync(int id)
       {
-         var dto = await _dbContext.Images
-            .ProjectTo<Dto.ImageDto>(_mapper.ConfigurationProvider)
+         var images = await _dbContext.Images
             .FirstOrDefaultAsync(r => r.Id == id)
             .ConfigureAwait(false);
-
+         var dto = _mapper.Map<ImageDto>(images);
          return dto;
       }
 

@@ -39,10 +39,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<YeastPairDto> Execute()
       {
-         var dtoList = _dbContext.YeastPair
-            .ProjectTo<YeastPairDto>(_mapper.ConfigurationProvider).ToList();
-         
-         return dtoList;
+         var pairs = _dbContext.YeastPair.ToList();
+         var list = _mapper.Map<List<YeastPairDto>>(pairs);
+         return list;
       }
 
       /// <summary>
@@ -53,10 +52,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public YeastPairDto Execute(int id)
       {
-         var dto = _dbContext.YeastPair
-            .ProjectTo<YeastPairDto>(_mapper.ConfigurationProvider)
+         var yeast = _dbContext.YeastPair
             .FirstOrDefault(p => p.Id == id);
-
+         var dto = _mapper.Map<YeastPairDto>(yeast);
          return dto;
       }
 
@@ -67,11 +65,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<YeastPairDto>> ExecuteAsync()
       {
-         var dtoList = await _dbContext.YeastPair
-            .ProjectTo<YeastPairDto>(_mapper.ConfigurationProvider)
-            .ToListAsync().ConfigureAwait(false);
-         
-         return dtoList;
+         var pairs = await _dbContext.YeastPair.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<YeastPairDto>>(pairs);
+         return list;
       }
 
       /// <summary>
@@ -82,10 +78,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<YeastPairDto> ExecuteAsync(int id)
       {
-         var dto = await _dbContext.YeastPair
-            .ProjectTo<YeastPairDto>(_mapper.ConfigurationProvider)
+         var yeast = await _dbContext.YeastPair
             .FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
-
+         var dto = _mapper.Map<YeastPairDto>(yeast);
          return dto;
       }
 

@@ -34,10 +34,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<ICode> Execute()
       {
-         var dtoList = _dbContext.YeastStyle
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider).ToList();
-         
-         return dtoList;
+         var styles = _dbContext.YeastStyle.ToList();
+         var list = _mapper.Map<List<ICode>>(styles);
+         return list;
       }
 
       /// <summary>
@@ -48,10 +47,8 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public ICode Execute(int id)
       {
-         var dto = _dbContext.YeastStyle
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-            .FirstOrDefault(p => p.Id == id);
-
+         var style = _dbContext.YeastStyle.FirstOrDefault(p => p.Id == id);
+         var dto = _mapper.Map<ICode>(style);
          return dto;
       }
 
@@ -62,11 +59,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<ICode>> ExecuteAsync()
       {
-         var dtoList = await _dbContext.YeastStyle
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-            .ToListAsync().ConfigureAwait(false);
-
-         return dtoList;
+         var styles = await _dbContext.YeastStyle.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<ICode>>(styles);
+         return list;
       }
 
       /// <summary>
@@ -77,10 +72,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<ICode> ExecuteAsync(int id)
       {
-         var dto = await _dbContext.YeastStyle
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider)
+         var style = await _dbContext.YeastStyle
             .FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
-
+         var dto = _mapper.Map<ICode>(style);
          return dto;
       }
 

@@ -37,10 +37,9 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<ICode> Execute()
       {
-         var dtoList = _dbContext.Varieties
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider).ToList();
-         
-         return dtoList;
+         var varieties = _dbContext.Varieties.ToList();
+         var list = _mapper.Map<List<ICode>>(varieties);
+         return list;
       }
 
       /// <summary>
@@ -51,10 +50,8 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public ICode Execute(int id)
       {
-         var dto = _dbContext.Varieties
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-            .FirstOrDefault(r => r.Id == id);
-
+         var variety = _dbContext.Varieties.FirstOrDefault(r => r.Id == id);
+         var dto = _mapper.Map<ICode>(variety);
          return dto;
       }
 
@@ -65,11 +62,9 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<ICode>> ExecuteAsync()
       {
-         var dtoList = await _dbContext.Varieties
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-            .ToListAsync().ConfigureAwait(false);
-
-         return dtoList;
+         var varieties = await _dbContext.Varieties.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<ICode>>(varieties);
+         return list;
       }
 
       /// <summary>
@@ -80,10 +75,9 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<ICode> ExecuteAsync(int id)
       {
-         var dto = await _dbContext.Varieties
-            .ProjectTo<ICode>(_mapper.ConfigurationProvider)
+         var variety = await _dbContext.Varieties
             .FirstOrDefaultAsync(r => r.Id == id).ConfigureAwait(false);
-
+         var dto = _mapper.Map<ICode>(variety);
          return dto;
       }
 

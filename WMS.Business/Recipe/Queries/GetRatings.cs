@@ -37,10 +37,9 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<RatingDto> Execute()
       {
-         var dtoList = _dbContext.Ratings
-            .ProjectTo<RatingDto>(_mapper.ConfigurationProvider).ToList();
-
-         return dtoList;
+         var ratings = _dbContext.Ratings.ToList();
+         var list = _mapper.Map<List<RatingDto>>(ratings);
+         return list;
       }
 
       /// <summary>
@@ -51,10 +50,9 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public RatingDto Execute(int id)
       {
-         var dto = _dbContext.Ratings
-            .ProjectTo<RatingDto>(_mapper.ConfigurationProvider)
+         var rating = _dbContext.Ratings
             .FirstOrDefault(r => r.Id == id);
-
+         var dto = _mapper.Map<RatingDto>(rating);
          return dto;
       }
 
@@ -65,11 +63,9 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<RatingDto>> ExecuteAsync()
       {
-         var dtoList = await _dbContext.Ratings
-            .ProjectTo<RatingDto>(_mapper.ConfigurationProvider)
-            .ToListAsync().ConfigureAwait(false);
-
-         return dtoList;
+         var ratings = await _dbContext.Ratings.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<RatingDto>>(ratings);
+         return list;
       }
 
       /// <summary>
@@ -80,11 +76,10 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<RatingDto> ExecuteAsync(int id)
       {
-         var dto = await _dbContext.Ratings
-            .ProjectTo<RatingDto>(_mapper.ConfigurationProvider)
+         var rating = await _dbContext.Ratings
             .FirstOrDefaultAsync(r => r.Id == id)
             .ConfigureAwait(false);
-
+         var dto = _mapper.Map<RatingDto>(rating);
          return dto;
       }
 

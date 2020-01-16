@@ -39,12 +39,12 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<YeastDto> Execute()
       {
-         var dtoList = _dbContext.Yeasts
-            .ProjectTo<YeastDto>(_mapper.ConfigurationProvider).ToList();
+         var yeast = _dbContext.Yeasts.ToList();
+         var list = _mapper.Map<List<YeastDto>>(yeast);
          var brands = _dbContext.YeastBrand.ToList();
          var styles = _dbContext.YeastStyle.ToList();
 
-         foreach (var item in dtoList)
+         foreach (var item in list)
          {
             if (item.Brand != null)
             {
@@ -58,7 +58,7 @@ namespace WMS.Business.Yeast.Queries
             }
          }
 
-         return dtoList;
+         return list;
       }
 
       /// <summary>
@@ -69,10 +69,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public YeastDto Execute(int id)
       {
-         var dto = _dbContext.Yeasts
-            .ProjectTo<YeastDto>(_mapper.ConfigurationProvider)
+         var yeast = _dbContext.Yeasts
             .FirstOrDefault(y => y.Id == id);
-
+         var dto = _mapper.Map<YeastDto>(yeast);
          return dto;
       }
 
@@ -85,12 +84,9 @@ namespace WMS.Business.Yeast.Queries
       {
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
-         var t1 = Task.Run(async () =>
-            await _dbContext.Yeasts
-               .ProjectTo<YeastDto>(_mapper.ConfigurationProvider)
-               .ToListAsync().ConfigureAwait(false));
+         var t1 = Task.Run(async () => await _dbContext.Yeasts.ToListAsync().ConfigureAwait(false));
          tasks.Add(t1);
-         var list = await t1.ConfigureAwait(false);
+         var list = _mapper.Map<List<YeastDto>>(await t1.ConfigureAwait(false));
 
          var t2 = Task.Run(async () => await _dbContext.YeastBrand.ToListAsync().ConfigureAwait(false));
          tasks.Add(t2);
@@ -129,10 +125,9 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<YeastDto> ExecuteAsync(int id)
       {
-         var dto = await _dbContext.Yeasts
-            .ProjectTo<YeastDto>(_mapper.ConfigurationProvider)
+         var yeast = await _dbContext.Yeasts
             .FirstOrDefaultAsync(y => y.Id == id).ConfigureAwait(false);
-
+         var dto = _mapper.Map<YeastDto>(yeast);
          return dto;
       }
 

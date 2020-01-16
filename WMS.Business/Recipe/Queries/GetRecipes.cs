@@ -37,26 +37,24 @@ namespace WMS.Business.Recipe.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<RecipeDto> Execute()
       {
-         var dtoList = _dbContext.Recipes
-            .Include("PicturesXref").Include("Ratings")
-            .ProjectTo<RecipeDto>(_mapper.ConfigurationProvider).ToList();
+         var recipes = _dbContext.Recipes.Include("PicturesXref").Include("Ratings").ToList();
+         var list = _mapper.Map<List<RecipeDto>>(recipes);
          var categories = _dbContext.Categories.ToList();
          var varieties = _dbContext.Varieties.ToList();
 
 
-         foreach (var item in dtoList)
+         foreach (var item in list)
          {
             if (item.Variety != null)
             {
                var code = varieties.SingleOrDefault(a => a.Id == item.Variety.Id);
                item.Variety.Literal = code.Variety;
-               item.Category = _dbContext.Categories
-                  .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-                  .SingleOrDefault(a => a.Id == code.CategoryId);
+               var cat = _dbContext.Categories.SingleOrDefault(a => a.Id == code.CategoryId);
+               item.Category = _mapper.Map<ICode>(cat);
             }
          }
 
-         return dtoList;
+         return list;
       }
 
       /// <summary>
@@ -74,16 +72,17 @@ namespace WMS.Business.Recipe.Queries
 
          var dto = _mapper.Map<RecipeDto>(recipe);
          var img = recipe.PicturesXref.Where(p => p.RecipeId == id).ToList();
+        // dto.ImageFiles = _mapper.Map<List<Dto.ImageFile>>(img);
+         var dtoList = _mapper.Map<List<ImageFileDto>>(img);
          dto.ImageFiles.Clear();
-         dto.ImageFiles.AddRange(_mapper.Map<List<ImageFileDto>>(img));
+         dto.ImageFiles.AddRange(dtoList);
 
          if (dto.Variety != null)
          {
             var code = _dbContext.Varieties.SingleOrDefault(a => a.Id == dto.Variety.Id);
             dto.Variety.Literal = code.Variety;
-            dto.Category = _dbContext.Categories
-               .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-               .SingleOrDefault(a => a.Id == code.CategoryId);
+            var cat = _dbContext.Categories.SingleOrDefault(a => a.Id == code.CategoryId);
+            dto.Category = _mapper.Map<ICode>(cat);
          }
 
          return dto;
@@ -99,11 +98,9 @@ namespace WMS.Business.Recipe.Queries
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
          var t1 = Task.Run(async () =>
-            await _dbContext.Recipes.Include("PicturesXref").Include("Ratings")
-               .ProjectTo<RecipeDto>(_mapper.ConfigurationProvider)
-               .ToListAsync().ConfigureAwait(false));
+            await _dbContext.Recipes.Include("PicturesXref").Include("Ratings").ToListAsync().ConfigureAwait(false));
          tasks.Add(t1);
-         var list = await t1.ConfigureAwait(false);
+         var list = _mapper.Map<List<RecipeDto>>(await t1.ConfigureAwait(false));
 
          var t2 = Task.Run(async () => await _dbContext.Categories.ToListAsync().ConfigureAwait(false));
          tasks.Add(t2);
@@ -121,9 +118,8 @@ namespace WMS.Business.Recipe.Queries
             {
                var code = varieties.SingleOrDefault(a => a.Id == item.Variety.Id);
                item.Variety.Literal = code.Variety;
-               item.Category = await _dbContext.Categories
-                  .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-                  .SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);
+               var cat = await _dbContext.Categories.SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);
+               item.Category = _mapper.Map<ICode>(cat);
             }
          }
 
@@ -146,17 +142,18 @@ namespace WMS.Business.Recipe.Queries
          var dto = _mapper.Map<RecipeDto>(recipe);
 
          var img = recipe.PicturesXref.Where(p => p.RecipeId == id).ToList();
+
+         //dto.ImageFiles = _mapper.Map<List<Dto.ImageFile>>(img);
+         var dtoList = _mapper.Map<List<ImageFileDto>>(img);
          dto.ImageFiles.Clear();
-         dto.ImageFiles.AddRange(_mapper.Map<List<ImageFileDto>>(img));
+         dto.ImageFiles.AddRange(dtoList);
 
          if (dto.Variety != null)
          {
             var code = await _dbContext.Varieties.SingleOrDefaultAsync(a => a.Id == dto.Variety.Id).ConfigureAwait(false);
             dto.Variety.Literal = code.Variety;
-            dto.Category = await _dbContext.Categories
-                  .ProjectTo<ICode>(_mapper.ConfigurationProvider)
-                  .SingleOrDefaultAsync(a => a.Id == code.CategoryId)
-                  .ConfigureAwait(false);
+            var cat = await _dbContext.Categories.SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);
+            dto.Category = _mapper.Map<ICode>(cat);
          }
 
          return dto;

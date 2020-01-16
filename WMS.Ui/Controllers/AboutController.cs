@@ -18,9 +18,9 @@ namespace WMS.Ui.Controllers
 
       public IActionResult Index()
       {
-         ViewData["Title"] = _localizer["Title"];
-         ViewData["Version"] = _appSettings?.AppVersion;
+         ViewData["Title"] = _localizer["PageTitle"];
          ViewData["PageDesc"] = _localizer["PageDesc"];
+         ViewData["Version"] = _appSettings?.AppVersion;
          return View();
       }
    }
