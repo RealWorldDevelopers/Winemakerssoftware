@@ -47,7 +47,6 @@
          if ($('input[name=optUomVolume]:checked', '#frmChaptalization').val() === 'metric') {
             useMetric = true;
          }
-
          var start = $('#ChaptalizationCalculator_CurrentReading').val();
          var end = $('#ChaptalizationCalculator_Goal').val();
          var vol = $('#ChaptalizationCalculator_Volume').val();
