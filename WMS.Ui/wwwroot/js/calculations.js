@@ -37,8 +37,8 @@
    $('body').on('click', '#btnCalcSugar', function (e) {
 
       event.preventDefault();
-      var $form = $('form');
-      if ($form.valid()) {        
+      var $form = $('#frmChaptalization');
+      if ($form.valid()) {
          var useMetric = false;
          var useBrix = false;
          if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
@@ -50,7 +50,7 @@
          var start = $('#ChaptalizationCalculator_CurrentReading').val();
          var end = $('#ChaptalizationCalculator_Goal').val();
          var vol = $('#ChaptalizationCalculator_Volume').val();
-         
+
          var gal = vol;
          if (useMetric) {
             gal = LitersToGallons(vol);
@@ -65,6 +65,42 @@
       }
 
    });
+
+   // calculate sugar button
+   $('body').off('click', '#btnCalcAlcohol');
+   $('body').on('click', '#btnCalcAlcohol', function (e) {
+
+      event.preventDefault();
+      var $form = $('#frmAlcoholABV');
+      if ($form.valid()) {
+         var useBrix = false;
+         if ($('input[name=optUomAlcohol]:checked', '#frmAlcoholABV').val() === 'brix') {
+            useBrix = true;
+         }
+
+         var start = $('#AlcoholCalculator_SugarStart').val();
+         var end = $('#AlcoholCalculator_SugarEnd').val();
+
+         var abv;
+         if (useBrix) {
+            // brix
+            var init = start * 0.55 - 0.63;
+            var final = end * 0.55 - 0.63;
+            abv = init - final;
+         } else {
+            //SG
+            abv = Math.round(((start - end) * 131.25) * 10) / 10;
+         }
+
+         $('#AlcoholCalculator_Abv').val(formatForDisplay(abv));
+
+         $('#AlcoholCalculator_SugarStart').val(formatForDisplay(start));
+         $('#AlcoholCalculator_SugarEnd').val(formatForDisplay(end));
+
+      }
+
+   });
+
 
    // adjust labels by user choice
    $('#frmChaptalization').off('click', 'input[type=radio]');
@@ -81,6 +117,16 @@
       } else {
          $('label[name=lblUomVolume]').text('Gallons');
          $('label[name=lblUomWeight]').text('Pounds');
+      }
+
+   });
+
+   $('#frmAlcoholABV').off('click', 'input[type=radio]');
+   $('#frmAlcoholABV').on('click', 'input[type=radio]', function (e) {
+      if ($('input[name=optUomAlcohol]:checked', '#frmAlcoholABV').val() === 'brix') {
+         $('label[name=lblUomABV]').text('Brix');
+      } else {
+         $('label[name=lblUomABV]').text('SG');
       }
 
    });
