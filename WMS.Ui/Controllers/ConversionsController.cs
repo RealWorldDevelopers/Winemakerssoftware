@@ -1,25 +1,28 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using WMS.Ui.Models.Conversions;
 
 namespace WMS.Ui.Controllers
 {
-    public class ConversionsController : Controller
-    {
-        private readonly IFactory _modelFactory;
+   public class ConversionsController : Controller
+   {
+      private readonly IFactory _modelFactory;
+      private readonly IStringLocalizer<ConversionsController> _localizer;
 
-        public ConversionsController(IFactory modelFactory)
-        {
-            _modelFactory = modelFactory;
-        }
+      public ConversionsController(IFactory modelFactory, IStringLocalizer<ConversionsController> localizer)
+      {
+         _modelFactory = modelFactory;
+         _localizer = localizer;
+      }
 
-        public IActionResult Index()
-        {
-            ViewData["Title"] = "Conversions";
-            ViewData["PageDesc"] = "Convert commonly used Units of Measure from Metric to English and Vise Versa.";
+      public IActionResult Index()
+      {
+         ViewData["Title"] = _localizer["PageTitle"];
+         ViewData["PageDesc"] = _localizer["PageDesc"];
 
-            var model = _modelFactory.CreateConversionsModel();        
-            return View(model);
-        }
-    }
+         var model = _modelFactory.CreateConversionsModel();
+         return View(model);
+      }
+   }
 }

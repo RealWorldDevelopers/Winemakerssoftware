@@ -126,9 +126,9 @@
     <comment>Alert Message for Successful Send in Contact</comment>
   </data>
   <data name="PageDesc" xml:space="preserve">
-    <value />
+    <value>Communicate with the folks at Winemakers Software.</value>
   </data>
   <data name="PageTitle" xml:space="preserve">
-    <value />
+    <value>Contact Us</value>
   </data>
 </root>

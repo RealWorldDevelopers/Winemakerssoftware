@@ -66,7 +66,7 @@
 
    });
 
-   // calculate sugar button
+   // calculate alcohol button
    $('body').off('click', '#btnCalcAlcohol');
    $('body').on('click', '#btnCalcAlcohol', function (e) {
 
@@ -101,8 +101,87 @@
 
    });
 
+   // calculate fortify button
+   $('body').off('click', '#btnCalcFortify');
+   $('body').on('click', '#btnCalcFortify', function (e) {
 
-   // adjust labels by user choice
+      event.preventDefault();
+      var $form = $('#frmFortify');
+      if ($form.valid()) {
+         var metricTransform = 3.7854;
+         if ($('input[name=optUomFortify]:checked', '#frmFortify').val() === 'metric') {
+            metricTransform = 1;
+         }
+
+         var volume = $('#FortifyCalculator_Volume').val();
+         var spirit_alchohol = $('#FortifyCalculator_SpiritReading').val() / 100;
+         var wine_alchohol = $('#FortifyCalculator_CurrentReading').val() / 100;
+         var target_alchohol = $('#FortifyCalculator_Goal').val() / 100;
+
+         var tmp4 = volume * metricTransform * (target_alchohol - wine_alchohol) / (spirit_alchohol - target_alchohol);
+         var needed = tmp4 / metricTransform;
+
+         $('#FortifyCalculator_Spirit').val(formatForDisplay(needed));
+
+         $('#FortifyCalculator_Volume').val(formatForDisplay(volume));
+         $('#FortifyCalculator_SpiritReading').val(formatForDisplay(spirit_alchohol * 100));
+         $('#FortifyCalculator_CurrentReading').val(formatForDisplay(wine_alchohol * 100));
+         $('#FortifyCalculator_Goal').val(formatForDisplay(target_alchohol * 100));
+
+      }
+
+   });
+
+   // calculate gravity temp button
+   $('body').off('click', '#btnCalcGravityTemp');
+   $('body').on('click', '#btnCalcGravityTemp', function (e) {
+
+      event.preventDefault();
+      var $form = $('#frmGravityTemp');
+      if ($form.valid()) {
+
+         var measured_gravity = $('#GravityTempCalculator_MeasuredGravity').val();
+         var temperature_reading = $('#GravityTempCalculator_TempReading').val();
+         var calibration_temperature = $('#GravityTempCalculator_TempCalibrate').val();
+
+         mg = measured_gravity; // needs to be SG
+         if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
+            mg = (measured_gravity / (258.6 - ((measured_gravity / 258.2) * 227.1)) + 1);
+         }
+
+         tr = temperature_reading; // needs to be Fahrenheit
+         tc = calibration_temperature; // needs to be Fahrenheit
+         if ($('input[name=optUomVolume]:checked', '#frmChaptalization').val() === 'metric') {
+            tr = 9.0 / 5.0 * temperature_reading + 32;
+            tc = 9.0 / 5.0 * calibration_temperature + 32;
+         }
+
+         var corrected_gravity = mg * ((1.00130346 - 0.000134722124 * tr + 0.00000204052596 * tr * tr - 0.00000000232820948 * tr * tr * tr) /
+            (1.00130346 - 0.000134722124 * tc + 0.00000204052596 * tc * tc - 0.00000000232820948 * tc * tc * tc));
+
+         var cg = corrected_gravity;
+         if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
+            cg = ((corrected_gravity - 1) * 220) + 1.6;
+         }
+
+         $('#GravityTempCalculator_CorrectedValue').val(formatForDisplay(cg));
+
+         $('#GravityTempCalculator_MeasuredGravity').val(formatForDisplay(measured_gravity));
+         $('#GravityTempCalculator_TempReading').val(formatForDisplay(temperature_reading));
+         $('#GravityTempCalculator_TempCalibrate').val(formatForDisplay(calibration_temperature));
+
+      }
+
+   });
+
+
+
+
+
+
+
+
+   // adjust labels by user choice Chaptalization
    $('#frmChaptalization').off('click', 'input[type=radio]');
    $('#frmChaptalization').on('click', 'input[type=radio]', function (e) {
       if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
@@ -121,6 +200,7 @@
 
    });
 
+   // adjust labels by user choice AlcoholABV
    $('#frmAlcoholABV').off('click', 'input[type=radio]');
    $('#frmAlcoholABV').on('click', 'input[type=radio]', function (e) {
       if ($('input[name=optUomAlcohol]:checked', '#frmAlcoholABV').val() === 'brix') {
@@ -130,6 +210,35 @@
       }
 
    });
+
+   // adjust labels by user choice Fortify
+   $('#frmFortify').off('click', 'input[type=radio]');
+   $('#frmFortify').on('click', 'input[type=radio]', function (e) {
+      if ($('input[name=optUomFortify]:checked', '#frmFortify').val() === 'metric') {
+         $('label[name=lblUomFortify]').text('Liters');
+      } else {
+         $('label[name=lblUomFortify]').text('Gallons');
+      }
+
+   });
+
+   // adjust labels by user choice Gravity Temp
+   $('#frmGravityTemp').off('click', 'input[type=radio]');
+   $('#frmGravityTemp').on('click', 'input[type=radio]', function (e) {
+      if ($('input[name=optUomGravityTemp]:checked', '#frmGravityTemp').val() === 'brix') {
+         $('label[name=lblUomGravitySugar]').text('Brix');
+      } else {
+         $('label[name=lblUomGravitySugar]').text('SG');
+      }
+
+      if ($('input[name=optGravityMetric]:checked', '#frmGravityTemp').val() === 'metric') {
+         $('label[name=lblUomGravityTemp]').text('°C');
+      } else {
+         $('label[name=lblUomGravityTemp]').text('°F');
+      }
+
+   });
+
 
 });
 

@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PageDesc" xml:space="preserve">
-    <value />
+    <value>Convert commonly used Units of Measure from Metric to English and Vise Versa.</value>
   </data>
   <data name="PageTitle" xml:space="preserve">
-    <value />
+    <value>Conversions</value>
   </data>
 </root>

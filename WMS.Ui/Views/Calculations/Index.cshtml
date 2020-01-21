@@ -225,17 +225,219 @@
          </div>
       </div>
 
+      <div name="calcSugar" class="card">
+         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-body">
+            <h3 class="card-title">Calculate Volumes to Fortify</h3>
+            <p class="card-text">
+               &#42;Knowing how much spirits to add to make a fortified wine.<br />
+            </p>
+
+            <form id="frmFortify">
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomFortify" value="metric">Liters
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomFortify" checked value="imperial">Gallons
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="FortifyCalculator.Volume"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="FortifyCalculator.Volume" required maxlength="10" />
+                     <span asp-validation-for="FortifyCalculator.Volume" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomFortify">Gallons</label>
+                  </div>
+               </div>
 
 
-      <!-- // TODO remove when section done -->
-      <environment include="Development">
-         next calc card
-      </environment>
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="FortifyCalculator.SpiritReading"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="FortifyCalculator.SpiritReading" required maxlength="10" />
+                     <span asp-validation-for="FortifyCalculator.SpiritReading" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>&#37;</label>
+                  </div>
+               </div>
 
-      <!-- // TODO remove when section done -->
-      <environment include="Development">
-         next calc card
-      </environment>
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="FortifyCalculator.CurrentReading"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="FortifyCalculator.CurrentReading" required maxlength="10" />
+                     <span asp-validation-for="FortifyCalculator.CurrentReading" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>&#37;</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="FortifyCalculator.Goal"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="FortifyCalculator.Goal" required maxlength="10" />
+                     <span asp-validation-for="FortifyCalculator.Goal" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>&#37;</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="FortifyCalculator.Spirit"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="FortifyCalculator.Spirit" readonly />
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomFortify">Gallons</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8">
+                     <button id="btnCalcFortify" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+            </form>
+
+         </div>
+      </div>
+
+      <div name="calcSugar" class="card">
+         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-body">
+            <h3 class="card-title">Adjust Gravity for Temp</h3>
+            <p class="card-text">
+               &#42;Something about being cold<br />
+               &#42;&#42;Something about where to find calibrate temp
+            </p>
+
+            <form id="frmGravityTemp">
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomGravityTemp" value="brix">Brix
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomGravityTemp" checked value="sg">Specific Gravity
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optGravityMetric" value="metric">Celsius
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optGravityMetric" checked value="imperial">Fahrenheit
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="GravityTempCalculator.MeasuredGravity"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="GravityTempCalculator.MeasuredGravity" required maxlength="10" />
+                     <span asp-validation-for="GravityTempCalculator.MeasuredGravity" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomGravitySugar">SG</label>
+                  </div>
+               </div>
+
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="GravityTempCalculator.TempReading"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="GravityTempCalculator.TempReading" required maxlength="10" />
+                     <span asp-validation-for="GravityTempCalculator.TempReading" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomGravityTemp">&#8457;</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="GravityTempCalculator.TempCalibrate"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="GravityTempCalculator.TempCalibrate" required maxlength="10" />
+                     <span asp-validation-for="GravityTempCalculator.TempCalibrate" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomGravityTemp">&#8457;</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="GravityTempCalculator.CorrectedValue"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="GravityTempCalculator.CorrectedValue" readonly />
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomGravitySugar">SG</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8">
+                     <button id="btnCalcGravityTemp" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+            </form>
+
+         </div>
+      </div>
+
 
       <!-- // TODO remove when section done -->
       <environment include="Development">
