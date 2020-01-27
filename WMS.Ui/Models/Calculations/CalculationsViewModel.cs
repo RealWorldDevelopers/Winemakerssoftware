@@ -9,6 +9,7 @@ namespace WMS.Ui.Models.Calculations
    public class CalculatorViewModel
    {
       public string GroupName { get; set; }
+      public string DisplayName { get; set; }
    }
 
    public class ChaptalizationViewModel
@@ -82,12 +83,12 @@ namespace WMS.Ui.Models.Calculations
       public decimal? MeasuredGravity { set; get; }
 
       [Required]
-    //  [Range(-5, 35)]
+      //  [Range(-5, 35)]
       [DisplayName("Temp at Reading")]
       public decimal? TempReading { set; get; }
 
       [Required]
-     // [Range(-5, 35)]
+      // [Range(-5, 35)]
       [DisplayName("Temp Hydrometer Calibrated")]
       public decimal? TempCalibrate { set; get; }
 
@@ -95,8 +96,56 @@ namespace WMS.Ui.Models.Calculations
       public decimal? CorrectedValue { set; get; }
    }
 
+   public class DoseSO2ViewModel
+   {
+      //[Required]
+      [Range(2.5, 4.5)]
+      [DisplayName("pH")]
+      public decimal? pH { set; get; }
 
+      [Required]
+      [Range(0, 50)]
+      [DisplayName("Current SO2")]
+      public decimal? CurrentReading { set; get; }
 
+      [Required]
+        [Range(0, 50)]
+      [DisplayName("Goal SO2")]
+      public decimal? Goal { set; get; }
+
+      // [Required]
+      // [Range(-5, 35)]
+      [DisplayName("Dose Rate")]
+      public decimal? DoseRate { set; get; }
+
+      [DisplayName("Volume")]
+      public decimal? Volume { set; get; }
+
+      [DisplayName("Dose Need")]
+      public decimal? DoseAmount { set; get; }
+   }
+
+   public class TitrateSO2ViewModel
+   {     
+      [Required]
+      [Range(0, 999)]
+      [DisplayName("mL of Must Tested")]
+      public decimal? TestSize { set; get; }
+
+      [Required]
+      //  [Range(-5, 35)]
+      [DisplayName("mL of Sodium Hydroxide (NaOH)")]
+      public decimal? VolumeNaOH { set; get; }
+
+      // [Required]
+      // [Range(-5, 35)]
+      [DisplayName("N of NaOH")]
+      public decimal? Normal { set; get; }
+
+      [DisplayName("mg/L (ppm) Free SO2")]
+      public decimal? FreeSO2 { set; get; }
+
+   }
 
    public class CalculationsViewModel
    {
@@ -114,6 +163,13 @@ namespace WMS.Ui.Models.Calculations
       public FortifyViewModel FortifyCalculator { get; set; }
 
       public GravityTempViewModel GravityTempCalculator { get; set; }
+
+      public DoseSO2ViewModel DoseSO2Calculator { get; set; }
+
+      public TitrateSO2ViewModel TitrateSO2 { get; set; }
+
+
+
    }
 
 }

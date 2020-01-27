@@ -20,7 +20,7 @@
                   {
                      <div class="form-check-inline">
                         <label class="form-check-label">
-                           <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.GroupName
+                           <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.DisplayName
                         </label>
                      </div>
                   }
@@ -38,9 +38,8 @@
 
 
       <div name="calcSugar" class="card">
-         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-header bg-dark text-light"><h2>Chaptalization Sugar</h2></div>
          <div class="card-body">
-            <h3 class="card-title">Chaptalization Sugar</h3>
             <p class="card-text">
                &#42;Chaptalization is the process of adding sugar to unfermented grape must in order to increase the alcohol content after fermentation.
             </p>
@@ -146,9 +145,8 @@
       </div>
 
       <div name="calcSugar" class="card">
-         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-header bg-dark text-light"><h2>Calculate Alcohol (ABV)</h2></div>
          <div class="card-body">
-            <h3 class="card-title">Calculate Alcohol (ABV)</h3>
             <p class="card-text">
                &#42;Stating Specific Gravity is Before the Yeast is Pitched <br />
                &#42;&#42;Ending Specific Gravity is at Stabilization (End of Fermentation before back sweetening).
@@ -226,9 +224,8 @@
       </div>
 
       <div name="calcSugar" class="card">
-         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-header bg-dark text-light"><h2>Calculate Volumes to Fortify</h2></div>
          <div class="card-body">
-            <h3 class="card-title">Calculate Volumes to Fortify</h3>
             <p class="card-text">
                &#42;Knowing how much spirits to add to make a fortified wine.<br />
             </p>
@@ -330,9 +327,8 @@
       </div>
 
       <div name="calcSugar" class="card">
-         <div class="card-header bg-dark text-light"><h2>Sugar</h2></div>
+         <div class="card-header bg-dark text-light"><h2>Adjust Gravity for Temperature</h2></div>
          <div class="card-body">
-            <h3 class="card-title">Adjust Gravity for Temp</h3>
             <p class="card-text">
                &#42;Something about being cold<br />
                &#42;&#42;Something about where to find calibrate temp
@@ -438,6 +434,205 @@
          </div>
       </div>
 
+      <!-- // TODO remove when section done -->
+      <environment include="Development">
+         <div name="calcSO2" class="card">
+            <div class="card-header bg-dark text-light"><h2>Titrate Free Sulfite</h2></div>
+            <div class="card-body">
+               <p class="card-text">
+                  &#42;Calc Free SO2 from Measurements<br />
+               </p>
+
+               <form id="frmSO2Titrate">
+                  <div class="row">
+                     <div class="col-sm-8">
+                        <input class="form-control text-right" type="text" asp-for="TitrateSO2.TestSize" required maxlength="10" />
+                        <span asp-validation-for="TitrateSO2.TestSize" class="text-danger"></span>
+                     </div>
+                     <div class="col-sm-4 text-left">
+                        <label asp-for="TitrateSO2.TestSize"></label>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-sm-8">
+                        <input class="form-control text-right" type="text" asp-for="TitrateSO2.VolumeNaOH" required maxlength="10" />
+                        <span asp-validation-for="TitrateSO2.VolumeNaOH" class="text-danger"></span>
+                     </div>
+                     <div class="col-sm-4 text-left">
+                        <label asp-for="TitrateSO2.VolumeNaOH"></label>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-sm-8">
+                        <input class="form-control text-right" type="text" asp-for="TitrateSO2.Normal" required maxlength="10" />
+                        <span asp-validation-for="TitrateSO2.Normal" class="text-danger"></span>
+                     </div>
+                     <div class="col-sm-4 text-left">
+                        <label asp-for="TitrateSO2.Normal"></label>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-sm-8">
+                        <input class="form-control text-right" type="text" asp-for="TitrateSO2.FreeSO2" readonly />
+                        <span asp-validation-for="TitrateSO2.FreeSO2" class="text-danger"></span>
+                     </div>
+                     <div class="col-sm-4 text-left">
+                        <label asp-for="TitrateSO2.FreeSO2"></label>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-sm-8">
+                        <button id="btnTitrateSO2" class="btn btn-primary btn-block" type="button">Calculate</button>
+                     </div>
+                     <div class="col-sm-4 text-left"></div>
+                  </div>
+
+               </form>
+
+            </div>
+         </div>
+      </environment>
+
+      <div name="calcSO2" class="card">
+         <div class="card-header bg-dark text-light"><h2>Raise SO2 Level</h2></div>
+         <div class="card-body">
+            <p class="card-text">
+               &#42;Bring SO2 up to goal level<br />
+               &#42;&#42;To make 10% sulfite solution 10g of sulfite in 50 mL of warm water. Bring to 100 mL with cool water, stir vigorously.
+            </p>
+
+            <form id="frmSO2Dose">
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optSO2DoseVariety" checked value="red">Red
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optSO2DoseVariety" value="white">White
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomSO2DoseVolume" value="metric">Liters
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomSO2DoseVolume" checked value="imperial">Gallons
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label>
+                        <input class="form-control" type="text" asp-for="DoseSO2Calculator.pH" maxlength="10" /> pH
+                     </label>
+                     <span asp-validation-for="DoseSO2Calculator.pH" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomSO2DoseSolution" value="powder">Powder
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomSO2DoseSolution" checked value="solution">10&#37; Solution
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="DoseSO2Calculator.Volume"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="DoseSO2Calculator.Volume" required maxlength="10" />
+                     <span asp-validation-for="DoseSO2Calculator.Volume" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomSO2DoseVolume">Gallons</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="DoseSO2Calculator.CurrentReading"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="DoseSO2Calculator.CurrentReading" required maxlength="10" />
+                     <span asp-validation-for="DoseSO2Calculator.CurrentReading" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>PPM</label>
+                  </div>
+               </div>
+
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="DoseSO2Calculator.Goal"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="DoseSO2Calculator.Goal" required maxlength="10" />
+                     <span asp-validation-for="DoseSO2Calculator.Goal" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>PPM</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="DoseSO2Calculator.DoseRate"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="DoseSO2Calculator.DoseRate" readonly />
+                     <span asp-validation-for="DoseSO2Calculator.DoseRate" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomSO2DoseRate">ML/Gallon</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="DoseSO2Calculator.DoseAmount"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="DoseSO2Calculator.DoseAmount" readonly />
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomSO2DoseAmount">ML</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8">
+                     <button id="btnCalcSO2Dose" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+            </form>
+
+         </div>
+      </div>
 
       <!-- // TODO remove when section done -->
       <environment include="Development">

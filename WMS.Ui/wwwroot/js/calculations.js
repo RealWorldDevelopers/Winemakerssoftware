@@ -39,6 +39,7 @@
       event.preventDefault();
       var $form = $('#frmChaptalization');
       if ($form.valid()) {
+
          var useMetric = false;
          var useBrix = false;
          if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
@@ -57,11 +58,13 @@
          }
 
          var sugar = CalcSugar(start, end, gal, useBrix);
+
          $('#ChaptalizationCalculator_Sugar').val(formatForDisplay(sugar));
 
          $('#ChaptalizationCalculator_CurrentReading').val(formatForDisplay(start));
          $('#ChaptalizationCalculator_Goal').val(formatForDisplay(end));
          $('#ChaptalizationCalculator_Volume').val(formatForDisplay(vol));
+
       }
 
    });
@@ -81,16 +84,7 @@
          var start = $('#AlcoholCalculator_SugarStart').val();
          var end = $('#AlcoholCalculator_SugarEnd').val();
 
-         var abv;
-         if (useBrix) {
-            // brix
-            var init = start * 0.55 - 0.63;
-            var final = end * 0.55 - 0.63;
-            abv = init - final;
-         } else {
-            //SG
-            abv = Math.round(((start - end) * 131.25) * 10) / 10;
-         }
+         var abv = CalcAlcohol(start, end, useBrix);
 
          $('#AlcoholCalculator_Abv').val(formatForDisplay(abv));
 
@@ -108,18 +102,13 @@
       event.preventDefault();
       var $form = $('#frmFortify');
       if ($form.valid()) {
-         var metricTransform = 3.7854;
-         if ($('input[name=optUomFortify]:checked', '#frmFortify').val() === 'metric') {
-            metricTransform = 1;
-         }
 
          var volume = $('#FortifyCalculator_Volume').val();
          var spirit_alchohol = $('#FortifyCalculator_SpiritReading').val() / 100;
          var wine_alchohol = $('#FortifyCalculator_CurrentReading').val() / 100;
          var target_alchohol = $('#FortifyCalculator_Goal').val() / 100;
 
-         var tmp4 = volume * metricTransform * (target_alchohol - wine_alchohol) / (spirit_alchohol - target_alchohol);
-         var needed = tmp4 / metricTransform;
+         var needed = CalcFortifyAddition(volume, target_alchohol, wine_alchohol, spirit_alchohol);
 
          $('#FortifyCalculator_Spirit').val(formatForDisplay(needed));
 
@@ -144,10 +133,7 @@
          var temperature_reading = $('#GravityTempCalculator_TempReading').val();
          var calibration_temperature = $('#GravityTempCalculator_TempCalibrate').val();
 
-         mg = measured_gravity; // needs to be SG
-         if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
-            mg = (measured_gravity / (258.6 - ((measured_gravity / 258.2) * 227.1)) + 1);
-         }
+         mg = measured_gravity;
 
          tr = temperature_reading; // needs to be Fahrenheit
          tc = calibration_temperature; // needs to be Fahrenheit
@@ -156,15 +142,14 @@
             tc = 9.0 / 5.0 * calibration_temperature + 32;
          }
 
-         var corrected_gravity = mg * ((1.00130346 - 0.000134722124 * tr + 0.00000204052596 * tr * tr - 0.00000000232820948 * tr * tr * tr) /
-            (1.00130346 - 0.000134722124 * tc + 0.00000204052596 * tc * tc - 0.00000000232820948 * tc * tc * tc));
-
-         var cg = corrected_gravity;
+         var corrected_gravity;
          if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
-            cg = ((corrected_gravity - 1) * 220) + 1.6;
+            corrected_gravity = AdjustBrixForTemp(mg, tc, tr);
+         } else {
+            corrected_gravity = AdjustSpecificGravityForTemp(mg, tc, tr);
          }
 
-         $('#GravityTempCalculator_CorrectedValue').val(formatForDisplay(cg));
+         $('#GravityTempCalculator_CorrectedValue').val(formatForDisplay(corrected_gravity));
 
          $('#GravityTempCalculator_MeasuredGravity').val(formatForDisplay(measured_gravity));
          $('#GravityTempCalculator_TempReading').val(formatForDisplay(temperature_reading));
@@ -174,7 +159,88 @@
 
    });
 
+   // calculate SO2 Dose button
+   $('body').off('click', '#btnCalcSO2Dose');
+   $('body').on('click', '#btnCalcSO2Dose', function (e) {
 
+      event.preventDefault();
+      var $form = $('#frmSO2Dose');
+      if ($form.valid()) {
+
+         var startingSO2 = $('#DoseSO2Calculator_CurrentReading').val();
+         var endingSO2 = $('#DoseSO2Calculator_Goal').val();
+         if (endingSO2 > 50) {
+            endingSO2 = 50;
+         }
+
+         var liters;
+         var gallons;
+         if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() === 'metric') {
+            liters = $('#DoseSO2Calculator_Volume').val();
+            gallons = LitersToGallons(liters);
+
+         } else {
+            gallons = $('#DoseSO2Calculator_Volume').val();
+            var qrts = GallonsToQuarts(gallons);
+            liters = QuartsToLiters(qrts);
+         }
+
+         if ($('input[name=optUomSO2DoseSolution]:checked', '#frmSO2Dose').val() === 'powder') {
+
+            var gPerGallon = (endingSO2 - startingSO2) * 0.00657;
+            var gPerLiter = gPerGallon * 0.2642;
+
+            var gDoseForLiters = gPerLiter * liters;
+            var gDoseForGallons = gPerGallon * gallons;
+
+            if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() === 'metric') {
+               $('#DoseSO2Calculator_DoseRate').val(formatForDisplay(gPerLiter));
+               $('#DoseSO2Calculator_DoseAmount').val(formatForDisplay(gDoseForLiters));
+            } else {
+               $('#DoseSO2Calculator_DoseRate').val(formatForDisplay(gPerGallon));
+               $('#DoseSO2Calculator_DoseAmount').val(formatForDisplay(gDoseForGallons));
+            }
+
+         } else {
+            var mlPerLiter = (endingSO2 - startingSO2) * 0.0175;
+            var mlPerGallon = mlPerLiter * 3.378541;
+
+            var mlDoseForLiters = mlPerLiter * liters;
+            var mlDoseForGallons = mlPerGallon * gallons;
+
+            if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() !== 'metric') {
+               $('#DoseSO2Calculator_DoseRate').val(formatForDisplay(mlPerLiter));
+               $('#DoseSO2Calculator_DoseAmount').val(formatForDisplay(mlDoseForLiters));
+            } else {
+               $('#DoseSO2Calculator_DoseRate').val(formatForDisplay(mlPerGallon));
+               $('#DoseSO2Calculator_DoseAmount').val(formatForDisplay(mlDoseForGallons));
+            }
+
+         }
+
+      }
+
+   });
+
+   // calculate SO2 Dose button
+   $('body').off('click', '#btnTitrateSO2');
+   $('body').on('click', '#btnTitrateSO2', function (e) {
+
+      event.preventDefault();
+      var $form = $('#frmSO2Titrate');
+      if ($form.valid()) {
+
+         var normal = $('#TitrateSO2_Normal').val();
+         var volNaOH = $('#TitrateSO2_VolumeNaOH').val();
+         var volWine = $('#TitrateSO2_TestSize').val();
+
+         var ppm = TitrateSO2(volWine, normal, volNaOH);
+
+         $('#TitrateSO2_FreeSO2').val(ppm);
+
+      }
+
+   });
 
 
 
@@ -239,10 +305,143 @@
 
    });
 
+   // adjust labels by user choice SO2 Dose
+   $('#frmSO2Dose').off('click', 'input[type=radio]');
+   $('#frmSO2Dose').on('click', 'input[type=radio]', function (e) {
+
+      if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() === 'metric') {
+         $('label[name=lblUomSO2DoseVolume]').text('Liters');
+
+         if ($('input[name=optUomSO2DoseSolution]:checked', '#frmSO2Dose').val() === 'powder') {
+            $('label[name=lblUomSO2DoseAmount]').text('Grams');
+            $('label[name=lblUomSO2DoseRate]').text('Grams/Liter');
+         } else {
+            $('label[name=lblUomSO2DoseAmount]').text('ML');
+            $('label[name=lblUomSO2DoseRate]').text('ML/Liter');
+         }
+      } else {
+         $('label[name=lblUomSO2DoseVolume]').text('Gallons');
+
+         if ($('input[name=optUomSO2DoseSolution]:checked', '#frmSO2Dose').val() === 'powder') {
+            $('label[name=lblUomSO2DoseAmount]').text('Grams');
+            $('label[name=lblUomSO2DoseRate]').text('Grams/Gallon');
+         } else {
+            $('label[name=lblUomSO2DoseAmount]').text('ML');
+            $('label[name=lblUomSO2DoseRate]').text('ML/Gallon');
+         }
+      }
+
+   });
+
+   $('#frmSO2Dose').off('keyup', '#DoseSO2Calculator_pH');
+   $('#frmSO2Dose').on('keyup', '#DoseSO2Calculator_pH', function (e) {
+      var red = true;
+      if ($('input[name=optSO2DoseVariety]:checked', '#frmSO2Dose').val() === 'white') {
+         red = false;
+      }
+
+      var pH = $('#DoseSO2Calculator_pH').val();
+      var target = CalcTargetSO2(pH, red);
+
+      $('#DoseSO2Calculator_Goal').val(target);
+
+   });
+
 
 });
 
+function DiluteSolution(strengthOfConcentrate, finalSolutionStrength, finalSolutionVolume) {
+   var volumeOfConcentrateNeeded = (finalSolutionStrength * finalSolutionVolume) / strengthOfConcentrate;
+   return volumeOfConcentrateNeeded;
+}
 
+function TitrateSO2(mL_Wine, N_NaOH, mL_NaOH) {
+   var ppm_SO2;
+   if (mL_Wine !== 0) {
+      ppm_SO2 = (32000 * mL_NaOH * N_NaOH) / mL_Wine;
+   }
+   return ppm_SO2;
+}
+
+function CalcFortifyAddition(volume, targetAlchohol, wineAlchohol, spiritAlchohol) {
+   var tmp = volume * (targetAlchohol - wineAlchohol) / (spiritAlchohol - targetAlchohol);
+   var needed = tmp;
+   return needed;
+}
+
+function AdjustSpecificGravityForTemp(readingSG, calabratedTemp, fahrenheitAtReading) {
+   var adjustedSG = 0;
+   if (Math.abs(calabratedTemp - fahrenheitAtReading) < 5.01) {
+      adjustedSG = readingSG;
+   } else {
+      adjustedSG = readingSG * ((1.00130346 - (0.000134722124 * fahrenheitAtReading) + (0.00000204052596 * fahrenheitAtReading * fahrenheitAtReading) -
+         (0.00000000232820948 * fahrenheitAtReading * fahrenheitAtReading * fahrenheitAtReading)) / (1.00130346 - (0.000134722124 * calabratedTemp) +
+            (0.00000204052596 * calabratedTemp * calabratedTemp) - (0.00000000232820948 * calabratedTemp * calabratedTemp * calabratedTemp)));
+   }
+
+   return adjustedSG;
+   // var newNum = Math.round(adjustedSG * 1000) / 1000;
+   // return newNum.toLocaleString('en');
+}
+
+function AdjustBrixForTemp(readingBrix, calabratedTemp, fahrenheitAtReading) {
+   var adjustedBrix = 0;
+
+   if (Math.abs(calabratedTemp - fahrenheitAtReading) < 5.01) {
+      adjustedBrix = readingBrix;
+   } else {
+      var degreesCorrection = 0;
+      var tempDiffernece = fahrenheitAtReading - calabratedTemp;
+      var originalBrix = readingBrix;
+
+      degreesCorrection = 0.0000006907947565 * tempDiffernece * tempDiffernece * tempDiffernece * tempDiffernece +
+         0.0000008650898228 * tempDiffernece * tempDiffernece * tempDiffernece * originalBrix + 0.0000002111610273 * tempDiffernece * tempDiffernece * originalBrix * originalBrix -
+         0.000000420289855 * tempDiffernece * originalBrix * originalBrix * originalBrix + 3.388131789E-19 * tempDiffernece * tempDiffernece * tempDiffernece * tempDiffernece -
+         0.00002646880494 * tempDiffernece * tempDiffernece * tempDiffernece - 0.00003812273795 * tempDiffernece * tempDiffernece * originalBrix +
+         0.00002132555958 * tempDiffernece * originalBrix * originalBrix + 0.0000003140096619 * originalBrix * originalBrix * originalBrix +
+         0.001470413886 * tempDiffernece * tempDiffernece + 0.0003854292164 * tempDiffernece * originalBrix -
+         0.00001254869767 * originalBrix * originalBrix + 0.04799327348 * tempDiffernece + 0.0002013056055 * originalBrix - 0.002157758291;
+
+      adjustedBrix = readingBrix + degreesCorrection;
+   }
+
+   return adjustedBrix;
+   //var newNum = Math.round(adjustedBrix * 10) / 10;
+   //return newNum.toLocaleString('en');
+
+}
+
+function CalcAlcohol(start, end, useBrix) {
+   var abv;
+   if (useBrix) {
+      // brix
+      var init = start * 0.55 - 0.63;
+      var final = end * 0.55 - 0.63;
+      abv = init - final;
+   } else {
+      //SG
+      abv = Math.round(((start - end) * 131.25) * 10) / 10;
+   }
+   return 0;
+}
+
+function CalcTargetSO2(pH, red) {
+   var target = 40;
+   var whiteAdjustment = 10;
+   if (red === true) {
+      target = 35;
+      whiteAdjustment = 0;
+   }
+
+   if (pH > 3) {
+      target = (pH - 3) * 100;
+      target = target + whiteAdjustment;
+   }
+   if (target > 50) {
+      target = 50;
+   }
+   return target;
+}
 
 function CalcSugar(starting, ending, volume, useBrix) {
    try {
@@ -316,6 +515,25 @@ function LitersToGallons(l) {
       console.error(err);
    }
 }
+
+function GallonsToQuarts(gals) {
+   try {
+      var qrts = gals * 4;
+      return qrts;
+   } catch (err) {
+      console.error(err);
+   }
+}
+
+function QuartsToLiters(qrts) {
+   try {
+      var l = qrts * 0.946352946;
+      return l;
+   } catch (err) {
+      console.error(err);
+   }
+}
+
 
 
 
