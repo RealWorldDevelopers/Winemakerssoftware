@@ -109,7 +109,7 @@ namespace WMS.Ui.Models.Calculations
       public decimal? CurrentReading { set; get; }
 
       [Required]
-        [Range(0, 50)]
+      [Range(0, 50)]
       [DisplayName("Goal SO2")]
       public decimal? Goal { set; get; }
 
@@ -126,7 +126,7 @@ namespace WMS.Ui.Models.Calculations
    }
 
    public class TitrateSO2ViewModel
-   {     
+   {
       [Required]
       [Range(0, 999)]
       [DisplayName("mL of Must Tested")]
@@ -147,6 +147,53 @@ namespace WMS.Ui.Models.Calculations
 
    }
 
+   public class DiluteSolutionViewModel
+   {
+      [Required]
+      //  [Range(-5, 35)]
+      [DisplayName("Strength of Concentrate (N)")]
+      public decimal? StrengthOfConcentrate { set; get; }
+
+      [DisplayName("Final Solution Strength (N)")]
+      public decimal? FinalSolutionStrength { set; get; }
+
+      // [Required]
+      // [Range(-5, 35)]
+      [DisplayName("Final Solution Volume")]
+      public decimal? FinalSolutionVolume { set; get; }     
+
+     // [Required]
+     // [Range(0, 999)]
+      [DisplayName("Volume of Concentrate Needed")]
+      public decimal? VolumeOfConcentrateNeeded { set; get; }
+
+   }
+
+   public class TitrateNaOHViewModel
+   {
+      [Required]
+      //  [Range(-5, 35)]
+      [DisplayName("mL of Potassium Acid Phthalate (KaPh)")]
+      public decimal? KaPhVolume { set; get; }
+
+      [DisplayName("N of KaPh")]
+      public decimal? KaPhNormal { set; get; }
+
+      // [Required]
+      // [Range(-5, 35)]
+      [DisplayName("mL of Sodium Hydroxide (NaOH)")]
+      public decimal? NaOHVolume { set; get; }
+
+      // [Required]
+      // [Range(0, 999)]
+      [DisplayName("N of NaOH")]
+      public decimal? NaOHNormal { set; get; }
+
+   }
+
+
+
+
    public class CalculationsViewModel
    {
       public CalculationsViewModel()
@@ -165,10 +212,12 @@ namespace WMS.Ui.Models.Calculations
       public GravityTempViewModel GravityTempCalculator { get; set; }
 
       public DoseSO2ViewModel DoseSO2Calculator { get; set; }
-
+      
       public TitrateSO2ViewModel TitrateSO2 { get; set; }
 
+      public DiluteSolutionViewModel DiluteSolution { get; set; }
 
+      public TitrateNaOHViewModel TitrateNaOH { get; set; }
 
    }
 

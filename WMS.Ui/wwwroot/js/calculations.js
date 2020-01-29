@@ -242,6 +242,23 @@
 
    });
 
+   // calculate SO2 Dose button
+   $('body').off('click', '#btnCalcDilute');
+   $('body').on('click', '#btnCalcDilute', function (e) {
+
+      event.preventDefault();
+      var $form = $('#frmDilute');
+      if ($form.valid()) {
+         var concetration = $('#DiluteSolution_StrengthOfConcentrate').val();
+         var finalStrength = $('#DiluteSolution_FinalSolutionStrength').val();
+         var finalVolume = $('#DiluteSolution_FinalSolutionVolume').val();        
+
+         var needed = DiluteSolution(concetration, finalStrength, finalVolume);
+
+         $('#DiluteSolution_VolumeOfConcentrateNeeded').val(needed);
+      }
+   });
+
 
 
 

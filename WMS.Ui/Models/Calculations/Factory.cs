@@ -13,8 +13,10 @@ namespace WMS.Ui.Models.Calculations
          model.GravityTempCalculator = new GravityTempViewModel { TempCalibrate = 68 };
          model.DoseSO2Calculator = new DoseSO2ViewModel { pH = 3.0m, Goal = 35 };
          model.TitrateSO2 = new TitrateSO2ViewModel { Normal = .01m, TestSize = 20 };
+         model.DiluteSolution = new DiluteSolutionViewModel();
+         model.TitrateNaOH = new TitrateNaOHViewModel();
 
-         // Concentrate
+         // acid
 
 
          model.CalculatorGroups.Add(new CalculatorViewModel { DisplayName = "SO2", GroupName = "SO2" });
