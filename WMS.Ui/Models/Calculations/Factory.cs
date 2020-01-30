@@ -15,6 +15,7 @@ namespace WMS.Ui.Models.Calculations
          model.TitrateSO2 = new TitrateSO2ViewModel { Normal = .01m, TestSize = 20 };
          model.DiluteSolution = new DiluteSolutionViewModel();
          model.TitrateNaOH = new TitrateNaOHViewModel();
+         model.TitrateAcid = new TitrateAcidViewModel();
 
          // acid
 

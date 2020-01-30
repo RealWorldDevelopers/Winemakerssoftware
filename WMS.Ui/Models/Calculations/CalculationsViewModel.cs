@@ -160,10 +160,10 @@ namespace WMS.Ui.Models.Calculations
       // [Required]
       // [Range(-5, 35)]
       [DisplayName("Final Solution Volume")]
-      public decimal? FinalSolutionVolume { set; get; }     
+      public decimal? FinalSolutionVolume { set; get; }
 
-     // [Required]
-     // [Range(0, 999)]
+      // [Required]
+      // [Range(0, 999)]
       [DisplayName("Volume of Concentrate Needed")]
       public decimal? VolumeOfConcentrateNeeded { set; get; }
 
@@ -191,6 +191,28 @@ namespace WMS.Ui.Models.Calculations
 
    }
 
+   public class TitrateAcidViewModel
+   {
+      [Required]
+      //  [Range(-5, 35)]
+      [DisplayName("mL of Must Tested")]
+      public decimal? MustVolume { set; get; }
+
+      [DisplayName("mL of Sodium Hydroxide (NaOH)")]
+      public decimal? NaOHVolume { set; get; }
+
+      // [Required]
+      // [Range(-5, 35)]
+      [DisplayName("N of NaOH")]
+      public decimal? NaOHNormal { set; get; }
+
+      // [Required]
+      // [Range(0, 999)]
+      [DisplayName("g/L Total Acid")]
+      public decimal? TotalAcid { set; get; }
+
+   }
+
 
 
 
@@ -212,12 +234,14 @@ namespace WMS.Ui.Models.Calculations
       public GravityTempViewModel GravityTempCalculator { get; set; }
 
       public DoseSO2ViewModel DoseSO2Calculator { get; set; }
-      
+
       public TitrateSO2ViewModel TitrateSO2 { get; set; }
 
       public DiluteSolutionViewModel DiluteSolution { get; set; }
 
       public TitrateNaOHViewModel TitrateNaOH { get; set; }
+
+      public TitrateAcidViewModel TitrateAcid { get; set; }
 
    }
 

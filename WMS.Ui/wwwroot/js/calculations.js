@@ -242,7 +242,7 @@
 
    });
 
-   // calculate SO2 Dose button
+   // calculate Dilute Solution button
    $('body').off('click', '#btnCalcDilute');
    $('body').on('click', '#btnCalcDilute', function (e) {
 
@@ -251,13 +251,48 @@
       if ($form.valid()) {
          var concetration = $('#DiluteSolution_StrengthOfConcentrate').val();
          var finalStrength = $('#DiluteSolution_FinalSolutionStrength').val();
-         var finalVolume = $('#DiluteSolution_FinalSolutionVolume').val();        
+         var finalVolume = $('#DiluteSolution_FinalSolutionVolume').val();
 
          var needed = DiluteSolution(concetration, finalStrength, finalVolume);
 
          $('#DiluteSolution_VolumeOfConcentrateNeeded').val(needed);
       }
    });
+
+   // calculate Titrate NaOH button
+   $('body').off('click', '#btnTitrateNaOH');
+   $('body').on('click', '#btnTitrateNaOH', function (e) {
+
+      event.preventDefault();
+      var $form = $('#frmTitrateNaOH');
+      if ($form.valid()) {
+         var KaPhVolume = $('#TitrateNaOH_KaPhVolume').val();
+         var KaPhNormal = $('#TitrateNaOH_KaPhNormal').val();
+         var NaOHVolume = $('#TitrateNaOH_NaOHVolume').val();
+
+         var n = CalcNofNaOH(KaPhVolume, KaPhNormal, NaOHVolume);
+
+         $('#TitrateNaOH_NaOHNormal').val(n);
+      }
+   });
+   
+   // calculate Titrate Acid button
+   $('body').off('click', '#btnTitrateAcid');
+   $('body').on('click', '#btnTitrateAcid', function (e) {
+
+      event.preventDefault();
+      var $form = $('#frmTitrateAcid');
+      if ($form.valid()) {        
+         var mustVolume = $('#TitrateAcid_MustVolume').val();
+         var NaOHVolume = $('#TitrateAcid_NaOHVolume').val();
+         var NaOHNormal = $('#TitrateAcid_NaOHNormal').val();
+
+         var ppm = CalcPpmAcid(mustVolume,NaOHNormal,NaOHVolume);
+
+         $('#TitrateAcid_TotalAcid').val(ppm);
+      }
+   });
+
 
 
 
@@ -366,6 +401,23 @@
 
 
 });
+
+
+function CalcPpmAcid(mL_Wine, N_NaOH, mL_NaOH) {
+   var ppm_Ta = 0;
+   if (mL_Wine > 0) {
+      ppm_Ta = (75 * mL_NaOH * N_NaOH) / mL_Wine;
+   }
+   return ppm_Ta;
+}
+
+function CalcNofNaOH(mL_KaPh, N_KaPh, mL_NaOH) {
+   var n_NaOH = 0;
+   if (mL_NaOH > 0) {
+      n_NaOH = (mL_KaPh * N_KaPh) / mL_NaOH;
+   }
+   return n_NaOH;
+}
 
 function DiluteSolution(strengthOfConcentrate, finalSolutionStrength, finalSolutionVolume) {
    var volumeOfConcentrateNeeded = (finalSolutionStrength * finalSolutionVolume) / strengthOfConcentrate;

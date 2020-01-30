@@ -7,30 +7,25 @@
    </div>
    <div class="card-body">
 
-      <!-- // TODO remove when all calcs are in -->
-      <environment include="Development">
+      <div class="card">
+         <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
+         <div class="card-body card-text text-left">
 
-         <div class="card">
-            <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
-            <div class="card-body card-text text-left">
+            <fieldset>
+               <legend class="card-title h2">Calculator Group</legend>
+               @foreach (var calcGroup in Model.CalculatorGroups)
+               {
+                  <div class="form-check-inline">
+                     <label class="form-check-label">
+                        <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.DisplayName
+                     </label>
+                  </div>
+               }
+            </fieldset>
+            <br /> <br />
 
-               <fieldset>
-                  <legend class="card-title h2">Calculator Group</legend>
-                  @foreach (var calcGroup in Model.CalculatorGroups)
-                  {
-                     <div class="form-check-inline">
-                        <label class="form-check-label">
-                           <input name="chkCalcGroup" type="checkbox" class="form-check-input" checked value="@calcGroup.GroupName">@calcGroup.DisplayName
-                        </label>
-                     </div>
-                  }
-               </fieldset>
-               <br /> <br />
-
-            </div>
          </div>
-
-      </environment>
+      </div>
 
       <br />
 
@@ -633,83 +628,129 @@
 
       <!-- // TODO remove when section done -->
       <environment include="Development">
-         increase acid
+         up and down acid
       </environment>
 
-      <!-- // TODO remove when section done -->
-      <environment include="Development">
-         decrease acid
-      </environment>
+      <div name="calcAcid" class="card">
+         <div class="card-header bg-dark text-light"><h2>Titrate for Total Acid</h2></div>
+         <div class="card-body">
+            <p class="card-text">
+               &#42;Determine acid level in a volume of Must<br />
+            </p>
 
-      <!-- // TODO remove when section done -->
-      <environment include="Development">
-         titrate Acid
-      </environment>
-
-      <!-- // TODO remove when section done -->
-      <environment include="Development">
-         <div name="calcUtility" class="card">
-            <div class="card-header bg-dark text-light"><h2>Titrate NaOH for Normality</h2></div>
-            <div class="card-body">
-               <p class="card-text">
-                  &#42;Determine the concentration of your titrate for accurate calculations<br />
-               </p>
-
-               <form id="frmTitrateNaOH">
-                  <div class="row">
-                     <div class="col-sm-6">
-                        <input class="form-control text-right" type="text" asp-for="TitrateNaOH.KaPhVolume" required maxlength="10" />
-                        <span asp-validation-for="TitrateNaOH.KaPhVolume" class="text-danger"></span>
-                     </div>
-                     <div class="col-sm-6 text-left">
-                        <label asp-for="TitrateNaOH.KaPhVolume"></label>
-                     </div>
+            <form id="frmTitrateAcid">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateAcid.MustVolume" required maxlength="10" />
+                     <span asp-validation-for="TitrateAcid.MustVolume" class="text-danger"></span>
                   </div>
-
-                  <div class="row">
-                     <div class="col-sm-6">
-                        <input class="form-control text-right" type="text" asp-for="TitrateNaOH.KaPhNormal" required maxlength="10" />
-                        <span asp-validation-for="TitrateNaOH.KaPhNormal" class="text-danger"></span>
-                     </div>
-                     <div class="col-sm-6 text-left">
-                        <label asp-for="TitrateNaOH.KaPhNormal"></label>
-                     </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateAcid.MustVolume"></label>
                   </div>
+               </div>
 
-
-                  <div class="row">
-                     <div class="col-sm-6">
-                        <input class="form-control text-right" type="text" asp-for="TitrateNaOH.NaOHVolume" required maxlength="10" />
-                        <span asp-validation-for="TitrateNaOH.NaOHVolume" class="text-danger"></span>
-                     </div>
-                     <div class="col-sm-6 text-left">
-                        <label asp-for="TitrateNaOH.NaOHVolume"></label>
-                     </div>
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateAcid.NaOHVolume" required maxlength="10" />
+                     <span asp-validation-for="TitrateAcid.NaOHVolume" class="text-danger"></span>
                   </div>
-
-                  <div class="row">
-                     <div class="col-sm-6">
-                        <input class="form-control text-right" type="text" asp-for="TitrateNaOH.NaOHNormal" readonly />
-                        <span asp-validation-for="TitrateNaOH.NaOHNormal" class="text-danger"></span>
-                     </div>
-                     <div class="col-sm-6 text-left">
-                        <label asp-for="TitrateNaOH.NaOHNormal"></label>
-                     </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateAcid.NaOHVolume"></label>
                   </div>
+               </div>
 
-                  <div class="row">
-                     <div class="col-sm-6">
-                        <button id="btnTitrateNaOH" class="btn btn-primary btn-block" type="button">Calculate</button>
-                     </div>
-                     <div class="col-sm-6 text-left"></div>
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateAcid.NaOHNormal" required maxlength="10" />
+                     <span asp-validation-for="TitrateAcid.NaOHNormal" class="text-danger"></span>
                   </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateAcid.NaOHNormal"></label>
+                  </div>
+               </div>
 
-               </form>
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateAcid.TotalAcid" readonly />
+                     <span asp-validation-for="TitrateAcid.TotalAcid" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateAcid.TotalAcid"></label>
+                  </div>
+               </div>
 
-            </div>
+               <div class="row">
+                  <div class="col-sm-6">
+                     <button id="btnTitrateAcid" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-6 text-left"></div>
+               </div>
+
+            </form>
+
          </div>
-      </environment>
+      </div>
 
+      <div name="calcUtility" class="card">
+         <div class="card-header bg-dark text-light"><h2>Titrate NaOH for Normality</h2></div>
+         <div class="card-body">
+            <p class="card-text">
+               &#42;Determine the concentration of your titrate for accurate calculations<br />
+            </p>
+
+            <form id="frmTitrateNaOH">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateNaOH.KaPhVolume" required maxlength="10" />
+                     <span asp-validation-for="TitrateNaOH.KaPhVolume" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateNaOH.KaPhVolume"></label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateNaOH.KaPhNormal" required maxlength="10" />
+                     <span asp-validation-for="TitrateNaOH.KaPhNormal" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateNaOH.KaPhNormal"></label>
+                  </div>
+               </div>
+
+
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateNaOH.NaOHVolume" required maxlength="10" />
+                     <span asp-validation-for="TitrateNaOH.NaOHVolume" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateNaOH.NaOHVolume"></label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control text-right" type="text" asp-for="TitrateNaOH.NaOHNormal" readonly />
+                     <span asp-validation-for="TitrateNaOH.NaOHNormal" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-6 text-left">
+                     <label asp-for="TitrateNaOH.NaOHNormal"></label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-6">
+                     <button id="btnTitrateNaOH" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-6 text-left"></div>
+               </div>
+
+            </form>
+
+         </div>
+      </div>
 
       <div name="calcUtility" class="card">
          <div class="card-header bg-dark text-light"><h2>Dilute a Solution</h2></div>
