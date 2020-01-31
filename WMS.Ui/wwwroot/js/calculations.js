@@ -275,25 +275,54 @@
          $('#TitrateNaOH_NaOHNormal').val(n);
       }
    });
-   
+
    // calculate Titrate Acid button
    $('body').off('click', '#btnTitrateAcid');
    $('body').on('click', '#btnTitrateAcid', function (e) {
 
       event.preventDefault();
       var $form = $('#frmTitrateAcid');
-      if ($form.valid()) {        
+      if ($form.valid()) {
          var mustVolume = $('#TitrateAcid_MustVolume').val();
          var NaOHVolume = $('#TitrateAcid_NaOHVolume').val();
          var NaOHNormal = $('#TitrateAcid_NaOHNormal').val();
 
-         var ppm = CalcPpmAcid(mustVolume,NaOHNormal,NaOHVolume);
+         var ppm = CalcPpmAcid(mustVolume, NaOHNormal, NaOHVolume);
 
          $('#TitrateAcid_TotalAcid').val(ppm);
       }
    });
 
+   // calculate Adjust Acid button
+   $('body').off('click', '#btnAdjustAcid');
+   $('body').on('click', '#btnAdjustAcid', function (e) {
 
+      event.preventDefault();
+      var $form = $('#frmAdjustAcid');
+      if ($form.valid()) {
+         var currentTA = $('#AdjustAcid_CurrentTa').val();
+         var goalTA = $('#AdjustAcid_GoalTa').val();
+         var gramPerLiter = CalcAcidAdditiveNeeded(currentTA, goalTA);
+         var gramPerGallon = gramPerLiter * 3.78541;
+         var volume = $('#AdjustAcid_Volume').val();
+
+         if (goalTA < currentTA) {
+            $('#AdjustAcid_Additive').val('Potassium Bicarbonate');
+         } else {
+            $('#AdjustAcid_Additive').val('Tartaric Acid');
+         }
+
+         var rate = gramPerGallon;         
+         if ($('input[name=optUomAdjustAcid]:checked', '#frmAdjustAcid').val() === 'metric') {
+            rate = gramPerLiter;
+         } 
+
+         var totalAdditive = rate * volume;
+
+         $('#AdjustAcid_DoseRate').val(rate);
+         $('#AdjustAcid_TotalAdditive').val(totalAdditive);
+      }
+   });
 
 
 
@@ -318,6 +347,7 @@
 
    });
 
+
    // adjust labels by user choice AlcoholABV
    $('#frmAlcoholABV').off('click', 'input[type=radio]');
    $('#frmAlcoholABV').on('click', 'input[type=radio]', function (e) {
@@ -329,6 +359,7 @@
 
    });
 
+
    // adjust labels by user choice Fortify
    $('#frmFortify').off('click', 'input[type=radio]');
    $('#frmFortify').on('click', 'input[type=radio]', function (e) {
@@ -339,6 +370,7 @@
       }
 
    });
+
 
    // adjust labels by user choice Gravity Temp
    $('#frmGravityTemp').off('click', 'input[type=radio]');
@@ -356,6 +388,7 @@
       }
 
    });
+
 
    // adjust labels by user choice SO2 Dose
    $('#frmSO2Dose').off('click', 'input[type=radio]');
@@ -400,8 +433,27 @@
    });
 
 
+   // adjust labels for Adjust Acid
+   $('#frmAdjustAcid').off('click', 'input[type=radio]');
+   $('#frmAdjustAcid').on('click', 'input[type=radio]', function (e) {
+      if ($('input[name=optUomAdjustAcid]:checked', '#frmAdjustAcid').val() === 'metric') {
+         $('#lblUomAdjustAcid').text('Liters');
+         $('#lblUomAdjustAcidRate').text('Grams/Liter');
+      } else {
+         $('#lblUomAdjustAcid').text('Gallons');
+         $('#lblUomAdjustAcidRate').text('Grams/Gallon');
+      }
+
+   });
+
 });
 
+function CalcAcidAdditiveNeeded(starting_ta, ending_ta) {
+   var taDifference = 0;
+   taDifference = (ending_ta - starting_ta);
+   result = Math.abs(taDifference);
+   return result;
+}
 
 function CalcPpmAcid(mL_Wine, N_NaOH, mL_NaOH) {
    var ppm_Ta = 0;

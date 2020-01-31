@@ -36,7 +36,7 @@
          <div class="card-header bg-dark text-light"><h2>Chaptalization Sugar</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Chaptalization is the process of adding sugar to unfermented grape must in order to increase the alcohol content after fermentation.
+               &#42;Chaptalization is the process of adding sugar to grape must in order to increase the alcohol content after fermentation.
             </p>
 
             <form id="frmChaptalization">
@@ -433,7 +433,7 @@
          <div class="card-header bg-dark text-light"><h2>Titrate Free Sulfite</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Calc Free SO2 from Measurements<br />
+               &#42;Calculate Free SO2 from Measurements<br />
             </p>
 
             <form id="frmSO2Titrate">
@@ -626,10 +626,121 @@
          </div>
       </div>
 
-      <!-- // TODO remove when section done -->
-      <environment include="Development">
-         up and down acid
-      </environment>
+
+      <div name="calcAcid" class="card">
+         <div class="card-header bg-dark text-light"><h2>Adjust Acid</h2></div>
+         <div class="card-body">
+            <p class="card-text">
+               &#42;Raise or Lower Acidity in a Must.<br />
+            </p>
+
+            <form id="frmAdjustAcid">
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8 text-right">
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomAdjustAcid" checked value="metric">Liters
+                        </label>
+                     </div>
+                     <div class="form-check-inline">
+                        <label class="form-check-label">
+                           <input type="radio" class="form-check-input" name="optUomAdjustAcid" value="imperial">Gallons
+                        </label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="AdjustAcid.CurrentTa"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="AdjustAcid.CurrentTa" required maxlength="10" />
+                     <span asp-validation-for="AdjustAcid.CurrentTa" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>g/L</label>
+                  </div>
+               </div>
+
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="AdjustAcid.GoalTa"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="AdjustAcid.GoalTa" required maxlength="10" />
+                     <span asp-validation-for="AdjustAcid.GoalTa" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>g/L</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="AdjustAcid.Additive"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="AdjustAcid.Additive" readonly />
+                     <span asp-validation-for="AdjustAcid.Additive" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label>B4 text input</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="AdjustAcid.DoseRate"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="AdjustAcid.DoseRate" readonly />
+                     <span asp-validation-for="AdjustAcid.DoseRate" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label id="lblUomAdjustAcidRate">Grams/Liter</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="AdjustAcid.Volume"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="AdjustAcid.Volume" required maxlength="10" />
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label id="lblUomAdjustAcid">Liters</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right">
+                     <label asp-for="AdjustAcid.TotalAdditive"></label>
+                  </div>
+                  <div class="col-sm-8">
+                     <input class="form-control text-right" type="text" asp-for="AdjustAcid.TotalAdditive" readonly />
+                  </div>
+                  <div class="col-sm-2 text-left">
+                     <label name="lblUomFortify">Grams</label>
+                  </div>
+               </div>
+
+               <div class="row">
+                  <div class="col-sm-2 text-right"></div>
+                  <div class="col-sm-8">
+                     <button id="btnAdjustAcid" class="btn btn-primary btn-block" type="button">Calculate</button>
+                  </div>
+                  <div class="col-sm-2 text-left"></div>
+               </div>
+
+            </form>
+
+         </div>
+      </div>
 
       <div name="calcAcid" class="card">
          <div class="card-header bg-dark text-light"><h2>Titrate for Total Acid</h2></div>
