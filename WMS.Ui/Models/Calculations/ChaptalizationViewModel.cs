@@ -5,6 +5,9 @@ namespace WMS.Ui.Models.Calculations
 {
    public class ChaptalizationViewModel
    {
+
+      // https://www.c-sharpcorner.com/article/how-to-add-custom-validator-for-any-model-in-c-sharp/
+
       [Required]
       [Range(0, 999)]
       [DisplayName("Must Volume")]
@@ -12,7 +15,7 @@ namespace WMS.Ui.Models.Calculations
 
       [Required]
       [Range(-5, 35)]
-      [DisplayName("Current Value")]
+      [DisplayName("Current Value")]      
       public decimal? CurrentReading { set; get; }
 
       [Required]

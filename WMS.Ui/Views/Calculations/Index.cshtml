@@ -10,7 +10,6 @@
       <div class="card">
          <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
          <div class="card-body card-text text-left">
-
             <fieldset>
                <legend class="card-title h2">Calculator Group</legend>
                @foreach (var calcGroup in Model.CalculatorGroups)
@@ -22,8 +21,6 @@
                   </div>
                }
             </fieldset>
-            <br /> <br />
-
          </div>
       </div>
 
@@ -36,7 +33,7 @@
          <div class="card-header bg-dark text-light"><h2>Chaptalization Sugar</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Chaptalization is the process of adding sugar to grape must in order to increase the alcohol content after fermentation.
+               &#42; Chaptalization is the process of adding sugar to Must in order to increase the alcohol content after fermentation.
             </p>
 
             <form id="frmChaptalization">
@@ -143,8 +140,8 @@
          <div class="card-header bg-dark text-light"><h2>Calculate Alcohol (ABV)</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Stating Specific Gravity is Before the Yeast is Pitched <br />
-               &#42;&#42;Ending Specific Gravity is at Stabilization (End of Fermentation before back sweetening).
+               &#42; Beginning Sugar is Specific Gravity before the Yeast was pitched. <br />
+               &#42;&#42; Ending Sugar is Specific Gravity at Stabilization (End of Fermentation before back sweetening).
             </p>
 
             <form id="frmAlcoholABV">
@@ -222,7 +219,7 @@
          <div class="card-header bg-dark text-light"><h2>Calculate Volumes to Fortify</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Knowing how much spirits to add to make a fortified wine.<br />
+               &#42; Knowing how much spirits to add to make a fortified wine.<br />
             </p>
 
             <form id="frmFortify">
@@ -325,8 +322,8 @@
          <div class="card-header bg-dark text-light"><h2>Adjust Gravity for Temperature</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Something about being cold<br />
-               &#42;&#42;Something about where to find calibrate temp
+               &#42; An accurate reading takes temperature into consideration.<br />
+               &#42;&#42; Each hydrometer is marked with a temperature for which it is calibrated.
             </p>
 
             <form id="frmGravityTemp">
@@ -433,7 +430,7 @@
          <div class="card-header bg-dark text-light"><h2>Titrate Free Sulfite</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Calculate Free SO2 from Measurements<br />
+               &#42; Calculate Free SO2 from Aeration Oxidation Test Measurements<br />
             </p>
 
             <form id="frmSO2Titrate">
@@ -493,8 +490,7 @@
          <div class="card-header bg-dark text-light"><h2>Raise SO2 Level</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Bring SO2 up to goal level<br />
-               &#42;&#42;To make 10% sulfite solution 10g of sulfite in 50 mL of warm water. Bring to 100 mL with cool water, stir vigorously.
+               &#42; To make a 10% sulfite solution, begin with 10g of sulfite in 50 mL of warm water. Then bring to 100 mL with cool water and stir vigorously.
             </p>
 
             <form id="frmSO2Dose">
@@ -631,7 +627,7 @@
          <div class="card-header bg-dark text-light"><h2>Adjust Acid</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Raise or Lower Acidity in a Must.<br />
+               &#42; Raise or Lower Acidity.<br />
             </p>
 
             <form id="frmAdjustAcid">
@@ -746,7 +742,7 @@
          <div class="card-header bg-dark text-light"><h2>Titrate for Total Acid</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Determine acid level in a volume of Must<br />
+               &#42; Determine Acid Level by Titration.<br />
             </p>
 
             <form id="frmTitrateAcid">
@@ -806,7 +802,7 @@
          <div class="card-header bg-dark text-light"><h2>Titrate NaOH for Normality</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Determine the concentration of your titrate for accurate calculations<br />
+               &#42; Determine the concentration of your titrate for accurate calculations.<br />
             </p>
 
             <form id="frmTitrateNaOH">
@@ -867,8 +863,9 @@
          <div class="card-header bg-dark text-light"><h2>Dilute a Solution</h2></div>
          <div class="card-body">
             <p class="card-text">
-               &#42;Dilute a solutions to a specific volume from a known concentrate<br />
-               &#42;&#42;Supplied Volume can be any unit of measure.  Calculated volume will be in same unit of measure.
+               &#42; Dilute a solutions to a specific volume from a known concentrate.<br />
+               &#42;&#42; Supplied Volume can be any unit of measure.<br />
+               &#42;&#42; Calculated volume will be in same unit of measure.
             </p>
 
             <form id="frmDilute">
@@ -934,6 +931,8 @@
 
 @section Scripts{
    <script src="~/js/calculations.js" asp-append-version="true" type="text/javascript"></script>
+   <script src="~/js/calcFunctions.js" asp-append-version="true" type="text/javascript"></script>
+   <script src="~/js/convertFunctions.js" asp-append-version="true" type="text/javascript"></script>
 }
 
 

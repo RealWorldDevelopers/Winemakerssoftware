@@ -1,33 +1,33 @@
 ﻿// register the service worker first
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-        .register('/sw.js', { scope: '/' })
-        .catch(function (err) {
-            console.log('Service Worker did not register', err)
-        });
+   navigator.serviceWorker
+      .register('/sw.js', { scope: '/' })
+      .catch(function (err) {
+         console.log('Service Worker did not register', err)
+      });
 } else { console.log('Active service worker found, no need to register') }
 
 
 // configure the add to home screen functions
 window.addEventListener('appinstalled', function () {
-    console.log('Application installed.');
+   console.log('Application installed.');
 });
 
 window.addEventListener('beforeinstallprompt', function (evt) {
-    evt.preventDefault();
-    promptEvt = evt;
-    return false;
+   evt.preventDefault();
+   promptEvt = evt;
+   return false;
 });
 
 // capture rootUri for later use
 if (!window.location.origin) {
-    window.location.origin = window.location.protocol + '//'
-        + window.location.hostname
-        + (window.location.port ? ':' + window.location.port : '');
+   window.location.origin = window.location.protocol + '//'
+      + window.location.hostname
+      + (window.location.port ? ':' + window.location.port : '');
 }
 var rootUri = window.location.origin;
 if (rootUri.substr(-1) === '/') {
-    rootUri = rootUri.substr(0, rootUri.length - 1);
+   rootUri = rootUri.substr(0, rootUri.length - 1);
 }
 
 var cssAlert_Error = 'alert alert-danger';
@@ -37,77 +37,90 @@ var cssAlert_Warning = 'alert alert-warning';
 
 $(document).ready(function () {
 
-    $(window).bind('beforeunload', function () {
-        showLoader();
-    });
+   $(window).bind('beforeunload', function () {
+      showLoader();
+   });
 
-    // hover effect images
-    $('body').off('click', 'a.info');
-    $('body').on('click', 'a.info', function () {
-        showPage();
-        event.preventDefault();
-        var el = $(this);
-        onImageClick(this.id, el.data('src'), el.data('alt'), el.data('title'), el.data('caption'));
-    })
+   // hover effect images
+   $('body').off('click', 'a.info');
+   $('body').on('click', 'a.info', function () {
+      showPage();
+      event.preventDefault();
+      var el = $(this);
+      onImageClick(this.id, el.data('src'), el.data('alt'), el.data('title'), el.data('caption'));
+   });
 
-    // click event of print icon
-    $('body').off('click', 'a.printer');
-    $('body').on('click', 'a.printer', function () {
-        showPage();
-        window.print();
-    })
+   // click event of print icon
+   $('body').off('click', 'a.printer');
+   $('body').on('click', 'a.printer', function () {
+      showPage();
+      window.print();
+   });
 
-    // initialize tooltips
-    $('[data-toggle="tooltip"]').tooltip();
+   // initialize tooltips
+   $('[data-toggle="tooltip"]').tooltip();
 
-    // Prompt user to install app
-    if (typeof promptEvt !== 'undefined') {
-        promptEvt.prompt();
+   // Prompt user to install app
+   if (typeof promptEvt !== 'undefined') {
+      promptEvt.prompt();
 
-        promptEvt.userChoice.then(choice => {
-            console.log("User's install choice: ", choice.outcome);
-        });
-    }
+      promptEvt.userChoice.then(choice => {
+         console.log("User's install choice: ", choice.outcome);
+      });
+   }
 
 });
 
 function showLoader() {
-    $('#loader').removeClass('d-none');
-    $('#bodyContent').addClass('d-none');
+   $('#loader').removeClass('d-none');
+   $('#bodyContent').addClass('d-none');
 }
 
 function showPage() {
-    $('#loader').addClass('d-none');
-    $('#bodyContent').removeClass('d-none');
+   $('#loader').addClass('d-none');
+   $('#bodyContent').removeClass('d-none');
 }
 
 function onImageClick(id, src, alt, title, caption) {
-    //alert('it works' + id);
-    document.getElementById("modalImageDisplay_img").src = src;
-    document.getElementById("modalImageDisplay_img").alt = alt;
-    document.getElementById("modalImageDisplay_img").title = title;
-    var captionText = document.getElementById("caption");
-    captionText.innerHTML = caption;    
-    $("#modalImageDisplay").modal()
+   //alert('it works' + id);
+   document.getElementById("modalImageDisplay_img").src = src;
+   document.getElementById("modalImageDisplay_img").alt = alt;
+   document.getElementById("modalImageDisplay_img").title = title;
+   var captionText = document.getElementById("caption");
+   captionText.innerHTML = caption;
+   $("#modalImageDisplay").modal();
 }
 
 function showAlert(msg, css, dimissable) {
-    var dismiss = '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-    if (!dimissable) dismiss = '';
-    var display = '<div class="' + css + '">' + dismiss + msg + '</div>';
-    $('#alertSection').append(display);
+   var dismiss = '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+   if (!dimissable) dismiss = '';
+   var display = '<div class="' + css + '">' + dismiss + msg + '</div>';
+   $('#alertSection').append(display);
 }
 
 function IsAlphaNumeric(e) {
-    var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
-    var ret = ((keyCode == 32) ||             // (Space)
-        (keyCode >= 48 && keyCode <= 57) ||   // numeric (0-9)
-        (keyCode >= 65 && keyCode <= 90) ||   // upper alpha (A-Z)
-        (keyCode >= 97 && keyCode <= 122) ||  // lower alpha (a-z)
-        (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
-    return ret;
+   var keyCode = e.keyCode === 0 ? e.charCode : e.keyCode;
+   var ret = ((keyCode === 32) ||             // (Space)
+      (keyCode >= 48 && keyCode <= 57) ||   // numeric (0-9)
+      (keyCode >= 65 && keyCode <= 90) ||   // upper alpha (A-Z)
+      (keyCode >= 97 && keyCode <= 122) ||  // lower alpha (a-z)
+      (specialKeys.indexOf(e.keyCode) !== -1 && e.charCode !== e.keyCode));
+   return ret;
 }
 
+function formatNumericForDisplay(num, places, fixed) {
+   try {
+      var factor = Math.pow(10, places);
+      var newNum = Math.round(num * factor) / factor;
+      if (fixed) {
+         newNum = newNum.toFixed(places);
+      }
+      return newNum.toLocaleString('en');
+   } catch (err) {
+      console.error(err);
+      return num;
+   }
+}
 
 
 

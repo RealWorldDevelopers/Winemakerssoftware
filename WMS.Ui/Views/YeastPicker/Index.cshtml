@@ -8,7 +8,6 @@
         <div class="card">
             <div class="card-header bg-dark text-light"><h2>Filter by:</h2></div>
             <div class="card-body card-text text-left">
-
                 <fieldset>
                     <legend class="card-title h3">Brand</legend>
                     @foreach (var yeastGroup in Model.YeastsGroups)
@@ -20,7 +19,7 @@
                         </div>
                     }
                 </fieldset>
-                <br /> <br />
+                <br /> 
 
                 <h3 class="card-title">Specific Use</h3>
                 <select id="varietySelector" class="custom-select" aria-label="Select a Variety" asp-items="Model.YeastPairs"></select>
