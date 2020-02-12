@@ -63,7 +63,8 @@
       "inputFiles": [
          "wwwroot/js/calculations.js",
          "wwwroot/js/calcFunctions.js",
-         "wwwroot/js/convertFunctions.js"
+         "wwwroot/js/convertFunctions.js",
+         "wwwroot/js/validation.js"
       ],
       // Optionally specify minification options
       "minify": {

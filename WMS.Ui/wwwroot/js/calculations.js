@@ -54,7 +54,7 @@ $(document).ready(function () {
    $('body').off('click', '#btnCalcSugar');
    $('body').on('click', '#btnCalcSugar', function (e) {
 
-      event.preventDefault();
+      event.preventDefault();     
       var $form = $('#frmChaptalization');
       if ($form.valid()) {
 
@@ -71,9 +71,9 @@ $(document).ready(function () {
             useMetric = true;
             volDigitsDisplay = MetricVolumeDisplayed;
          }
-         var start = $('#ChaptalizationCalculator_CurrentReading').val();
-         var end = $('#ChaptalizationCalculator_Goal').val();
-         var vol = $('#ChaptalizationCalculator_Volume').val();
+         var start = $('#CurrentReading').val();
+         var end = $('#Goal').val();
+         var vol = $('#Volume').val();
 
          var gal = vol;
          if (useMetric) {
@@ -82,11 +82,11 @@ $(document).ready(function () {
 
          var sugar = CalcSugar(start, end, gal, useBrix);
 
-         $('#ChaptalizationCalculator_Sugar').val(formatNumericForDisplay(sugar, massDigitDisplay, false));
+         $('#Sugar').val(formatNumericForDisplay(sugar, massDigitDisplay, false));
 
-         $('#ChaptalizationCalculator_CurrentReading').val(formatNumericForDisplay(start, sugarDigitsDisplay, true));
-         $('#ChaptalizationCalculator_Goal').val(formatNumericForDisplay(end, sugarDigitsDisplay, true));
-         $('#ChaptalizationCalculator_Volume').val(formatNumericForDisplay(vol, volDigitsDisplay, false));
+         $('#CurrentReading').val(formatNumericForDisplay(start, sugarDigitsDisplay, true));
+         $('#Goal').val(formatNumericForDisplay(end, sugarDigitsDisplay, true));
+         $('#Volume').val(formatNumericForDisplay(vol, volDigitsDisplay, false));
 
       }
 

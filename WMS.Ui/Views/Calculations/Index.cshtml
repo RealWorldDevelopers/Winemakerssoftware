@@ -28,8 +28,9 @@
 
       @*<div class="card-columns">*@
 
+      <partial name="_ChaptalizationCalculator" model="Model.ChaptalizationCalculator" />
 
-      <div name="calcSugar" class="card">
+      @*<div name="calcSugar" class="card">
          <div class="card-header bg-dark text-light"><h2>Chaptalization Sugar</h2></div>
          <div class="card-body">
             <p class="card-text">
@@ -76,7 +77,7 @@
                      <label asp-for="ChaptalizationCalculator.Volume"></label>
                   </div>
                   <div class="col-sm-8">
-                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Volume" required maxlength="10" />
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Volume" maxlength="10" />
                      <span asp-validation-for="ChaptalizationCalculator.Volume" class="text-danger"></span>
                   </div>
                   <div class="col-sm-2 text-left">
@@ -90,7 +91,7 @@
                      <label asp-for="ChaptalizationCalculator.CurrentReading"></label>
                   </div>
                   <div class="col-sm-8">
-                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.CurrentReading" required maxlength="10" />
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.CurrentReading" maxlength="10" />
                      <span asp-validation-for="ChaptalizationCalculator.CurrentReading" class="text-danger"></span>
                   </div>
                   <div class="col-sm-2 text-left">
@@ -103,7 +104,7 @@
                      <label asp-for="ChaptalizationCalculator.Goal"></label>
                   </div>
                   <div class="col-sm-8">
-                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Goal" required maxlength="10" />
+                     <input class="form-control text-right" type="text" asp-for="ChaptalizationCalculator.Goal" maxlength="10" />
                      <span asp-validation-for="ChaptalizationCalculator.Goal" class="text-danger"></span>
                   </div>
                   <div class="col-sm-2 text-left">
@@ -134,7 +135,7 @@
             </form>
 
          </div>
-      </div>
+      </div>*@
 
       <div name="calcSugar" class="card">
          <div class="card-header bg-dark text-light"><h2>Calculate Alcohol (ABV)</h2></div>
@@ -933,6 +934,7 @@
    <script src="~/js/calculations.js" asp-append-version="true" type="text/javascript"></script>
    <script src="~/js/calcFunctions.js" asp-append-version="true" type="text/javascript"></script>
    <script src="~/js/convertFunctions.js" asp-append-version="true" type="text/javascript"></script>
+   <script src="~/js/validation.js" asp-append-version="true" type="text/javascript"></script>
 }
 
 

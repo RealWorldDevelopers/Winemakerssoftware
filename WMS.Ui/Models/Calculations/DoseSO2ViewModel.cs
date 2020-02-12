@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WMS.Ui.Models.Calculations
 {
+   // TODO https://www.c-sharpcorner.com/article/how-to-add-custom-validator-for-any-model-in-c-sharp/
+
    public class DoseSO2ViewModel
    {
       //[Required]

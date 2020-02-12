@@ -83,12 +83,12 @@ function showPage() {
 
 function onImageClick(id, src, alt, title, caption) {
    //alert('it works' + id);
-   document.getElementById("modalImageDisplay_img").src = src;
-   document.getElementById("modalImageDisplay_img").alt = alt;
-   document.getElementById("modalImageDisplay_img").title = title;
-   var captionText = document.getElementById("caption");
+   document.getElementById('modalImageDisplay_img').src = src;
+   document.getElementById('modalImageDisplay_img').alt = alt;
+   document.getElementById('modalImageDisplay_img').title = title;
+   var captionText = document.getElementById('caption');
    captionText.innerHTML = caption;
-   $("#modalImageDisplay").modal();
+   $('#modalImageDisplay').modal();
 }
 
 function showAlert(msg, css, dimissable) {

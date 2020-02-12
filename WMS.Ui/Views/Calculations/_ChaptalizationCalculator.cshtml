@@ -1,0 +1,109 @@
+﻿
+@model WMS.Ui.Models.Calculations.ChaptalizationViewModel
+
+<div name="calcSugar" class="card">
+   <div class="card-header bg-dark text-light"><h2>Chaptalization Sugar</h2></div>
+   <div class="card-body">
+      <p class="card-text">
+         &#42; Chaptalization is the process of adding sugar to Must in order to increase the alcohol content after fermentation.
+      </p>
+
+      <form id="frmChaptalization">
+         <div class="row">
+            <div class="col-sm-2 text-right"></div>
+            <div class="col-sm-8 text-right">
+               <div class="form-check-inline">
+                  <label class="form-check-label">
+                     <input type="radio" class="form-check-input" name="optUomSugar" value="brix">Brix
+                  </label>
+               </div>
+               <div class="form-check-inline">
+                  <label class="form-check-label">
+                     <input type="radio" class="form-check-input" name="optUomSugar" checked value="sg">Specific Gravity
+                  </label>
+               </div>
+            </div>
+            <div class="col-sm-2 text-left"></div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right"></div>
+            <div class="col-sm-8 text-right">
+               <div class="form-check-inline">
+                  <label class="form-check-label">
+                     <input type="radio" class="form-check-input" name="optUomVolume" value="metric">kg per liter
+                  </label>
+               </div>
+               <div class="form-check-inline">
+                  <label class="form-check-label">
+                     <input type="radio" class="form-check-input" name="optUomVolume" checked value="imperial">lbs per gal
+                  </label>
+               </div>
+            </div>
+            <div class="col-sm-2 text-left"></div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="Volume"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="Volume" maxlength="10" />
+               <span asp-validation-for="Volume" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label name="lblUomVolume">Gallons</label>
+            </div>
+         </div>
+
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="CurrentReading"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="CurrentReading" maxlength="10" />
+               <span asp-validation-for="CurrentReading" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label name="lblUomSugar">SG</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="Goal"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="Goal" maxlength="10" />
+               <span asp-validation-for="Goal" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label name="lblUomSugar">SG</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="Sugar"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="Sugar" readonly />
+            </div>
+            <div class="col-sm-2 text-left">
+               <label name="lblUomWeight">Pounds</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right"></div>
+            <div class="col-sm-8">
+               <button id="btnCalcSugar" class="btn btn-primary btn-block" type="button">Calculate</button>
+            </div>
+            <div class="col-sm-2 text-left"></div>
+         </div>
+
+      </form>
+
+   </div>
+</div>

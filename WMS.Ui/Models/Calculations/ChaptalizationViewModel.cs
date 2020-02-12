@@ -1,25 +1,28 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using WMS.Ui.Models.Validation;
 
 namespace WMS.Ui.Models.Calculations
 {
    public class ChaptalizationViewModel
    {
+      public bool UseBrix { get; set; }
 
-      // https://www.c-sharpcorner.com/article/how-to-add-custom-validator-for-any-model-in-c-sharp/
-
-      [Required]
+      public bool UseMetric { get; set; }
+            
       [Range(0, 999)]
       [DisplayName("Must Volume")]
       public decimal? Volume { set; get; }
 
-      [Required]
-      [Range(-5, 35)]
-      [DisplayName("Current Value")]      
+      // [Required]
+      // [RangeIf(0, 32, "UseBrix", Comparison.IsEqualTo, true)]
+      // [RangeIf(.990, 1.130, "UseBrix", Comparison.IsEqualTo, false)] // TODO client side Brix SG  .990 to 1.130  or 0 to 31
+      [DisplayName("Current Value")]
       public decimal? CurrentReading { set; get; }
 
-      [Required]
-      [Range(-5, 35)]
+      // [Required]
+      // [RangeIf(0, 32, "UseBrix", Comparison.IsEqualTo, true)]
+      // [RangeIf(.990, 1.130, "UseBrix", Comparison.IsEqualTo, false)] // TODO client side Brix SG  .990 to 1.130  or 0 to 31
       [DisplayName("Goal")]
       public decimal? Goal { set; get; }
 
