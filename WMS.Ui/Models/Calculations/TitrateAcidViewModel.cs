@@ -8,20 +8,20 @@ namespace WMS.Ui.Models.Calculations
    public class TitrateAcidViewModel
    {
       [Required]
-      //  [Range(-5, 35)]
+      [Range(0, 999)]
       [DisplayName("mL of Must Tested")]
       public decimal? MustVolume { set; get; }
 
+      [Required]
+      [Range(0, 999)]
       [DisplayName("mL of Sodium Hydroxide (NaOH)")]
-      public decimal? NaOHVolume { set; get; }
+      public decimal? NaOHVolumeTa { set; get; }
 
-      // [Required]
-      // [Range(-5, 35)]
+      [Required]
+      [Range(-5, 5)]
       [DisplayName("N of NaOH")]
-      public decimal? NaOHNormal { set; get; }
+      public decimal? NaOHNormalTa { set; get; }
 
-      // [Required]
-      // [Range(0, 999)]
       [DisplayName("g/L Total Acid")]
       public decimal? TotalAcid { set; get; }
 

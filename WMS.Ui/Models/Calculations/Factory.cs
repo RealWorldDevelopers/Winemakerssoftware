@@ -11,7 +11,7 @@ namespace WMS.Ui.Models.Calculations
             AlcoholCalculator = new AlcoholViewModel(),
             FortifyCalculator = new FortifyViewModel(),
             GravityTempCalculator = new GravityTempViewModel { TempCalibrate = 68 },
-            DoseSO2Calculator = new DoseSO2ViewModel { pH = 3.0m, Goal = 35 },
+            DoseSO2Calculator = new DoseSO2ViewModel { pH = 3.0m, GoalSO2 = 35 },
             TitrateSO2 = new TitrateSO2ViewModel { Normal = .01m, TestSize = 20 },
             DiluteSolution = new DiluteSolutionViewModel(),
             TitrateNaOH = new TitrateNaOHViewModel(),

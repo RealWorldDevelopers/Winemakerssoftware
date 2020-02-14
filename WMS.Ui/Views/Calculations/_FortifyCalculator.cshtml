@@ -1,0 +1,105 @@
+﻿
+@model WMS.Ui.Models.Calculations.FortifyViewModel
+
+<div name="calcSugar" class="card">
+   <div class="card-header bg-dark text-light"><h2>Calculate Volumes to Fortify</h2></div>
+   <div class="card-body">
+      <p class="card-text">
+         &#42; Knowing how much spirits to add to make a fortified wine.<br />
+      </p>
+
+      <form id="frmFortify">
+         <div class="row">
+            <div class="col-sm-2 text-right"></div>
+            <div class="col-sm-8 text-right">
+               <div class="form-check-inline">
+                  <label class="form-check-label">
+                     <input type="radio" class="form-check-input" name="optUomFortify" value="metric">Liters
+                  </label>
+               </div>
+               <div class="form-check-inline">
+                  <label class="form-check-label">
+                     <input type="radio" class="form-check-input" name="optUomFortify" checked value="imperial">Gallons
+                  </label>
+               </div>
+            </div>
+            <div class="col-sm-2 text-left"></div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="VolumeWine"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="VolumeWine" required maxlength="3" />
+               <span asp-validation-for="VolumeWine" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label name="lblUomFortify">Gallons</label>
+            </div>
+         </div>
+
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="SpiritReading"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="SpiritReading" required maxlength="3" />
+               <span asp-validation-for="SpiritReading" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label>&#37;</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="InitialAlcohol"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="InitialAlcohol" required maxlength="3" />
+               <span asp-validation-for="InitialAlcohol" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label>&#37;</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="GoalAlcohol"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="GoalAlcohol" required maxlength="3" />
+               <span asp-validation-for="GoalAlcohol" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2 text-left">
+               <label>&#37;</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right">
+               <label asp-for="Spirit"></label>
+            </div>
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="Spirit" readonly />
+            </div>
+            <div class="col-sm-2 text-left">
+               <label name="lblUomFortify">Gallons</label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2 text-right"></div>
+            <div class="col-sm-8">
+               <button id="btnCalcFortify" class="btn btn-primary btn-block" type="button">Calculate</button>
+            </div>
+            <div class="col-sm-2 text-left"></div>
+         </div>
+
+      </form>
+
+   </div>
+</div>

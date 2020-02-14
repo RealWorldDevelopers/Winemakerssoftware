@@ -6,28 +6,26 @@ namespace WMS.Ui.Models.Calculations
 {
    public class ChaptalizationViewModel
    {
-      public bool UseBrix { get; set; }
-
-      public bool UseMetric { get; set; }
-            
+      [Required]
       [Range(0, 999)]
       [DisplayName("Must Volume")]
-      public decimal? Volume { set; get; }
+      public decimal? VolumeMustSugar { set; get; }
 
-      // [Required]
-      // [RangeIf(0, 32, "UseBrix", Comparison.IsEqualTo, true)]
-      // [RangeIf(.990, 1.130, "UseBrix", Comparison.IsEqualTo, false)] // TODO client side Brix SG  .990 to 1.130  or 0 to 31
+      [Required]
+      [Range(0, 32)] // Brix
+      [RangeIf(.990, 1.130, "Chaptalization_UseBrix", Comparison.IsEqualTo, false)]
       [DisplayName("Current Value")]
-      public decimal? CurrentReading { set; get; }
+      public decimal? CurrentSugarReading { set; get; }
 
-      // [Required]
-      // [RangeIf(0, 32, "UseBrix", Comparison.IsEqualTo, true)]
-      // [RangeIf(.990, 1.130, "UseBrix", Comparison.IsEqualTo, false)] // TODO client side Brix SG  .990 to 1.130  or 0 to 31
+      [Required]
+      [Range(0, 32)] // Brix
+      [RangeIf(.990, 1.130, "Chaptalization_UseBrix", Comparison.IsEqualTo, false)]
       [DisplayName("Goal")]
-      public decimal? Goal { set; get; }
+      public decimal? GoalSugar { set; get; }
 
       [DisplayName("Sugar")]
       public decimal? Sugar { set; get; }
+
    }
 
 }

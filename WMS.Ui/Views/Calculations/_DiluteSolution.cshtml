@@ -1,0 +1,65 @@
+﻿@model WMS.Ui.Models.Calculations.DiluteSolutionViewModel
+
+<div name="calcUtility" class="card">
+   <div class="card-header bg-dark text-light"><h2>Dilute a Solution</h2></div>
+   <div class="card-body">
+      <p class="card-text">
+         &#42; Dilute a solutions to a specific volume from a known concentrate.<br />
+         &#42;&#42; Supplied Volume can be any unit of measure.<br />
+         &#42;&#42; Calculated volume will be in same unit of measure.
+      </p>
+
+      <form id="frmDilute">
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="StrengthOfConcentrate" required maxlength="5" />
+               <span asp-validation-for="StrengthOfConcentrate" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="StrengthOfConcentrate"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="FinalSolutionStrength" required maxlength="5" />
+               <span asp-validation-for="FinalSolutionStrength" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="FinalSolutionStrength"></label>
+            </div>
+         </div>
+
+
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="FinalSolutionVolume" required maxlength="5" />
+               <span asp-validation-for="FinalSolutionVolume" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="FinalSolutionVolume"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="VolumeOfConcentrateNeeded" readonly />
+               <span asp-validation-for="VolumeOfConcentrateNeeded" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="VolumeOfConcentrateNeeded"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <button id="btnCalcDilute" class="btn btn-primary btn-block" type="button">Calculate</button>
+            </div>
+            <div class="col-sm-6 text-left"></div>
+         </div>
+
+      </form>
+
+   </div>
+</div>
+

@@ -1,0 +1,61 @@
+﻿@model WMS.Ui.Models.Calculations.TitrateSO2ViewModel
+
+<div name="calcSO2" class="card">
+   <div class="card-header bg-dark text-light"><h2>Titrate Free Sulfite</h2></div>
+   <div class="card-body">
+      <p class="card-text">
+         &#42; Calculate Free SO2 from Aeration Oxidation Test Measurements<br />
+      </p>
+
+      <form id="frmSO2Titrate">
+         <div class="row">
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="TestSize" required maxlength="4" />
+               <span asp-validation-for="TestSize" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4 text-left">
+               <label asp-for="TestSize"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="VolumeNaOH" required maxlength="4" />
+               <span asp-validation-for="VolumeNaOH" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4 text-left">
+               <label asp-for="VolumeNaOH"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="Normal" required maxlength="4" />
+               <span asp-validation-for="Normal" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4 text-left">
+               <label asp-for="Normal"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-8">
+               <input class="form-control text-right" type="text" asp-for="FreeSO2" readonly />
+               <span asp-validation-for="FreeSO2" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4 text-left">
+               <label asp-for="FreeSO2"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-8">
+               <button id="btnTitrateSO2" class="btn btn-primary btn-block" type="button">Calculate</button>
+            </div>
+            <div class="col-sm-4 text-left"></div>
+         </div>
+
+      </form>
+
+   </div>
+</div>

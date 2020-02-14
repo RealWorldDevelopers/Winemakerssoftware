@@ -9,30 +9,26 @@ namespace WMS.Ui.Models.Calculations
    public class AdjustAcidViewModel
    {
       [Required]
-      //  [Range(-5, 35)]
+      [Range(0, 60)]
       [DisplayName("Current TA")]
       public decimal? CurrentTa { set; get; }
 
+      [Required]
+      [Range(0, 60)]
       [DisplayName("Goal TA")]
       public decimal? GoalTa { set; get; }
 
-      // [Required]
-      // [Range(-5, 35)]
       [DisplayName("Additive")]
       public string Additive { set; get; }
 
-      // [Required]
-      // [Range(-5, 35)]
       [DisplayName("Rate of Additive")]
-      public decimal? DoseRate { set; get; }
+      public decimal? DoseRateTa { set; get; }
 
-      // [Required]
-      // [Range(-5, 35)]
+      [Required]
+      [Range(0, 999)]
       [DisplayName("Volume of Must")]
-      public decimal? Volume { set; get; }
+      public decimal? VolumeMustTa { set; get; }
 
-      // [Required]
-      // [Range(0, 999)]
       [DisplayName("Total Addition")]
       public decimal? TotalAdditive { set; get; }
 

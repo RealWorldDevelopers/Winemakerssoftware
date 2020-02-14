@@ -122,6 +122,23 @@ function formatNumericForDisplay(num, places, fixed) {
    }
 }
 
+function clearValidation(formId) {
+   // get the form inside we are working - change selector to your form as needed
+   var form = $('#'+formId);
+
+   // get validator object
+   var validator = form.validate();
+
+   // get errors that were created using jQuery.validate.unobtrusive
+   var errors = form.find('.field-validation-error span');
+
+   // trick unobtrusive to think the elements were successfully validated
+   // this removes the validation messages
+   errors.each(function () { validator.settings.success($(this)); });
+
+   // clear errors from validation
+   validator.resetForm();
+}
 
 
 // TODO use to grey scale objects not in the cache when offline (SW Toolbox video) like available menu choices

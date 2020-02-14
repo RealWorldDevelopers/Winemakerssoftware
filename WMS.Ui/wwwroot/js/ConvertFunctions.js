@@ -17,7 +17,6 @@ function FahrenheitToCelsius(fahrenheit) {
 }
 
 
-
 function PoundsToKilograms(lbs) {
    try {
       var kg = lbs * 0.45359237;

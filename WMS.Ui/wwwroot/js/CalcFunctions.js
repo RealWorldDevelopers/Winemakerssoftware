@@ -219,3 +219,4 @@ function GetSugarContent(reading, useBrix) {
       console.error(err);
    }
 }
+

@@ -5,17 +5,17 @@
    $.validator.addMethod('notequalto',
       function (value, element, params) {
          if (this.optional(element)) return true;
-         var props = params[0].split(',');
-         for (var i in props) {
+         var els = params[0].split(',');
+         for (var i in els) {
 
-            var el = $('#' + props[i]);
+            var el = $('#' + els[i]);
             var testVal = el.val();
 
             // if both numeric
             if (!isNaN(testVal) && !isNaN(value)) {
                if (parseFloat(testVal) === parseFloat(value)) return false;
             } else {
-               if (testVal === value) return false;
+               if (testVal.toLowerCase() === value.toLowerCase()) return false;
             }
 
          }
@@ -46,15 +46,15 @@
    jQuery.validator.addMethod('requiredif',
       function (value, element, params) {
          if (value !== '') return true;
-         var prop = $('#' + params[0]);
-         var otherVal = prop.attr('type').toUpperCase() === 'CHECKBOX' ? prop.attr('checked') ? 'true' : 'false' : prop.val();
+         var el = $('#' + params[0]);
+         var otherVal = el.attr('type').toUpperCase() === 'CHECKBOX' || el.attr('type').toUpperCase() === 'RADIO' ? el.prop('checked') ? 'true' : 'false' : el.val();
          var testVal = params[2];
 
          // if both numeric
          if (!isNaN(testVal) && !isNaN(otherVal)) {
-            return params[1] === 'isequalto' ? parseFloat(otherVal) !== parseFloat(testVal) : parseFloat(otherVal) === parseFloat(testVal);
+            return params[1].toLowerCase() === 'isequalto' ? parseFloat(otherVal) === parseFloat(testVal) : parseFloat(otherVal) !== parseFloat(testVal);
          } else {
-            return params[1] === 'isequalto' ? otherVal !== testVal : otherVal === testVal;
+            return params[1].toLowerCase() === 'isequalto' ? otherVal.toLowerCase() === testVal.toLowerCase() : otherVal.toLowerCase() !== testVal.toLowerCase();
          }
 
       });
@@ -70,17 +70,17 @@
          if (this.optional(element)) return true;
 
          var required;
-         var prop = $('#' + params[0]);
-         var otherVal = prop.attr('type').toUpperCase() === 'CHECKBOX' ? prop.attr('checked') ? 'true' : 'false' : prop.val();
+         var el = $('#' + params[0]);
+         var otherVal = el.attr('type').toUpperCase() === 'CHECKBOX' || el.attr('type').toUpperCase() === 'RADIO' ? el.prop('checked') ? 'true' : 'false' : el.val();
          var testVal = params[2];
          var min = params[3];
          var max = params[4];
 
          // if both numeric
          if (!isNaN(testVal) && !isNaN(otherVal)) {
-            required = params[1] === 'isequalto' ? parseFloat(otherVal) === parseFloat(testVal) : parseFloat(otherVal) !== parseFloat(testVal);
+            required = params[1].toLowerCase() === 'isequalto' ? parseFloat(otherVal) === parseFloat(testVal) : parseFloat(otherVal) !== parseFloat(testVal);
          } else {
-            required = params[1] === 'isequalto' ? otherVal === testVal : otherVal !== testVal;
+            required = params[1].toLowerCase() === 'isequalto' ? otherVal.toLowerCase() === testVal.toLowerCase() : otherVal.toLowerCase() !== testVal.toLowerCase();
          }
 
          if (required) {
@@ -95,5 +95,8 @@
          options.rules['rangeif'] = [options.params['dependentproperty'], options.params['comparison'], options.params['dependentvalue'], options.params['min'], options.params['max']];
          options.messages['rangeif'] = options.message;
       });
+
+
+ 
 
 }(jQuery));

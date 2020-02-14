@@ -1,0 +1,61 @@
+﻿@model WMS.Ui.Models.Calculations.TitrateAcidViewModel
+
+<div name="calcAcid" class="card">
+   <div class="card-header bg-dark text-light"><h2>Titrate for Total Acid</h2></div>
+   <div class="card-body">
+      <p class="card-text">
+         &#42; Determine Acid Level by Titration.<br />
+      </p>
+
+      <form id="frmTitrateAcid">
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="MustVolume" required maxlength="4" />
+               <span asp-validation-for="MustVolume" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="MustVolume"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="NaOHVolumeTa" required maxlength="4" />
+               <span asp-validation-for="NaOHVolumeTa" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="NaOHVolumeTa"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="NaOHNormalTa" required maxlength="4" />
+               <span asp-validation-for="NaOHNormalTa" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="NaOHNormalTa"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <input class="form-control text-right" type="text" asp-for="TotalAcid" readonly />
+               <span asp-validation-for="TotalAcid" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6 text-left">
+               <label asp-for="TotalAcid"></label>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <button id="btnTitrateAcid" class="btn btn-primary btn-block" type="button">Calculate</button>
+            </div>
+            <div class="col-sm-6 text-left"></div>
+         </div>
+
+      </form>
+
+   </div>
+</div>

@@ -2,30 +2,28 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace WMS.Ui.Models.Calculations
-{
-   // TODO https://www.c-sharpcorner.com/article/how-to-add-custom-validator-for-any-model-in-c-sharp/
-
+{  
    public class FortifyViewModel
    {
       [Required]
-      [Range(0, 999)]
+      [Range(1, 999)]
       [DisplayName("Volume")]
-      public decimal? Volume { set; get; }
+      public decimal? VolumeWine { set; get; }
 
       [Required]
-      [Range(-5, 35)]
+      [Range(1, 99)]
       [DisplayName("Spirit Alcohol Level")]
       public decimal? SpiritReading { set; get; }
 
       [Required]
-      [Range(-5, 35)]
+      [Range(1, 30)]
       [DisplayName("Initial Alcohol Wine")]
-      public decimal? CurrentReading { set; get; }
+      public decimal? InitialAlcohol { set; get; }
 
       [Required]
-      [Range(-5, 35)]
+      [Range(1, 99)]
       [DisplayName("Goal Alcohol")]
-      public decimal? Goal { set; get; }
+      public decimal? GoalAlcohol { set; get; }
 
       [DisplayName("Volume of Spirit")]
       public decimal? Spirit { set; get; }

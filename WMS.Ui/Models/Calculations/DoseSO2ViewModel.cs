@@ -2,33 +2,30 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace WMS.Ui.Models.Calculations
-{
-   // TODO https://www.c-sharpcorner.com/article/how-to-add-custom-validator-for-any-model-in-c-sharp/
-
+{   
    public class DoseSO2ViewModel
    {
-      //[Required]
+      [Range(0,999)]
+      [DisplayName("Volume")]
+      public decimal? MustVolumeSO2 { set; get; }
+
       [Range(2.5, 4.5)]
       [DisplayName("pH")]
+      [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
       public decimal? pH { set; get; }
 
       [Required]
-      [Range(0, 50)]
+      [Range(0, 80)]
       [DisplayName("Current SO2")]
-      public decimal? CurrentReading { set; get; }
+      public decimal? CurrentSO2Reading { set; get; }
 
       [Required]
-      [Range(0, 50)]
+      [Range(1, 50)]
       [DisplayName("Goal SO2")]
-      public decimal? Goal { set; get; }
+      public decimal? GoalSO2 { set; get; }
 
-      // [Required]
-      // [Range(-5, 35)]
       [DisplayName("Dose Rate")]
-      public decimal? DoseRate { set; get; }
-
-      [DisplayName("Volume")]
-      public decimal? Volume { set; get; }
+      public decimal? DoseRateSO2 { set; get; }     
 
       [DisplayName("Dose Need")]
       public decimal? DoseAmount { set; get; }

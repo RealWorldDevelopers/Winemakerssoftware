@@ -1,25 +1,25 @@
-﻿
-@model WMS.Ui.Models.Calculations.ChaptalizationViewModel
+﻿@model WMS.Ui.Models.Calculations.GravityTempViewModel
 
 <div name="calcSugar" class="card">
-   <div class="card-header bg-dark text-light"><h2>Chaptalization Sugar</h2></div>
+   <div class="card-header bg-dark text-light"><h2>Adjust Gravity for Temperature</h2></div>
    <div class="card-body">
       <p class="card-text">
-         &#42; Chaptalization is the process of adding sugar to Must in order to increase the alcohol content after fermentation.
-      </p>  
+         &#42; An accurate reading takes temperature into consideration.<br />
+         &#42;&#42; Each hydrometer is marked with a temperature for which it is calibrated.
+      </p>
 
-      <form id="frmChaptalization">
+      <form id="frmGravityTemp">
          <div class="row">
             <div class="col-sm-2 text-right"></div>
             <div class="col-sm-8 text-right">
                <div class="form-check-inline">
                   <label class="form-check-label">
-                     <input id="Chaptalization_UseBrix" type="radio" class="form-check-input" name="optUomSugar" value="brix">Brix
+                     <input id="GravityTemp_UseBrix" type="radio" class="form-check-input" name="optUomGravityTemp" value="brix">Brix
                   </label>
                </div>
                <div class="form-check-inline">
                   <label class="form-check-label">
-                     <input id="Chaptalization_UseSG" type="radio" class="form-check-input" name="optUomSugar" checked value="sg">Specific Gravity
+                     <input id="GravityTemp_UseSG" type="radio" class="form-check-input" name="optUomGravityTemp" checked value="sg">Specific Gravity
                   </label>
                </div>
             </div>
@@ -31,12 +31,12 @@
             <div class="col-sm-8 text-right">
                <div class="form-check-inline">
                   <label class="form-check-label">
-                     <input id="UseMetric" type="radio" class="form-check-input" name="optUomVolume" value="metric">kg per liter
+                     <input id="GravityTemp_Metric" type="radio" class="form-check-input" name="optGravityMetric" value="metric">Celsius
                   </label>
                </div>
                <div class="form-check-inline">
                   <label class="form-check-label">
-                     <input id="UseImperial" type="radio" class="form-check-input" name="optUomVolume" checked value="imperial">lbs per gal
+                     <input id="GravityTemp_Imperial" type="radio" class="form-check-input" name="optGravityMetric" checked value="imperial">Fahrenheit
                   </label>
                </div>
             </div>
@@ -45,60 +45,60 @@
 
          <div class="row">
             <div class="col-sm-2 text-right">
-               <label asp-for="VolumeMustSugar"></label>
+               <label asp-for="MeasuredGravity"></label>
             </div>
             <div class="col-sm-8">
-               <input class="form-control text-right" type="text" asp-for="VolumeMustSugar" required maxlength="4" />
-               <span asp-validation-for="VolumeMustSugar" class="text-danger"></span>
+               <input class="form-control text-right" type="text" asp-for="MeasuredGravity" required maxlength="4" />
+               <span asp-validation-for="MeasuredGravity" class="text-danger"></span>
             </div>
             <div class="col-sm-2 text-left">
-               <label name="lblUomVolume">Gallons</label>
+               <label name="lblUomGravitySugar">SG</label>
             </div>
          </div>
 
 
          <div class="row">
             <div class="col-sm-2 text-right">
-               <label asp-for="CurrentSugarReading"></label>
+               <label asp-for="TempReading"></label>
             </div>
             <div class="col-sm-8">
-               <input class="form-control text-right" type="text" asp-for="CurrentSugarReading" required maxlength="4" />
-               <span asp-validation-for="CurrentSugarReading" class="text-danger"></span>
+               <input class="form-control text-right" type="text" asp-for="TempReading" required maxlength="4" />
+               <span asp-validation-for="TempReading" class="text-danger"></span>
             </div>
             <div class="col-sm-2 text-left">
-               <label name="lblUomSugar">SG</label>
+               <label name="lblUomGravityTemp">&#8457;</label>
             </div>
          </div>
 
          <div class="row">
             <div class="col-sm-2 text-right">
-               <label asp-for="GoalSugar"></label>
+               <label asp-for="TempCalibrate"></label>
             </div>
             <div class="col-sm-8">
-               <input class="form-control text-right" type="text" asp-for="GoalSugar" required maxlength="4" />
-               <span asp-validation-for="GoalSugar" class="text-danger"></span>
+               <input class="form-control text-right" type="text" asp-for="TempCalibrate" required maxlength="4" />
+               <span asp-validation-for="TempCalibrate" class="text-danger"></span>
             </div>
             <div class="col-sm-2 text-left">
-               <label name="lblUomSugar">SG</label>
+               <label name="lblUomGravityTemp">&#8457;</label>
             </div>
          </div>
 
          <div class="row">
             <div class="col-sm-2 text-right">
-               <label asp-for="Sugar"></label>
+               <label asp-for="CorrectedValue"></label>
             </div>
             <div class="col-sm-8">
-               <input class="form-control text-right" type="text" asp-for="Sugar" readonly />
+               <input class="form-control text-right" type="text" asp-for="CorrectedValue" readonly />
             </div>
             <div class="col-sm-2 text-left">
-               <label name="lblUomWeight">Pounds</label>
+               <label name="lblUomGravitySugar">SG</label>
             </div>
          </div>
 
          <div class="row">
             <div class="col-sm-2 text-right"></div>
             <div class="col-sm-8">
-               <button id="btnCalcSugar" class="btn btn-primary btn-block" type="button">Calculate</button>
+               <button id="btnCalcGravityTemp" class="btn btn-primary btn-block" type="button">Calculate</button>
             </div>
             <div class="col-sm-2 text-left"></div>
          </div>

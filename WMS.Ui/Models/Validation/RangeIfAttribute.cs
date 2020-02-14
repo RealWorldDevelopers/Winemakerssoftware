@@ -6,12 +6,12 @@ using System.Globalization;
 
 namespace WMS.Ui.Models.Validation
 {
-   [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+   [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
    public sealed class RangeIfAttribute : RangeAttribute, IClientModelValidator
    {
       public string DependentProperty { get; private set; }
       public Comparison Comparison { get; private set; }
-      public object Value { get; private set; }
+      public object Value { get; private set; }     
 
       /// <param name="minimum"></param>
       /// <param name="maximum"></param>
