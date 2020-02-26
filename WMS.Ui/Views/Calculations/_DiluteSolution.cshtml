@@ -1,61 +1,69 @@
 ﻿@model WMS.Ui.Models.Calculations.DiluteSolutionViewModel
-
+   <div id="dilutepop"></div>
 <div name="calcUtility" class="card">
    <div class="card-header bg-dark text-light"><h2>Dilute a Solution</h2></div>
    <div class="card-body">
-      <p class="card-text">
-         &#42; Dilute a solutions to a specific volume from a known concentrate.<br />
-         &#42;&#42; Supplied Volume can be any unit of measure.<br />
-         &#42;&#42; Calculated volume will be in same unit of measure.
-      </p>
+      <div class="d-flex">
+         <a href="#dilutepop" title="Dilute a Solutions from a Known Concentrate" data-toggle="popover" data-trigger="click" data-placement="bottom"
+            data-content="Final Volume can be any unit of measure. Calculated volume will be in same unit of measure.">&#42;Dilute a Solutions</a>
+      </div>
 
       <form id="frmDilute">
-         <div class="row">
-            <div class="col-sm-6">
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="StrengthOfConcentrate"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="StrengthOfConcentrate" required maxlength="5" />
                <span asp-validation-for="StrengthOfConcentrate" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="StrengthOfConcentrate"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">N</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-6">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="FinalSolutionStrength"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="FinalSolutionStrength" required maxlength="5" />
                <span asp-validation-for="FinalSolutionStrength" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="FinalSolutionStrength"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">N</label>
             </div>
          </div>
 
-
-         <div class="row">
-            <div class="col-sm-6">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="FinalSolutionVolume"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="FinalSolutionVolume" required maxlength="5" />
                <span asp-validation-for="FinalSolutionVolume" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="FinalSolutionVolume"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">Any UOM</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-6">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="VolumeOfConcentrateNeeded"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="VolumeOfConcentrateNeeded" readonly />
                <span asp-validation-for="VolumeOfConcentrateNeeded" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="VolumeOfConcentrateNeeded"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">Same UOM</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-6">
-               <button id="btnCalcDilute" class="btn btn-primary btn-block" type="button">Calculate</button>
-            </div>
-            <div class="col-sm-6 text-left"></div>
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnCalcDilute" class="btn btn-primary" type="button">Calculate</button>
          </div>
 
       </form>

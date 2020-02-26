@@ -8,13 +8,13 @@ namespace WMS.Ui.Models.Calculations
    {
       [Required]
       [Range(0, 999)]
-      [DisplayName("Must Volume")]
+      [DisplayName("Volume")]
       public decimal? VolumeMustSugar { set; get; }
 
       [Required]
       [Range(0, 32)] // Brix
       [RangeIf(.990, 1.130, "Chaptalization_UseBrix", Comparison.IsEqualTo, false)]
-      [DisplayName("Current Value")]
+      [DisplayName("Current")]
       public decimal? CurrentSugarReading { set; get; }
 
       [Required]

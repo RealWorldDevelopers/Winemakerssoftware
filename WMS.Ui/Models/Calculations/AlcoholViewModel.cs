@@ -19,7 +19,7 @@ namespace WMS.Ui.Models.Calculations
       [DisplayName("Ending Sugar")]
       public decimal? SugarEnd { set; get; }
 
-      [DisplayName("Alcohol By Volume")]
+      [DisplayName("ABV")]
       public decimal? Abv { set; get; }
 
    }

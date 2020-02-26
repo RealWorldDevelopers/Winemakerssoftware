@@ -8,7 +8,7 @@ namespace WMS.Ui.Models.Calculations
    {
       [Required]
         [Range(0, 999)]
-      [DisplayName("mL of Potassium Acid Phthalate (KaPh)")]
+      [DisplayName("Volume KaPh")]
       public decimal? KaPhVolume { set; get; }
 
       [Required]
@@ -18,7 +18,7 @@ namespace WMS.Ui.Models.Calculations
 
       [Required]
       [Range(0, 999)]
-      [DisplayName("mL of Sodium Hydroxide (NaOH)")]
+      [DisplayName("Volume NaOH")]
       public decimal? NaOHVolume { set; get; }
       
       [DisplayName("N of NaOH")]

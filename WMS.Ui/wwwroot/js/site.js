@@ -60,6 +60,9 @@ $(document).ready(function () {
    // initialize tooltips
    $('[data-toggle="tooltip"]').tooltip();
 
+   // initialize popovers
+   $('[data-toggle="popover"]').popover(); 
+  
    // Prompt user to install app
    if (typeof promptEvt !== 'undefined') {
       promptEvt.prompt();

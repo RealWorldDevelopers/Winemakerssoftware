@@ -410,7 +410,7 @@ $(document).ready(function () {
          $('label[name=lblUomVolume]').text('Liters');
          $('label[name=lblUomWeight]').text('KiloGrams');
       } else {
-         $('label[name=lblUomVolume]').text('Gallons');
+         $('label[name=lblUomVolume]').text('Gallon');
          $('label[name=lblUomWeight]').text('Pounds');
       }
 
@@ -476,8 +476,8 @@ $(document).ready(function () {
             $('label[name=lblUomSO2DoseAmount]').text('Grams');
             $('label[name=lblUomSO2DoseRate]').text('Grams/Liter');
          } else {
-            $('label[name=lblUomSO2DoseAmount]').text('ML');
-            $('label[name=lblUomSO2DoseRate]').text('ML/Liter');
+            $('label[name=lblUomSO2DoseAmount]').text('mL');
+            $('label[name=lblUomSO2DoseRate]').text('mL/Liter');
          }
       } else {
          $('label[name=lblUomSO2DoseVolume]').text('Gallons');
@@ -486,8 +486,8 @@ $(document).ready(function () {
             $('label[name=lblUomSO2DoseAmount]').text('Grams');
             $('label[name=lblUomSO2DoseRate]').text('Grams/Gallon');
          } else {
-            $('label[name=lblUomSO2DoseAmount]').text('ML');
-            $('label[name=lblUomSO2DoseRate]').text('ML/Gallon');
+            $('label[name=lblUomSO2DoseAmount]').text('mL');
+            $('label[name=lblUomSO2DoseRate]').text('mL/Gallon');
          }
       }
 

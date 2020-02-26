@@ -12,12 +12,12 @@ namespace WMS.Ui.Models.Calculations
 
       [Required]
       [Range(1, 99)]
-      [DisplayName("Spirit Alcohol Level")]
+      [DisplayName("Spirit Alcohol")]
       public decimal? SpiritReading { set; get; }
 
       [Required]
       [Range(1, 30)]
-      [DisplayName("Initial Alcohol Wine")]
+      [DisplayName("Alcohol Wine")]
       public decimal? InitialAlcohol { set; get; }
 
       [Required]

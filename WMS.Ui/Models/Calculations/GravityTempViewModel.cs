@@ -9,7 +9,7 @@ namespace WMS.Ui.Models.Calculations
       [Required]
       [Range(0, 32)] // Brix
       [RangeIf(.990, 1.130, "GravityTemp_UseBrix", Comparison.IsEqualTo, false)]
-      [DisplayName("Measured Gravity")]
+      [DisplayName("Measurement")]
       public decimal? MeasuredGravity { set; get; }
 
       [Required]
@@ -21,10 +21,10 @@ namespace WMS.Ui.Models.Calculations
       [Required]
       [Range(10, 80)]
       [RangeIf(50, 80, "GravityTemp_Metric", Comparison.IsEqualTo, false)]
-      [DisplayName("Temp Hydrometer Calibrated")]
+      [DisplayName("Temp Calibrated")]
       public decimal? TempCalibrate { set; get; }
 
-      [DisplayName("Corrected Gravity")]
+      [DisplayName("Correct Gravity")]
       public decimal? CorrectedValue { set; get; }
    }
 

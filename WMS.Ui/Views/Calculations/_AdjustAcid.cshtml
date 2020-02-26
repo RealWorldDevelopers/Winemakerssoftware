@@ -1,113 +1,103 @@
 ﻿@model WMS.Ui.Models.Calculations.AdjustAcidViewModel
-
+ 
 <div name="calcAcid" class="card">
    <div class="card-header bg-dark text-light"><h2>Adjust Acid</h2></div>
-   <div class="card-body">
-      <p class="card-text">
-         &#42; Raise or Lower Acidity.<br />
-      </p>
+   <div class="card-body">     
 
       <form id="frmAdjustAcid">
-         <div class="row">
-            <div class="col-sm-2 text-right"></div>
-            <div class="col-sm-8 text-right">
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input id="AdjustAcid_UseMetric" type="radio" class="form-check-input" name="optUomAdjustAcid" checked value="metric">Liters
-                  </label>
-               </div>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input id="AdjustAcid_UseImperial" type="radio" class="form-check-input" name="optUomAdjustAcid" value="imperial">Gallons
-                  </label>
-               </div>
+         
+         <div class="d-flex justify-content-center m-2">
+            <div class="form-check-inline mr-4">
+               <label class="form-check-label">
+                  <input id="AdjustAcid_UseMetric" type="radio" class="form-check-input" name="optUomAdjustAcid" checked value="metric">Liters
+               </label>
             </div>
-            <div class="col-sm-2 text-left"></div>
+            <div class="form-check-inline mr-4">
+               <label class="form-check-label">
+                  <input id="AdjustAcid_UseImperial" type="radio" class="form-check-input" name="optUomAdjustAcid" value="imperial">Gallons
+               </label>
+            </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-2 text-right">
-               <label asp-for="CurrentTa"></label>
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="CurrentTa"></label>
             </div>
-            <div class="col-sm-8">
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="CurrentTa" required maxlength="4" />
                <span asp-validation-for="CurrentTa" class="text-danger"></span>
             </div>
-            <div class="col-sm-2 text-left">
-               <label>g/L</label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">g/L</label>
             </div>
          </div>
 
 
-         <div class="row">
-            <div class="col-sm-2 text-right">
-               <label asp-for="GoalTa"></label>
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="GoalTa"></label>
             </div>
-            <div class="col-sm-8">
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="GoalTa" required maxlength="4" />
                <span asp-validation-for="GoalTa" class="text-danger"></span>
             </div>
-            <div class="col-sm-2 text-left">
-               <label>g/L</label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">g/L</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-2 text-right">
-               <label asp-for="Additive"></label>
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="Additive"></label>
             </div>
-            <div class="col-sm-8">
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="Additive" readonly />
                <span asp-validation-for="Additive" class="text-danger"></span>
             </div>
-            <div class="col-sm-2 text-left">
-               <label>B4 text input</label>
+            <div class="col p-0 ml-2">
+               <label class="m-0"></label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-2 text-right">
-               <label asp-for="DoseRateTa"></label>
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="DoseRateTa"></label>
             </div>
-            <div class="col-sm-8">
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="DoseRateTa" readonly />
                <span asp-validation-for="DoseRateTa" class="text-danger"></span>
             </div>
-            <div class="col-sm-2 text-left">
-               <label id="lblUomAdjustAcidRate">Grams/Liter</label>
+            <div class="col p-0 ml-2">
+               <label class="m-0" id="lblUomAdjustAcidRate">Grams/Liter</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-2 text-right">
-               <label asp-for="VolumeMustTa"></label>
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="VolumeMustTa"></label>
             </div>
-            <div class="col-sm-8">
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="VolumeMustTa" required maxlength="4" />
             </div>
-            <div class="col-sm-2 text-left">
-               <label id="lblUomAdjustAcid">Liters</label>
+            <div class="col p-0 ml-2">
+               <label class="m-0" id="lblUomAdjustAcid">Liters</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-2 text-right">
-               <label asp-for="TotalAdditive"></label>
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="TotalAdditive"></label>
             </div>
-            <div class="col-sm-8">
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="TotalAdditive" readonly />
             </div>
-            <div class="col-sm-2 text-left">
-               <label name="lblUomFortify">Grams</label>
+            <div class="col p-0 ml-2">
+               <label class="m-0" name="lblUomFortify">Grams</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-2 text-right"></div>
-            <div class="col-sm-8">
-               <button id="btnAdjustAcid" class="btn btn-primary btn-block" type="button">Calculate</button>
-            </div>
-            <div class="col-sm-2 text-left"></div>
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnAdjustAcid" class="btn btn-primary" type="button">Calculate</button>
          </div>
 
       </form>

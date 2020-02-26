@@ -1,58 +1,69 @@
 ﻿@model WMS.Ui.Models.Calculations.TitrateSO2ViewModel
-
+<div id="so2aopop"></div>
 <div name="calcSO2" class="card">
    <div class="card-header bg-dark text-light"><h2>Titrate Free Sulfite</h2></div>
    <div class="card-body">
-      <p class="card-text">
-         &#42; Calculate Free SO2 from Aeration Oxidation Test Measurements<br />
-      </p>
+      <div class="d-flex">
+         <a href="#so2aopop" title="Aeration Oxidation Method" data-toggle="popover" data-trigger="click" data-placement="bottom"
+            data-content="The method is called aeration/oxidation because we aerate the SO2 out of a sample and then oxidize it into a solution. We then take that solution and analyze for the amount of SO2 absorbed.">&#42;Aeration Oxidation Method</a>
+      </div>
 
       <form id="frmSO2Titrate">
-         <div class="row">
-            <div class="col-sm-8">
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="TestSize"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="TestSize" required maxlength="4" />
                <span asp-validation-for="TestSize" class="text-danger"></span>
             </div>
-            <div class="col-sm-4 text-left">
-               <label asp-for="TestSize"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">mL</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-8">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="VolumeNaOH"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="VolumeNaOH" required maxlength="4" />
                <span asp-validation-for="VolumeNaOH" class="text-danger"></span>
             </div>
-            <div class="col-sm-4 text-left">
-               <label asp-for="VolumeNaOH"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">mL</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-8">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="Normal"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="Normal" required maxlength="4" />
                <span asp-validation-for="Normal" class="text-danger"></span>
             </div>
-            <div class="col-sm-4 text-left">
-               <label asp-for="Normal"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">N</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-8">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="FreeSO2"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="FreeSO2" readonly />
                <span asp-validation-for="FreeSO2" class="text-danger"></span>
             </div>
-            <div class="col-sm-4 text-left">
-               <label asp-for="FreeSO2"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">mg/L (ppm)</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-8">
-               <button id="btnTitrateSO2" class="btn btn-primary btn-block" type="button">Calculate</button>
-            </div>
-            <div class="col-sm-4 text-left"></div>
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnTitrateSO2" class="btn btn-primary" type="button">Calculate</button>
          </div>
 
       </form>

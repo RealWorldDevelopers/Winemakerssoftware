@@ -3,57 +3,64 @@
 <div name="calcUtility" class="card">
    <div class="card-header bg-dark text-light"><h2>Titrate NaOH for Normality</h2></div>
    <div class="card-body">
-      <p class="card-text">
-         &#42; Determine the concentration of your titrate for accurate calculations.<br />
-      </p>
 
       <form id="frmTitrateNaOH">
-         <div class="row">
-            <div class="col-sm-6">
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="KaPhVolume"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="KaPhVolume" required maxlength="4" />
                <span asp-validation-for="KaPhVolume" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="KaPhVolume"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">mL</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-6">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="KaPhNormal"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="KaPhNormal" required maxlength="4" />
                <span asp-validation-for="KaPhNormal" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="KaPhNormal"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">N</label>
             </div>
          </div>
 
 
-         <div class="row">
-            <div class="col-sm-6">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="NaOHVolume"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="NaOHVolume" required maxlength="4" />
                <span asp-validation-for="NaOHVolume" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="NaOHVolume"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">mL</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-6">
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="NaOHNormal"></label>
+            </div>
+            <div class="col p-0">
                <input class="form-control text-right" type="text" asp-for="NaOHNormal" readonly />
                <span asp-validation-for="NaOHNormal" class="text-danger"></span>
             </div>
-            <div class="col-sm-6 text-left">
-               <label asp-for="NaOHNormal"></label>
+            <div class="col p-0 ml-2">
+               <label class="m-0">N</label>
             </div>
          </div>
 
-         <div class="row">
-            <div class="col-sm-6">
-               <button id="btnTitrateNaOH" class="btn btn-primary btn-block" type="button">Calculate</button>
-            </div>
-            <div class="col-sm-6 text-left"></div>
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnTitrateNaOH" class="btn btn-primary" type="button">Calculate</button>
          </div>
 
       </form>

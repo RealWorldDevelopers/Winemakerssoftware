@@ -7,12 +7,12 @@ namespace WMS.Ui.Models.Calculations
    {
       [Required]
       [Range(0, 99)]
-      [DisplayName("mL of Must Tested")]
+      [DisplayName("Volume Tested")]
       public decimal? TestSize { set; get; }
 
       [Required]
       [Range(0, 99)]
-      [DisplayName("mL of Sodium Hydroxide (NaOH)")]
+      [DisplayName("Volume NaOH")]
       public decimal? VolumeNaOH { set; get; }
 
       [Required]
@@ -20,7 +20,7 @@ namespace WMS.Ui.Models.Calculations
       [DisplayName("N of NaOH")]
       public decimal? Normal { set; get; }
 
-      [DisplayName("mg/L (ppm) Free SO2")]
+      [DisplayName("Free SO2")]
       public decimal? FreeSO2 { set; get; }
 
    }

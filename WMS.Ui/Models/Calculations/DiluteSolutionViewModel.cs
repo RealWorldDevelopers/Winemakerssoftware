@@ -7,20 +7,20 @@ namespace WMS.Ui.Models.Calculations
    {
       [Required]
       [Range(0, 9999)]
-      [DisplayName("Strength of Concentrate (N)")]
+      [DisplayName("N of Concentrate")]
       public decimal? StrengthOfConcentrate { set; get; }
 
       [Required]
       [Range(0, 9999)]
-      [DisplayName("Final Solution Strength (N)")]
+      [DisplayName("Final N")]
       public decimal? FinalSolutionStrength { set; get; }
 
       [Required]
       [Range(0, 9999)]
-      [DisplayName("Final Solution Volume")]
+      [DisplayName("Final Volume")]
       public decimal? FinalSolutionVolume { set; get; }
       
-      [DisplayName("Volume of Concentrate Needed")]
+      [DisplayName("Concentrate")]
       public decimal? VolumeOfConcentrateNeeded { set; get; }
 
    }
