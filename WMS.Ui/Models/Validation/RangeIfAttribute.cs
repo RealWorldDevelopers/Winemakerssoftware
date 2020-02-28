@@ -11,7 +11,7 @@ namespace WMS.Ui.Models.Validation
    {
       public string DependentProperty { get; private set; }
       public Comparison Comparison { get; private set; }
-      public object Value { get; private set; }     
+      public object Value { get; private set; }
 
       /// <param name="minimum"></param>
       /// <param name="maximum"></param>

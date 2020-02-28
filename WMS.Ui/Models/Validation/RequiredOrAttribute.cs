@@ -56,7 +56,7 @@ namespace WMS.Ui.Models.Validation
             var otherPropNames = DependentProperty.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var otherPropName in otherPropNames)
             {
-               var propInfo = validationContext.ObjectInstance.GetType().GetProperty(DependentProperty);
+               var propInfo = validationContext.ObjectInstance.GetType().GetProperty(otherPropName);
                var propValue = propInfo.GetValue(validationContext.ObjectInstance, null);
 
                if (propValue != null)

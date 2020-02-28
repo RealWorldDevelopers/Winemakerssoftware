@@ -401,17 +401,17 @@ $(document).ready(function () {
       clearValidation('frmChaptalization');
 
       if ($('input[name=optUomSugar]:checked', '#frmChaptalization').val() === 'brix') {
-         $('label[name=lblUomSugar]').text('Brix');
+         $('div[name=lblUomSugar]').text('Brix');
       } else {
-         $('label[name=lblUomSugar]').text('SG');
+         $('div[name=lblUomSugar]').text('SG');
       }
 
       if ($('input[name=optUomVolume]:checked', '#frmChaptalization').val() === 'metric') {
-         $('label[name=lblUomVolume]').text('Liters');
-         $('label[name=lblUomWeight]').text('KiloGrams');
+         $('div[name=lblUomVolume]').text('Liters');
+         $('div[name=lblUomWeight]').text('KiloGrams');
       } else {
-         $('label[name=lblUomVolume]').text('Gallon');
-         $('label[name=lblUomWeight]').text('Pounds');
+         $('div[name=lblUomVolume]').text('Gallon');
+         $('div[name=lblUomWeight]').text('Pounds');
       }
 
    });
@@ -424,9 +424,9 @@ $(document).ready(function () {
       clearValidation('frmAlcoholABV');
 
       if ($('input[name=optUomAlcohol]:checked', '#frmAlcoholABV').val() === 'brix') {
-         $('label[name=lblUomABV]').text('Brix');
+         $('div[name=lblUomABV]').text('Brix');
       } else {
-         $('label[name=lblUomABV]').text('SG');
+         $('div[name=lblUomABV]').text('SG');
       }
 
    });
@@ -436,9 +436,9 @@ $(document).ready(function () {
    $('#frmFortify').off('click', 'input[type=radio]');
    $('#frmFortify').on('click', 'input[type=radio]', function (e) {
       if ($('input[name=optUomFortify]:checked', '#frmFortify').val() === 'metric') {
-         $('label[name=lblUomFortify]').text('Liters');
+         $('div[name=lblUomFortify]').text('Liters');
       } else {
-         $('label[name=lblUomFortify]').text('Gallons');
+         $('div[name=lblUomFortify]').text('Gallons');
       }
 
    });
@@ -451,15 +451,15 @@ $(document).ready(function () {
       clearValidation('frmGravityTemp');
 
       if ($('input[name=optUomGravityTemp]:checked', '#frmGravityTemp').val() === 'brix') {
-         $('label[name=lblUomGravitySugar]').text('Brix');
+         $('div[name=lblUomGravitySugar]').text('Brix');
       } else {
-         $('label[name=lblUomGravitySugar]').text('SG');
+         $('div[name=lblUomGravitySugar]').text('SG');
       }
 
       if ($('input[name=optGravityMetric]:checked', '#frmGravityTemp').val() === 'metric') {
-         $('label[name=lblUomGravityTemp]').text('°C');
+         $('div[name=lblUomGravityTemp]').text('°C');
       } else {
-         $('label[name=lblUomGravityTemp]').text('°F');
+         $('div[name=lblUomGravityTemp]').text('°F');
       }
 
    });
@@ -470,24 +470,24 @@ $(document).ready(function () {
    $('#frmSO2Dose').on('click', 'input[type=radio]', function (e) {
 
       if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() === 'metric') {
-         $('label[name=lblUomSO2DoseVolume]').text('Liters');
+         $('div[name=lblUomSO2DoseVolume]').text('Liters');
 
          if ($('input[name=optUomSO2DoseSolution]:checked', '#frmSO2Dose').val() === 'powder') {
-            $('label[name=lblUomSO2DoseAmount]').text('Grams');
-            $('label[name=lblUomSO2DoseRate]').text('Grams/Liter');
+            $('div[name=lblUomSO2DoseAmount]').text('Grams');
+            $('div[name=lblUomSO2DoseRate]').text('Grams/Liter');
          } else {
-            $('label[name=lblUomSO2DoseAmount]').text('mL');
-            $('label[name=lblUomSO2DoseRate]').text('mL/Liter');
+            $('div[name=lblUomSO2DoseAmount]').text('mL');
+            $('div[name=lblUomSO2DoseRate]').text('mL/Liter');
          }
       } else {
-         $('label[name=lblUomSO2DoseVolume]').text('Gallons');
+         $('div[name=lblUomSO2DoseVolume]').text('Gallons');
 
          if ($('input[name=optUomSO2DoseSolution]:checked', '#frmSO2Dose').val() === 'powder') {
-            $('label[name=lblUomSO2DoseAmount]').text('Grams');
-            $('label[name=lblUomSO2DoseRate]').text('Grams/Gallon');
+            $('div[name=lblUomSO2DoseAmount]').text('Grams');
+            $('div[name=lblUomSO2DoseRate]').text('Grams/Gallon');
          } else {
-            $('label[name=lblUomSO2DoseAmount]').text('mL');
-            $('label[name=lblUomSO2DoseRate]').text('mL/Gallon');
+            $('div[name=lblUomSO2DoseAmount]').text('mL');
+            $('div[name=lblUomSO2DoseRate]').text('mL/Gallon');
          }
       }
 
@@ -512,11 +512,11 @@ $(document).ready(function () {
    $('#frmAdjustAcid').off('click', 'input[type=radio]');
    $('#frmAdjustAcid').on('click', 'input[type=radio]', function (e) {
       if ($('input[name=optUomAdjustAcid]:checked', '#frmAdjustAcid').val() === 'metric') {
-         $('#lblUomAdjustAcid').text('Liters');
-         $('#lblUomAdjustAcidRate').text('Grams/Liter');
+         $('div[name=lblUomAdjustAcid]').text('Liters');
+         $('div[name=lblUomAdjustAcidRate]').text('Grams/Liter');
       } else {
-         $('#lblUomAdjustAcid').text('Gallons');
-         $('#lblUomAdjustAcidRate').text('Grams/Gallon');
+         $('div[name=lblUomAdjustAcid]').text('Gallons');
+         $('div[name=lblUomAdjustAcidRate]').text('Grams/Gallon');
       }
 
    });

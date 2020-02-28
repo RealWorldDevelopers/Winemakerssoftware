@@ -18,19 +18,21 @@
 
       <form id="frmAlcoholABV">
 
-         <div class="d-flex justify-content-center m-2">
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="AlcoholCalculator_UseBrix" type="radio" class="form-check-input" name="optUomAlcohol" value="brix">Brix
-               </label>
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Brix or Specific Gravity</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AlcoholCalculator_UseBrix" type="radio" class="form-check-input" name="optUomAlcohol" value="brix">Brix
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AlcoholCalculator_UseSG" type="radio" class="form-check-input" name="optUomAlcohol" checked value="sg">Specific Gravity
+                  </label>
+               </div>
             </div>
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="AlcoholCalculator_UseSG" type="radio" class="form-check-input" name="optUomAlcohol" checked value="sg">Specific Gravity
-               </label>
-            </div>
-         </div>
-
+         </fieldset>
 
 
          <div class="row align-items-center">
@@ -42,7 +44,7 @@
                <span asp-validation-for="SugarStart" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomABV">SG</label>
+               <div class="m-0" name="lblUomABV">SG</div>
             </div>
          </div>
 
@@ -56,7 +58,7 @@
                <span asp-validation-for="SugarEnd" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomABV">SG</label>
+               <div class="m-0" name="lblUomABV">SG</div>
             </div>
          </div>
 
@@ -68,7 +70,7 @@
                <input class="form-control text-right" type="text" asp-for="Abv" readonly />
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomWeight">&#37;</label>
+               <div class="m-0" name="lblUomWeight">&#37;</div>
             </div>
          </div>
 

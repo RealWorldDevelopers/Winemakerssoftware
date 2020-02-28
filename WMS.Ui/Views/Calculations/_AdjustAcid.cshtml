@@ -6,18 +6,21 @@
 
       <form id="frmAdjustAcid">
          
-         <div class="d-flex justify-content-center m-2">
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="AdjustAcid_UseMetric" type="radio" class="form-check-input" name="optUomAdjustAcid" checked value="metric">Liters
-               </label>
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Liters or Gallons</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AdjustAcid_UseMetric" type="radio" class="form-check-input" name="optUomAdjustAcid" checked value="metric">Liters
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AdjustAcid_UseImperial" type="radio" class="form-check-input" name="optUomAdjustAcid" value="imperial">Gallons
+                  </label>
+               </div>
             </div>
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="AdjustAcid_UseImperial" type="radio" class="form-check-input" name="optUomAdjustAcid" value="imperial">Gallons
-               </label>
-            </div>
-         </div>
+         </fieldset>
 
          <div class="row align-items-center">
             <div class="col p-0 mr-2 text-right">
@@ -28,11 +31,10 @@
                <span asp-validation-for="CurrentTa" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0">g/L</label>
+               <div class="m-0">g/L</div>
             </div>
          </div>
-
-
+         
          <div class="row align-items-center">
             <div class="col p-0 mr-2 text-right">
                <label class="m-0"  asp-for="GoalTa"></label>
@@ -42,7 +44,7 @@
                <span asp-validation-for="GoalTa" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0">g/L</label>
+               <div class="m-0">g/L</div>
             </div>
          </div>
 
@@ -54,9 +56,7 @@
                <input class="form-control text-right" type="text" asp-for="Additive" readonly />
                <span asp-validation-for="Additive" class="text-danger"></span>
             </div>
-            <div class="col p-0 ml-2">
-               <label class="m-0"></label>
-            </div>
+            <div class="col p-0 ml-2"></div>
          </div>
 
          <div class="row align-items-center">
@@ -68,7 +68,7 @@
                <span asp-validation-for="DoseRateTa" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" id="lblUomAdjustAcidRate">Grams/Liter</label>
+               <div class="m-0" name="lblUomAdjustAcidRate">Grams/Liter</div>
             </div>
          </div>
 
@@ -80,7 +80,7 @@
                <input class="form-control text-right" type="text" asp-for="VolumeMustTa" required maxlength="4" />
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" id="lblUomAdjustAcid">Liters</label>
+               <div class="m-0" name="lblUomAdjustAcid">Liters</div>
             </div>
          </div>
 
@@ -92,7 +92,7 @@
                <input class="form-control text-right" type="text" asp-for="TotalAdditive" readonly />
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomFortify">Grams</label>
+               <div class="m-0">Grams</div>
             </div>
          </div>
 

@@ -11,18 +11,21 @@
 
       <form id="frmSO2Dose">
 
-         <div class="d-flex justify-content-center m-2">
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="DoseSO2_Red" type="radio" class="form-check-input" name="optSO2DoseVariety" checked value="red">Red
-               </label>
+         <fieldset>
+            <legend class="sr-only">Red or White Wine</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="DoseSO2_Red" type="radio" class="form-check-input" name="optSO2DoseVariety" checked value="red">Red
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="DoseSO2_White" type="radio" class="form-check-input" name="optSO2DoseVariety" value="white">White
+                  </label>
+               </div>
             </div>
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="DoseSO2_White" type="radio" class="form-check-input" name="optSO2DoseVariety" value="white">White
-               </label>
-            </div>
-         </div>         
+         </fieldset>
 
          <div class="row align-items-center">
             <div class="col p-0 mr-2 text-right"></div>
@@ -31,35 +34,41 @@
                <span asp-validation-for="pH" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0">pH</label>
+               <label class="m-0" asp-for="pH"></label>
             </div>
          </div>
 
-         <div class="d-flex justify-content-center m-2">
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="DoseSO2_Metric" type="radio" class="form-check-input" name="optUomSO2DoseVolume" value="metric">Liters
-               </label>
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Liters or Gallons</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="DoseSO2_Metric" type="radio" class="form-check-input" name="optUomSO2DoseVolume" value="metric">Liters
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="DoseSO2_Imperial" type="radio" class="form-check-input" name="optUomSO2DoseVolume" checked value="imperial">Gallons
+                  </label>
+               </div>
             </div>
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="DoseSO2_Imperial" type="radio" class="form-check-input" name="optUomSO2DoseVolume" checked value="imperial">Gallons
-               </label>
-            </div>
-         </div>
+         </fieldset>
 
-         <div class="d-flex justify-content-center m-2">
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="DoseSO2_Powder" type="radio" class="form-check-input" name="optUomSO2DoseSolution" value="powder">Powder
-               </label>
+         <fieldset>
+            <legend class="sr-only">Type of Additive Powder or 10% Solution</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="DoseSO2_Powder" type="radio" class="form-check-input" name="optUomSO2DoseSolution" value="powder">Powder
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="DoseSO2_Solution" type="radio" class="form-check-input" name="optUomSO2DoseSolution" checked value="solution">10&#37; Solution
+                  </label>
+               </div>
             </div>
-            <div class="form-check-inline mr-4">
-               <label class="form-check-label">
-                  <input id="DoseSO2_Solution" type="radio" class="form-check-input" name="optUomSO2DoseSolution" checked value="solution">10&#37; Solution
-               </label>
-            </div>
-         </div>
+         </fieldset>
 
          <div class="row align-items-center">
             <div class="col p-0 mr-2 text-right">
@@ -70,7 +79,7 @@
                <span asp-validation-for="MustVolumeSO2" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomSO2DoseVolume">Gallons</label>
+               <div class="m-0" name="lblUomSO2DoseVolume">Gallons</div>
             </div>
          </div>
 
@@ -83,7 +92,7 @@
                <span asp-validation-for="CurrentSO2Reading" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0">PPM</label>
+               <div class="m-0">PPM</div>
             </div>
          </div>
 
@@ -97,7 +106,7 @@
                <span asp-validation-for="GoalSO2" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0">PPM</label>
+               <div class="m-0">PPM</div>
             </div>
          </div>
 
@@ -110,7 +119,7 @@
                <span asp-validation-for="DoseRateSO2" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomSO2DoseRate">mL/Gallon</label>
+               <div class="m-0" name="lblUomSO2DoseRate">mL/Gallon</div>
             </div>
          </div>
 
@@ -122,7 +131,7 @@
                <input class="form-control text-right" type="text" asp-for="DoseAmount" readonly />
             </div>
             <div class="col p-0 ml-2">
-               <label class="m-0" name="lblUomSO2DoseAmount">mL</label>
+               <div class="m-0" name="lblUomSO2DoseAmount">mL</div>
             </div>
          </div>
 
