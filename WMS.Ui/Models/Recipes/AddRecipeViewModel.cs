@@ -28,11 +28,11 @@ namespace WMS.Ui.Models.Recipes
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Instructions are required")]
-        [StringLength(5000, MinimumLength = 100, ErrorMessage = "Instructions should be between 100 and 5000 characters long.")]
+        [StringLength(8000, MinimumLength = 100, ErrorMessage = "Instructions should be between 100 and 8,000 characters long.")]
         public string Instructions { get; set; }
 
         [Required(ErrorMessage = "Ingredients are required")]
-        [StringLength(5000, MinimumLength = 100, ErrorMessage = "Ingredients should be between 100 and 5000 characters long.")]
+        [StringLength(8000, MinimumLength = 100, ErrorMessage = "Ingredients should be between 100 and 8,000 characters long.")]
         public string Ingredients { get; set; }
 
 
