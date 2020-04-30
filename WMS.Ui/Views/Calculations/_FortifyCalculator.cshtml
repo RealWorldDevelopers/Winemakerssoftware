@@ -32,7 +32,7 @@
                <label class="m-0" asp-for="VolumeWine"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="VolumeWine" required maxlength="3" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="VolumeWine" required maxlength="3" />
                <span asp-validation-for="VolumeWine" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -46,7 +46,7 @@
                <label class="m-0" asp-for="SpiritReading"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="SpiritReading" required maxlength="3" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="SpiritReading" required maxlength="3" />
                <span asp-validation-for="SpiritReading" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -59,7 +59,7 @@
                <label class="m-0" asp-for="InitialAlcohol"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="InitialAlcohol" required maxlength="3" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="InitialAlcohol" required maxlength="3" />
                <span asp-validation-for="InitialAlcohol" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -72,7 +72,7 @@
                <label class="m-0" asp-for="GoalAlcohol"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="GoalAlcohol" required maxlength="3" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="GoalAlcohol" required maxlength="3" />
                <span asp-validation-for="GoalAlcohol" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

@@ -15,7 +15,7 @@
                <label class="m-0" asp-for="StrengthOfConcentrate"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="StrengthOfConcentrate" required maxlength="5" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="StrengthOfConcentrate" required maxlength="5" />
                <span asp-validation-for="StrengthOfConcentrate" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -28,7 +28,7 @@
                <label class="m-0" asp-for="FinalSolutionStrength"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="FinalSolutionStrength" required maxlength="5" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="FinalSolutionStrength" required maxlength="5" />
                <span asp-validation-for="FinalSolutionStrength" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -41,7 +41,7 @@
                <label class="m-0" asp-for="FinalSolutionVolume"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="FinalSolutionVolume" required maxlength="5" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="FinalSolutionVolume" required maxlength="5" />
                <span asp-validation-for="FinalSolutionVolume" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

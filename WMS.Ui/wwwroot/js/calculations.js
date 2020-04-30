@@ -12,7 +12,7 @@ var CelsiusDigitDisplayed = 1;
 
 var NormalityDisplayed = 4;
 
-var PpmDigitDisplayed = 0;
+var PpmDigitDisplayed = 1;
 
 $(document).ready(function () {
 
@@ -71,9 +71,9 @@ $(document).ready(function () {
             useMetric = true;
             volDigitsDisplay = MetricVolumeDisplayed;
          }
-         var start = $('#CurrentSugarReading').val();
-         var end = $('#GoalSugar').val();
-         var vol = $('#VolumeMustSugar').val();
+         var start = +$('#CurrentSugarReading').val();
+         var end = +$('#GoalSugar').val();
+         var vol = +$('#VolumeMustSugar').val();
 
          var gal = vol;
          if (useMetric) {
@@ -106,8 +106,8 @@ $(document).ready(function () {
             sugarDigitsDisplay = BrixDigitsDisplayed;
          }
 
-         var start = $('#SugarStart').val();
-         var end = $('#SugarEnd').val();
+         var start = +$('#SugarStart').val();
+         var end = +$('#SugarEnd').val();
 
          var abv = CalcAlcohol(start, end, useBrix);
 
@@ -128,10 +128,10 @@ $(document).ready(function () {
       var $form = $('#frmFortify');
       if ($form.valid()) {
 
-         var volume = $('#VolumeWine').val();
-         var spirit_alchohol = $('#SpiritReading').val() / 100;
-         var wine_alchohol = $('#InitialAlcohol').val() / 100;
-         var target_alchohol = $('#GoalAlcohol').val() / 100;
+         var volume = +$('#VolumeWine').val();
+         var spirit_alchohol = +$('#SpiritReading').val() / 100;
+         var wine_alchohol = +$('#InitialAlcohol').val() / 100;
+         var target_alchohol = +$('#GoalAlcohol').val() / 100;
 
          var needed = CalcFortifyAddition(volume, target_alchohol, wine_alchohol, spirit_alchohol);
 
@@ -157,9 +157,9 @@ $(document).ready(function () {
          var sugarDigitsDisplay = SGDigitsDisplayed;
          var tempDigitsDisplay = FahrenheitDigitDisplayed;
 
-         var measured_gravity = $('#MeasuredGravity').val();
-         var temperature_reading = $('#TempReading').val();
-         var calibration_temperature = $('#TempCalibrate').val();
+         var measured_gravity = +$('#MeasuredGravity').val();
+         var temperature_reading = +$('#TempReading').val();
+         var calibration_temperature = +$('#TempCalibrate').val();
 
          mg = measured_gravity;
 
@@ -198,9 +198,9 @@ $(document).ready(function () {
       var $form = $('#frmSO2Titrate');
       if ($form.valid()) {
 
-         var normal = $('#Normal').val();
-         var volNaOH = $('#VolumeNaOH').val();
-         var volWine = $('#TestSize').val();
+         var normal = +$('#Normal').val();
+         var volNaOH = +$('#VolumeNaOH').val();
+         var volWine = +$('#TestSize').val();
 
          var ppm = TitrateSO2(volWine, normal, volNaOH);
 
@@ -221,8 +221,8 @@ $(document).ready(function () {
       var $form = $('#frmSO2Dose');
       if ($form.valid()) {
 
-         var startingSO2 = $('#CurrentSO2Reading').val();
-         var endingSO2 = $('#GoalSO2').val();
+         var startingSO2 = +$('#CurrentSO2Reading').val();
+         var endingSO2 = +$('#GoalSO2').val();
          if (endingSO2 > 50) {
             endingSO2 = 50;
          }
@@ -230,11 +230,11 @@ $(document).ready(function () {
          var liters;
          var gallons;
          if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() === 'metric') {
-            liters = $('#MustVolumeSO2').val();
+            liters = +$('#MustVolumeSO2').val();
             gallons = LitersToGallons(liters);
 
          } else {
-            gallons = $('#MustVolumeSO2').val();
+            gallons = +$('#MustVolumeSO2').val();
             var qrts = GallonsToQuarts(gallons);
             liters = QuartsToLiters(qrts);
          }
@@ -297,9 +297,9 @@ $(document).ready(function () {
       event.preventDefault();
       var $form = $('#frmDilute');
       if ($form.valid()) {
-         var concetration = $('#StrengthOfConcentrate').val();
-         var finalStrength = $('#FinalSolutionStrength').val();
-         var finalVolume = $('#FinalSolutionVolume').val();
+         var concetration = +$('#StrengthOfConcentrate').val();
+         var finalStrength = +$('#FinalSolutionStrength').val();
+         var finalVolume = +$('#FinalSolutionVolume').val();
 
          var needed = DiluteSolution(concetration, finalStrength, finalVolume);
 
@@ -319,9 +319,9 @@ $(document).ready(function () {
       event.preventDefault();
       var $form = $('#frmTitrateNaOH');
       if ($form.valid()) {
-         var KaPhVolume = $('#KaPhVolume').val();
-         var KaPhNormal = $('#KaPhNormal').val();
-         var NaOHVolume = $('#NaOHVolume').val();
+         var KaPhVolume = +$('#KaPhVolume').val();
+         var KaPhNormal = +$('#KaPhNormal').val();
+         var NaOHVolume = +$('#NaOHVolume').val();
 
          var n = CalcNofNaOH(KaPhVolume, KaPhNormal, NaOHVolume);
 
@@ -340,9 +340,9 @@ $(document).ready(function () {
       event.preventDefault();
       var $form = $('#frmTitrateAcid');
       if ($form.valid()) {
-         var mustVolume = $('#MustVolume').val();
-         var NaOHVolume = $('#NaOHVolumeTa').val();
-         var NaOHNormal = $('#NaOHNormalTa').val();
+         var mustVolume = +$('#MustVolume').val();
+         var NaOHVolume = +$('#NaOHVolumeTa').val();
+         var NaOHNormal = +$('#NaOHNormalTa').val();
 
          var ppm = CalcPpmAcid(mustVolume, NaOHNormal, NaOHVolume);
 
@@ -361,11 +361,11 @@ $(document).ready(function () {
       event.preventDefault();
       var $form = $('#frmAdjustAcid');
       if ($form.valid()) {
-         var currentTA = $('#CurrentTa').val();
-         var goalTA = $('#GoalTa').val();
+         var currentTA = +$('#CurrentTa').val();
+         var goalTA = +$('#GoalTa').val();
          var gramPerLiter = CalcAcidAdditiveNeeded(currentTA, goalTA);
          var gramPerGallon = gramPerLiter * 3.78541;
-         var volume = $('#VolumeMustTa').val();
+         var volume = +$('#VolumeMustTa').val();
 
          if (goalTA < currentTA) {
             $('#Additive').val('Potassium Bicarbonate');
@@ -521,7 +521,7 @@ $(document).ready(function () {
 
    });
 
-   
+
 });
 
 

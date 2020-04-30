@@ -47,7 +47,7 @@
                <label class="m-0" asp-for="MeasuredGravity"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="MeasuredGravity" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="MeasuredGravity" required maxlength="5" />
                <span asp-validation-for="MeasuredGravity" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -61,7 +61,7 @@
                <label class="m-0" asp-for="TempReading"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="TempReading" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="TempReading" required maxlength="4" />
                <span asp-validation-for="TempReading" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -74,7 +74,7 @@
                <label class="m-0" asp-for="TempCalibrate"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="TempCalibrate" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="TempCalibrate" required maxlength="4" />
                <span asp-validation-for="TempCalibrate" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

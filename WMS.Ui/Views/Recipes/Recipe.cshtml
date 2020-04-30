@@ -4,89 +4,95 @@
 <label class="d-none"><input hidden asp-for="RatingJwt" />Hidden Label</label>
 <div class="card">
 
-    <!-- title section -->
-    <div class="card-header bg-secondary text-light">
-        <h1><strong>@Model.Title</strong></h1>
-        <h2>@Model.Description</h2> shared by: @Model.User.FirstName
-        <fieldset class="rating" id=" @Model.Id">
-            <input type="radio" id="star5" name="rating" aria-label="5 stars" value=5 @Model.Rating.Check5 /><span class="full" for="star5" title="Awesome - 5 stars"></span>
-            <input type="radio" id="star4half" name="rating" value=4.5 @Model.Rating.Check45 /><span class="half" for="star4half" title="Really good - 4.5 stars"></span>
-            <input type="radio" id="star4" name="rating" value=4 @Model.Rating.Check4 /><span class="full" for="star4" title="Pretty good - 4 stars"></span>
-            <input type="radio" id="star3half" name="rating" value=3.5 @Model.Rating.Check35 /><span class="half" for="star3half" title="It's OK - 3.5 stars"></span>
-            <input type="radio" id="star3" name="rating" value=3 @Model.Rating.Check3 /><span class="full" for="star3" title="Meh - 3 stars"></span>
-            <input type="radio" id="star2half" name="rating" value=2.5 @Model.Rating.Check25 /><span class="half" for="star2half" title="Not Very fond of it - 2.5 stars"></span>
-            <input type="radio" id="star2" name="rating" value=2 @Model.Rating.Check2 /><span class="full" for="star2" title="Not Good - 2 stars"></span>
-            <input type="radio" id="star1half" name="rating" value=1.5 @Model.Rating.Check15 /><span class="half" for="star1half" title="Kinda bad - 1.5 stars"></span>
-            <input type="radio" id="star1" name="rating" value=1 @Model.Rating.Check1 /><span class="full" for="star1" title="Awful - 1 star"></span>
-            <input type="radio" id="starhalf" name="rating" value=.5 @Model.Rating.Check /><span class="half" for="starhalf" title="Sucks big time - 0.5 stars"></span>
-        </fieldset>
-    </div>  
+   <!-- title section -->
+   <div class="card-header bg-secondary text-light">
+      <h1><strong>@Model.Title</strong></h1>
+      <h2>@Model.Description</h2> shared by: @Model.User.FirstName
+      <fieldset class="rating" id=" @Model.Id">
+         <input type="radio" id="star5" name="rating" aria-label="5 stars" value=5 @Model.Rating.Check5 /><span class="full" for="star5" title="Awesome - 5 stars"></span>
+         <input type="radio" id="star4half" name="rating" value=4.5 @Model.Rating.Check45 /><span class="half" for="star4half" title="Really good - 4.5 stars"></span>
+         <input type="radio" id="star4" name="rating" value=4 @Model.Rating.Check4 /><span class="full" for="star4" title="Pretty good - 4 stars"></span>
+         <input type="radio" id="star3half" name="rating" value=3.5 @Model.Rating.Check35 /><span class="half" for="star3half" title="It's OK - 3.5 stars"></span>
+         <input type="radio" id="star3" name="rating" value=3 @Model.Rating.Check3 /><span class="full" for="star3" title="Meh - 3 stars"></span>
+         <input type="radio" id="star2half" name="rating" value=2.5 @Model.Rating.Check25 /><span class="half" for="star2half" title="Not Very fond of it - 2.5 stars"></span>
+         <input type="radio" id="star2" name="rating" value=2 @Model.Rating.Check2 /><span class="full" for="star2" title="Not Good - 2 stars"></span>
+         <input type="radio" id="star1half" name="rating" value=1.5 @Model.Rating.Check15 /><span class="half" for="star1half" title="Kinda bad - 1.5 stars"></span>
+         <input type="radio" id="star1" name="rating" value=1 @Model.Rating.Check1 /><span class="full" for="star1" title="Awful - 1 star"></span>
+         <input type="radio" id="starhalf" name="rating" value=.5 @Model.Rating.Check /><span class="half" for="starhalf" title="Sucks big time - 0.5 stars"></span>
+      </fieldset>
+   </div>
 
-    <!-- recipe body -->
-    <div class="card-body">
-        <div class="row">
-            <!-- details section -->
-            <div class="col-sm-8">
-                <h3><i>Category</i> : <strong>@Model.Category</strong></h3>
-                <h3><i>Variety</i> : <strong>@Model.Variety</strong></h3>
+   <!-- recipe body -->
+   <div class="card-body">
+      <div class="row">
+         <!-- details section -->
+         <div class="col-sm-8">
+            <h3><i>Category</i> : <strong>@Model.Category</strong></h3>
+            <h3><i>Variety</i> : <strong>@Model.Variety</strong></h3>
 
-                <h4><i>Ingredients:</i></h4>
-                <div class="instructionText m-3">@Model.Ingredients</div>
-                <h4><i>Instructions:</i></h4>
-                <div class="instructionText m-3">@Model.Instructions</div>
+            <h4><i>Ingredients:</i></h4>
+            <div class="instructionText m-3">@Model.Ingredients</div>
+            <h4><i>Instructions:</i></h4>
+            <div class="instructionText m-3">@Model.Instructions</div>
+         </div>
+         <!-- sub menu -->
+         <div class="col-sm-4">
+            <!-- links -->
+            <p><a class="printer" href="#"><i class="fa fa-print">&nbsp Printer Friendly Version</i></a></p>
+            <p><a href="/recipes/add"><i class="fa fa-plus">&nbsp Submit New Recipe</i></a></p>
+            <!-- hit counter -->
+            <div class="card">
+               <div class="card-header">
+                  <strong>Views</strong>
+               </div>
+               <div class="card-body">
+                  <div class="hit">@Model.Hits.Digit1</div>
+                  <div class="hit">@Model.Hits.Digit2</div>
+                  <div class="hit">@Model.Hits.Digit3</div>
+                  <div class="hit">@Model.Hits.Digit4</div>
+                  <div class="hit">@Model.Hits.Digit5</div>
+                  <div class="hit">@Model.Hits.Digit6</div>
+                  <div class="hit">@Model.Hits.Digit7</div>
+                  <div class="hit">@Model.Hits.Digit8</div>
+                  <div class="hit">@Model.Hits.Digit9</div>
+               </div>
             </div>
-            <!-- sub menu -->
-            <div class="col-sm-4">
-                <!-- links -->
-                <p><a class="printer" href="#"><i class="fa fa-print">&nbsp Printer Friendly Version</i></a></p>
-                <p><a href="/recipes/add"><i class="fa fa-plus">&nbsp Submit New Recipe</i></a></p>
-                <!-- hit counter -->
-                <div class="card">
-                    <div class="card-header">
-                        <strong>Views</strong>
-                    </div>
-                    <div class="card-body">
-                        <div class="hit">@Model.Hits.Digit1</div>
-                        <div class="hit">@Model.Hits.Digit2</div>
-                        <div class="hit">@Model.Hits.Digit3</div>
-                        <div class="hit">@Model.Hits.Digit4</div>
-                        <div class="hit">@Model.Hits.Digit5</div>
-                        <div class="hit">@Model.Hits.Digit6</div>
-                        <div class="hit">@Model.Hits.Digit7</div>
-                        <div class="hit">@Model.Hits.Digit8</div>
-                        <div class="hit">@Model.Hits.Digit9</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-       
-            <!-- recipe images -->
-            <div class="row">
-                @if (Model.Images != null)
-                {
-                    @foreach (var img in Model.Images)
-                    {
-                        <div class="col-sm-4">
-                            <div class="card">
-                                <div class="hovereffect">
-                                    <img class="img-fluid rounded border border-secondary" src="@img.Src" alt="@img.Alt" title="@img.Title">
-                                    <div class="overlay">
-                                        <h2>@img.Caption</h2>
-                                        <a id="@img.Id" class="info" data-src="@img.Src" data-alt="@img.Alt" data-title="@img.Title" data-caption="@img.Caption">ZOOM</a>
-                                    </div>
-                                </div>
-                            </div>
+         </div>
+      </div>
+
+      <!-- recipe images -->
+      <div class="row">
+         @if (Model.Images != null)
+         {
+            @foreach (var img in Model.Images)
+            {
+               <div class="col-sm-4">
+                  <div class="card">
+                     <div class="hovereffect">
+                        <img class="img-fluid rounded border border-secondary" src="@img.Src" alt="@img.Alt" title="@img.Title">
+                        <div class="overlay">
+                           <h2>@img.Caption</h2>
+                           <a id="@img.Id" class="info" data-src="@img.Src" data-alt="@img.Alt" data-title="@img.Title" data-caption="@img.Caption">ZOOM</a>
                         </div>
-                    }
-                }
+                     </div>
+                  </div>
+               </div>
+            }
+         }
 
-            </div>
-        
-    </div>
-    <div class="card-footer"></div>
+      </div>
+
+   </div>
+   <div class="card-footer"></div>
 
 </div>
 
 @section Scripts{
-    <script src="~/js/recipe.min.js" asp-append-version="true" type="text/javascript"></script>
+
+   <environment include="Development">
+      <script src="~/js/recipe.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/recipe.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
 }

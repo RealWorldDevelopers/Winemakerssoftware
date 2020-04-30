@@ -30,7 +30,7 @@
          <div class="row align-items-center">
             <div class="col p-0 mr-2 text-right"></div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="pH" maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="pH" maxlength="4" />
                <span asp-validation-for="pH" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -75,7 +75,7 @@
                <label class="m-0" asp-for="MustVolumeSO2"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="MustVolumeSO2" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="MustVolumeSO2" required maxlength="4" />
                <span asp-validation-for="MustVolumeSO2" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -88,7 +88,7 @@
                <label class="m-0" asp-for="CurrentSO2Reading"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="CurrentSO2Reading" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="CurrentSO2Reading" required maxlength="4" />
                <span asp-validation-for="CurrentSO2Reading" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -102,7 +102,7 @@
                <label class="m-0" asp-for="GoalSO2"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="GoalSO2" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="GoalSO2" required maxlength="4" />
                <span asp-validation-for="GoalSO2" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

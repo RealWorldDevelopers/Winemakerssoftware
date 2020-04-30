@@ -40,7 +40,7 @@
                <label class="m-0" asp-for="SugarStart"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="SugarStart" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="SugarStart" required maxlength="5" />
                <span asp-validation-for="SugarStart" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -54,7 +54,7 @@
                <label class="m-0" asp-for="SugarEnd"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="SugarEnd" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="SugarEnd" required maxlength="5" />
                <span asp-validation-for="SugarEnd" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

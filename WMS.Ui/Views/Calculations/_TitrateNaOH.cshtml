@@ -11,7 +11,7 @@
                <label class="m-0" asp-for="KaPhVolume"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="KaPhVolume" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="KaPhVolume" required maxlength="4" />
                <span asp-validation-for="KaPhVolume" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -24,7 +24,7 @@
                <label class="m-0" asp-for="KaPhNormal"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="KaPhNormal" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="KaPhNormal" required maxlength="4" />
                <span asp-validation-for="KaPhNormal" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -38,7 +38,7 @@
                <label class="m-0" asp-for="NaOHVolume"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="NaOHVolume" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="NaOHVolume" required maxlength="4" />
                <span asp-validation-for="NaOHVolume" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

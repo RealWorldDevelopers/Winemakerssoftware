@@ -48,7 +48,7 @@
                   <label class="m-0" asp-for="VolumeMustSugar"></label>
                </div>
                <div class="col p-0">
-                  <input class="form-control text-right" type="text" asp-for="VolumeMustSugar" required maxlength="5" />
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="VolumeMustSugar" required maxlength="5" />
                   <span asp-validation-for="VolumeMustSugar" class="text-danger"></span>
                </div>
                <div class="col p-0 ml-2">
@@ -61,7 +61,7 @@
                   <label class="m-0" asp-for="CurrentSugarReading"></label>
                </div>
                <div class="col p-0">
-                  <input class="form-control text-right" type="text" asp-for="CurrentSugarReading" required maxlength="5" />
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="CurrentSugarReading" required maxlength="5" />
                   <span asp-validation-for="CurrentSugarReading" class="text-danger"></span>
                </div>
                <div class="col p-0 ml-2">
@@ -74,7 +74,7 @@
                   <label class="m-0" asp-for="GoalSugar"></label>
                </div>
                <div class="col p-0">
-                  <input class="form-control text-right" type="text" asp-for="GoalSugar" required maxlength="4" />
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="GoalSugar" required maxlength="5" />
                   <span asp-validation-for="GoalSugar" class="text-danger"></span>
                </div>
                <div class="col p-0 ml-2">

@@ -1,129 +1,134 @@
 ﻿@model WMS.Ui.Models.Admin.YeastViewModel
 
 <div class="card">
-    <div class="card-header bg-secondary text-light">
-        <h1>@ViewData["Title"]</h1>
-    </div>
-    <div class="card-body">
-        <form asp-controller="Admin" asp-action="UpdateYeast" method="POST" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly"></div>
-            <div class="row">
-                <div class="col-sm-11"></div>
-                <div class="col-sm-1">
-                    <a asp-area="" asp-controller="Admin" asp-route-id="yeasts" asp-action="Index">Back</a>
-                </div>
+   <div class="card-header bg-secondary text-light">
+      <h1>@ViewData["Title"]</h1>
+   </div>
+   <div class="card-body">
+      <form asp-controller="Admin" asp-action="UpdateYeast" method="POST" enctype="multipart/form-data">
+         <div asp-validation-summary="ModelOnly"></div>
+         <div class="row">
+            <div class="col-sm-11"></div>
+            <div class="col-sm-1">
+               <a asp-area="" asp-controller="Admin" asp-route-id="yeasts" asp-action="Index">Back</a>
             </div>
-            <label class="d-none"><input hidden asp-for="Id" />Hidden Label</label>
+         </div>
+         <label class="d-none"><input hidden asp-for="Id" />Hidden Label</label>
 
-                <div class="row">
-                    <div class="col-sm-4">
-                        <label class="col-form-label" asp-for="Style.Id"><strong>Style:</strong></label>
-                        <select class="custom-select" asp-for="Style.Id" asp-items="Model.Styles"></select>
-                        <span asp-validation-for="Style.Id" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="col-form-label" asp-for="Brand.Id"><strong>Brand:</strong></label>
-                        <select class="custom-select" asp-for="Brand.Id" asp-items="Model.Brands"></select>
-                        <span asp-validation-for="Brand.Id" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="col-form-label" asp-for="Trademark"><strong>Trademark (Name):</strong></label>
-                        <input class="form-control" type="text" placeholder="Trademark (Name)" maxlength="200" required asp-for="Trademark" />
-                        <span asp-validation-for="Trademark" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-4">
-                        <label class="col-form-label" asp-for="TempMin"><strong>Minimum Temperature:</strong></label>
-                        <input class="form-control" type="number" maxlength="5" min="5" max="25" placeholder="Minimum Temp C" data-toggle="tooltip" title="Temperature is in Celsius !" required asp-for="TempMin" />
-                        <span asp-validation-for="TempMin" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="col-form-label" asp-for="TempMax"><strong>Maximum Temperature:</strong></label>
-                        <input class="form-control" type="number" maxlength="5" min="10" max="45" placeholder="Maximum Temp C" data-toggle="tooltip" title="Temperature is in Celsius !" required asp-for="TempMax" />
-                        <span asp-validation-for="TempMax" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label class="col-form-label" asp-for="Alcohol"><strong>Alcohol Tolerance:</strong></label>
-                        <input class="form-control" type="number" maxlength="5" min=".01" max=".25" placeholder="Alcohol Tolerance" data-toggle="tooltip" title="Alcohol is percent as decimal !" required asp-for="Alcohol" />
-                        <span asp-validation-for="Alcohol" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <label class="col-form-label" asp-for="Note"><strong>Notes:</strong></label>
-                        <textarea class="form-control" type="text" rows="5" maxlength="500" placeholder="Notes" asp-for="Note"></textarea>
-                        <span asp-validation-for="Note" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <br />
-
-                <div class="row">
-                    <div class="col-sm-9"></div>
-                    <div class="col-sm-3">
-                        <button class="btn btn-primary" type="reset">Cancel</button>
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                    </div>
-                </div>
-
-</form>
-
-        @if (Model.Id > 0)
-        {
-            <br />
-            <partial name="_UpdateYeastPairing" model="Model.Pairing" />
-            <br />
-
-            <div class="card-columns">
-                @foreach (var pairing in Model.Pairings)
-                {
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <p class="card-text">
-                                <strong>
-                                    @if (string.IsNullOrWhiteSpace(pairing.Variety.Literal))
-                                    {
-                                        @pairing.Category.Literal
-                                    }
-                                    else
-                                    {
-                                        @pairing.Variety.Literal
-                                    }
-                                </strong>
-                                <br />
-                                @if (Model.Pairing.Id == 0)
-                                {
-                                    <button name="deleteYeastPairingButton" class="btn btn-primary btn-sm" data-id="@pairing.Id">Remove</button>
-                                    <button name="editYeastPairingButton" class="btn btn-primary btn-sm" data-id="@pairing.Id">Edit</button>
-                                }
-                            </p>
-                        </div>
-                    </div>
-                }
+         <div class="row">
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="Style.Id"><strong>Style:</strong></label>
+               <select class="custom-select" asp-for="Style.Id" asp-items="Model.Styles"></select>
+               <span asp-validation-for="Style.Id" class="text-danger"></span>
             </div>
-        }
+
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="Brand.Id"><strong>Brand:</strong></label>
+               <select class="custom-select" asp-for="Brand.Id" asp-items="Model.Brands"></select>
+               <span asp-validation-for="Brand.Id" class="text-danger"></span>
+            </div>
+
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="Trademark"><strong>Trademark (Name):</strong></label>
+               <input class="form-control" type="text" placeholder="Trademark (Name)" maxlength="200" required asp-for="Trademark" />
+               <span asp-validation-for="Trademark" class="text-danger"></span>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="TempMin"><strong>Minimum Temperature:</strong></label>
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="number" maxlength="5" min="5" max="25" placeholder="Minimum Temp C" data-toggle="tooltip" title="Temperature is in Celsius !" required asp-for="TempMin" />
+               <span asp-validation-for="TempMin" class="text-danger"></span>
+            </div>
+
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="TempMax"><strong>Maximum Temperature:</strong></label>
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="number" maxlength="5" min="10" max="45" placeholder="Maximum Temp C" data-toggle="tooltip" title="Temperature is in Celsius !" required asp-for="TempMax" />
+               <span asp-validation-for="TempMax" class="text-danger"></span>
+            </div>
+
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="Alcohol"><strong>Alcohol Tolerance:</strong></label>
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="number" maxlength="5" min=".01" max=".25" placeholder="Alcohol Tolerance" data-toggle="tooltip" title="Alcohol is percent as decimal !" required asp-for="Alcohol" />
+               <span asp-validation-for="Alcohol" class="text-danger"></span>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-12">
+               <label class="col-form-label" asp-for="Note"><strong>Notes:</strong></label>
+               <textarea class="form-control" type="text" rows="5" maxlength="500" placeholder="Notes" asp-for="Note"></textarea>
+               <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+         </div>
+
+         <br />
+
+         <div class="row">
+            <div class="col-sm-9"></div>
+            <div class="col-sm-3">
+               <button class="btn btn-primary" type="reset">Cancel</button>
+               <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+         </div>
+
+      </form>
+
+      @if (Model.Id > 0)
+      {
+         <br />
+         <partial name="_UpdateYeastPairing" model="Model.Pairing" />
+         <br />
+
+         <div class="card-columns">
+            @foreach (var pairing in Model.Pairings)
+            {
+               <div class="card">
+                  <div class="card-body text-center">
+                     <p class="card-text">
+                        <strong>
+                           @if (string.IsNullOrWhiteSpace(pairing.Variety.Literal))
+                           {
+                              @pairing.Category.Literal
+                           }
+                           else
+                           {
+                              @pairing.Variety.Literal
+                           }
+                        </strong>
+                        <br />
+                        @if (Model.Pairing.Id == 0)
+                        {
+                           <button name="deleteYeastPairingButton" class="btn btn-primary btn-sm" data-id="@pairing.Id">Remove</button>
+                           <button name="editYeastPairingButton" class="btn btn-primary btn-sm" data-id="@pairing.Id">Edit</button>
+                        }
+                     </p>
+                  </div>
+               </div>
+            }
+         </div>
+      }
 
 
-    </div>
-    <div class="card-footer"></div>
+   </div>
+   <div class="card-footer"></div>
 
 </div>
 
 <form id="frmEditYeastPairing" asp-controller="Admin" asp-action="EditYeastPairing" method="POST" enctype="multipart/form-data">
-    <label class="d-none"><input hidden name="Id" id="editYeastPairingId" />Hidden Label</label>
+   <label class="d-none"><input hidden name="Id" id="editYeastPairingId" />Hidden Label</label>
 </form>
 
 <form id="frmDeleteYeastPairing" asp-controller="Admin" asp-action="DeletePairing" method="POST" enctype="multipart/form-data">
-    <label class="d-none"><input hidden name="Id" id="deleteYeastPairingId" />Hidden Label</label>
+   <label class="d-none"><input hidden name="Id" id="deleteYeastPairingId" />Hidden Label</label>
 </form>
 
 
-@section Scripts{
-    <script src="~/js/admin.js" asp-append-version="true" type="text/javascript"></script>
+@section Scripts{   
+   <environment include="Development">
+      <script src="~/js/admin.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/admin.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
 }

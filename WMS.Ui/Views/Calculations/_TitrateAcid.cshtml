@@ -11,7 +11,7 @@
                <label class="m-0" asp-for="MustVolume"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="MustVolume" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="MustVolume" required maxlength="4" />
                <span asp-validation-for="MustVolume" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -24,7 +24,7 @@
                <label class="m-0" asp-for="NaOHVolumeTa"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="NaOHVolumeTa" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="NaOHVolumeTa" required maxlength="4" />
                <span asp-validation-for="NaOHVolumeTa" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -37,7 +37,7 @@
                <label class="m-0" asp-for="NaOHNormalTa"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="NaOHNormalTa" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="NaOHNormalTa" required maxlength="4" />
                <span asp-validation-for="NaOHNormalTa" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">

@@ -66,10 +66,6 @@ $(document).ready(function () {
    // Prompt user to install app
    if (typeof promptEvt !== 'undefined') {
       promptEvt.prompt();
-
-      promptEvt.userChoice.then(choice => {
-         console.log("User's install choice: ", choice.outcome);
-      });
    }
 
 });

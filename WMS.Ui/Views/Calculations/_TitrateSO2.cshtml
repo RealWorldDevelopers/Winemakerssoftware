@@ -15,7 +15,7 @@
                <label class="m-0" asp-for="TestSize"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="TestSize" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="TestSize" required maxlength="4" />
                <span asp-validation-for="TestSize" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -28,7 +28,7 @@
                <label class="m-0" asp-for="VolumeNaOH"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="VolumeNaOH" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="VolumeNaOH" required maxlength="4" />
                <span asp-validation-for="VolumeNaOH" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
@@ -41,7 +41,7 @@
                <label class="m-0" asp-for="Normal"></label>
             </div>
             <div class="col p-0">
-               <input class="form-control text-right" type="text" asp-for="Normal" required maxlength="4" />
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Normal" required maxlength="4" />
                <span asp-validation-for="Normal" class="text-danger"></span>
             </div>
             <div class="col p-0 ml-2">
