@@ -105,6 +105,20 @@
    },
 
    {
+      "outputFileName": "wwwroot/js/journal.min.js",
+      "inputFiles": [
+         "wwwroot/js/journal.js"
+      ],
+      // Optionally specify minification options
+      "minify": {
+         "enabled": true,
+         "renameLocals": true
+      },
+      // Optionally generate .map file
+      "sourceMap": false
+   },
+
+   {
       "outputFileName": "wwwroot/js/yeast.min.js",
       "inputFiles": [
          "wwwroot/js/yeast.js"

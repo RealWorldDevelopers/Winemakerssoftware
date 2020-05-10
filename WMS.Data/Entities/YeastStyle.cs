@@ -13,6 +13,6 @@ namespace WMS.Data.Entities
         public int Id { get; set; }
         public string Style { get; set; }
 
-        public ICollection<Yeasts> Yeasts { get; set; }
+        public virtual ICollection<Yeasts> Yeasts { get; set; }
     }
 }

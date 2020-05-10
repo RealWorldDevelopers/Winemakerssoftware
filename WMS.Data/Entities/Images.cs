@@ -18,6 +18,6 @@ namespace WMS.Data.Entities
         public string Name { get; set; }
         public string FileName { get; set; }
 
-        public ICollection<PicturesXref> PicturesXref { get; set; }
+        public virtual ICollection<PicturesXref> PicturesXref { get; set; }
     }
 }

@@ -57,6 +57,11 @@ namespace WMS.Ui
               });
 
 
+         CreateMap<WMS.Data.Entities.UnitsOfMeasure, Business.Common.IUnitOfMeasure>().ReverseMap();
+
+         CreateMap<WMS.Data.Entities.Batches, Business.Journal.Dto.BatchDto>().ReverseMap();
+
+         CreateMap<WMS.Data.Entities.Targets, Business.Journal.Dto.TargetDto>().ReverseMap();
 
          CreateMap<WMS.Data.Entities.PicturesXref, Business.Recipe.Dto.ImageFileDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ImageId));

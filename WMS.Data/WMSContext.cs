@@ -15,22 +15,50 @@ namespace WMS.Data
             : base(options)
         {
         }
-         
+        
+        public virtual DbSet<Batches> Batches { get; set; }
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Images> Images { get; set; }
         public virtual DbSet<PicturesXref> PicturesXref { get; set; }
         public virtual DbSet<Ratings> Ratings { get; set; }
         public virtual DbSet<Recipes> Recipes { get; set; }
+        public virtual DbSet<Targets> Targets { get; set; }
+        public virtual DbSet<UnitsOfMeasure> UnitsOfMeasure { get; set; }
         public virtual DbSet<Varieties> Varieties { get; set; }
         public virtual DbSet<YeastBrand> YeastBrand { get; set; }
         public virtual DbSet<YeastPair> YeastPair { get; set; }
-        public virtual DbSet<Yeasts> Yeasts { get; set; }
         public virtual DbSet<YeastStyle> YeastStyle { get; set; }
+        public virtual DbSet<Yeasts> Yeasts { get; set; }
 
-      
+         protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+             modelBuilder.Entity<Batches>(entity =>
+            {
+                entity.Property(e => e.SubmittedBy).HasMaxLength(450);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {          
+                entity.Property(e => e.Title).HasMaxLength(250);
+
+                entity.HasOne(d => d.Recipe)
+                    .WithMany(p => p.Batches)
+                    .HasForeignKey(d => d.RecipeId)
+                    .HasConstraintName("FK_Batches_Recipes");
+
+                entity.HasOne(d => d.Target)
+                    .WithMany(p => p.Batches)
+                    .HasForeignKey(d => d.TargetId)
+                    .HasConstraintName("FK_Batches_Targets");
+
+                entity.HasOne(d => d.Variety)
+                    .WithMany(p => p.Batches)
+                    .HasForeignKey(d => d.VarietyId)
+                    .HasConstraintName("FK_Batches_Varieties");
+
+                entity.HasOne(d => d.VolumeUom)
+                    .WithMany(p => p.Batches)
+                    .HasForeignKey(d => d.VolumeUomId)
+                    .HasConstraintName("FK_Batches_UnitsOfMeasure");
+            });
+
             modelBuilder.Entity<Categories>(entity =>
             {
                 entity.Property(e => e.Category)
@@ -62,13 +90,11 @@ namespace WMS.Data
                 entity.HasOne(d => d.Image)
                     .WithMany(p => p.PicturesXref)
                     .HasForeignKey(d => d.ImageId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_PicturesXref_Images");
 
                 entity.HasOne(d => d.Recipe)
                     .WithMany(p => p.PicturesXref)
                     .HasForeignKey(d => d.RecipeId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_PicturesXref_Recipes");
             });
 
@@ -87,7 +113,6 @@ namespace WMS.Data
                 entity.HasOne(d => d.Recipe)
                     .WithOne(p => p.Ratings)
                     .HasForeignKey<Ratings>(d => d.RecipeId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Ratings_Recipe");
             });
 
@@ -104,8 +129,40 @@ namespace WMS.Data
                 entity.HasOne(d => d.Variety)
                     .WithMany(p => p.Recipes)
                     .HasForeignKey(d => d.VarietyId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Recipes_Varieties");
+            });
+
+            modelBuilder.Entity<Targets>(entity =>
+            {
+                entity.Property(e => e.PH).HasColumnName("pH");
+
+                entity.Property(e => e.Ta).HasColumnName("TA");
+
+                entity.HasOne(d => d.EndSugarUom)
+                    .WithMany(p => p.TargetsEndSugarUom)
+                    .HasForeignKey(d => d.EndSugarUomId)
+                    .HasConstraintName("FK_Targets_EndSugar_UnitsOfMeasure");
+
+                entity.HasOne(d => d.StartSugarUom)
+                    .WithMany(p => p.TargetsStartSugarUom)
+                    .HasForeignKey(d => d.StartSugarUomId)
+                    .HasConstraintName("FK_Targets_StartSugar_UnitsOfMeasure");
+
+                entity.HasOne(d => d.TempUom)
+                    .WithMany(p => p.TargetsTempUom)
+                    .HasForeignKey(d => d.TempUomId)
+                    .HasConstraintName("FK_Targets_Temp_UnitsOfMeasure");
+            });
+
+            modelBuilder.Entity<UnitsOfMeasure>(entity =>
+            {
+                entity.Property(e => e.Abbreviation).HasMaxLength(50);
+
+                entity.Property(e => e.Description).HasMaxLength(75);
+
+                entity.Property(e => e.Subset).HasMaxLength(50);
+
+                entity.Property(e => e.UnitOfMeasure).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Varieties>(entity =>
@@ -117,7 +174,6 @@ namespace WMS.Data
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Varieties)
                     .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Varieties_Categories");
             });
 
@@ -147,8 +203,12 @@ namespace WMS.Data
                 entity.HasOne(d => d.YeastNavigation)
                     .WithMany(p => p.YeastPair)
                     .HasForeignKey(d => d.Yeast)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_YeastPair_Yeasts");
+            });
+
+            modelBuilder.Entity<YeastStyle>(entity =>
+            {
+                entity.Property(e => e.Style).HasMaxLength(100);
             });
 
             modelBuilder.Entity<Yeasts>(entity =>
@@ -158,7 +218,6 @@ namespace WMS.Data
                 entity.HasOne(d => d.BrandNavigation)
                     .WithMany(p => p.Yeasts)
                     .HasForeignKey(d => d.Brand)
-                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Yeasts_YeastBrand");
 
                 entity.HasOne(d => d.StyleNavigation)
@@ -167,10 +226,9 @@ namespace WMS.Data
                     .HasConstraintName("FK_Yeasts_YeastStyle");
             });
 
-            modelBuilder.Entity<YeastStyle>(entity =>
-            {
-                entity.Property(e => e.Style).HasMaxLength(100);
-            });
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

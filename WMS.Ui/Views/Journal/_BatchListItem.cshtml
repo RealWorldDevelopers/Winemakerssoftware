@@ -1,0 +1,14 @@
+﻿@model WMS.Ui.Models.Journal.BatchViewModel
+<div class="card-body card-text text-left">
+
+   <ul class="list-group-flush">
+
+
+      @foreach (var entry in Model.Entries)
+      {
+         <partial name="_EntryListItem" model="entry" />
+      }
+
+   </ul>
+
+</div>

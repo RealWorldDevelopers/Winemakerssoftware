@@ -45,7 +45,7 @@ namespace WMS.Ui.Models.Validation
          switch (Comparison)
          {
             case Comparison.IsNotEqualTo:
-               return actualPropertyValue == null || !actualPropertyValue.Equals(Value);
+               return actualPropertyValue != null && !actualPropertyValue.Equals(Value);
             default:
                return actualPropertyValue != null && actualPropertyValue.Equals(Value);
          }

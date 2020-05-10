@@ -11,8 +11,8 @@ namespace WMS.Data.Entities
         public int? Variety { get; set; }
         public string Note { get; set; }
 
-        public Categories CategoryNavigation { get; set; }
-        public Varieties VarietyNavigation { get; set; }
-        public Yeasts YeastNavigation { get; set; }
+        public virtual Categories CategoryNavigation { get; set; }
+        public virtual Varieties VarietyNavigation { get; set; }
+        public virtual Yeasts YeastNavigation { get; set; }
     }
 }

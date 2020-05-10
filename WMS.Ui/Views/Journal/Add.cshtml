@@ -1,0 +1,130 @@
+﻿@model WMS.Ui.Models.Journal.AddBatchViewModel
+
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>Create a New Batch: </h1>
+   </div>
+   <div class="card-body">
+      <form asp-controller="Journal" asp-action="Add" method="POST" enctype="multipart/form-data">
+
+         <div class="card" id="batchDescription">
+            <div class="card-header bg-dark text-light">
+               <i>Enter a Title and Short Description:</i>
+            </div>
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <input class="form-control" type="text" aria-label="Title" placeholder="Title of Batch" required asp-for="Title" maxlength="100">
+                     <span asp-validation-for="Title" class="text-danger"></span>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-12">
+                     <input class="form-control" type="text" placeholder="Description (optional)" aria-label="Description of Batch" asp-for="Description" maxlength="100">
+                     <span asp-validation-for="Description" class="text-danger"></span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card" id="batchInfo">
+            <div class="card-header bg-dark text-light">
+               <i>Enter your Volume, Vintage and Variety:</i>
+            </div>
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-2 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Volume of Batch" placeholder="Volume of Batch" required asp-for="Volume" maxlength="10">
+                     <span asp-validation-for="Volume" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="VolumeUOM" asp-items="Model.VolumeUOMs"></select>
+                     <span asp-validation-for="VolumeUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-2">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" placeholder="Vintage" aria-label="Vintage of Wine" required asp-for="Vintage" maxlength="4">
+                     <span asp-validation-for="Vintage" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-5">
+                     <select class="custom-select" aria-label="Select a Variety of Wine" asp-for="VarietyId" asp-items="Model.Varieties"></select>
+                     <span asp-validation-for="VarietyId" class="text-danger"></span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card" id="batchTargets">
+            <div class="card-header bg-dark text-light">
+               <i>Enter Target Values for Fermentation Temperature, Starting Sugar Level, Ending Sugar Level, TA and pH: (optional)</i>
+            </div>
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="StartingSugar" maxlength="5">
+                     <span asp-validation-for="StartingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="StartSugarUOM" asp-items="Model.SugarUOMs"></select>
+                     <span asp-validation-for="StartSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="FermentationTemp" maxlength="4">
+                     <span asp-validation-for="FermentationTemp" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="TempUOM" asp-items="Model.TempUOMs"></select>
+                     <span asp-validation-for="TempUOM" class="text-danger"></span>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="EndingSugar" maxlength="5">
+                     <span asp-validation-for="EndingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="EndSugarUOM" asp-items="Model.SugarUOMs"></select>
+                     <span asp-validation-for="EndSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="TA" maxlength="4">
+                     <span asp-validation-for="TA" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="pH" maxlength="4">
+                     <span asp-validation-for="pH" class="text-danger"></span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card" id="action">
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-2">
+                     <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-paper-plane"></i>Create Batch
+                     </button>
+                  </div>
+                  <div class="col-sm-10">
+                     <button class="btn btn-primary" type="reset">
+                        <i class="fa fa-refresh"></i> Reset
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+      </form>
+   </div>
+   <div class="card-footer"></div>
+</div>
+
+@section Scripts{
+   <environment include="Development">
+         <script src="~/js/journal.js" asp-append-version="true" type="text/javascript"></script>
+      </environment>
+      <environment exclude="Development">
+         <script src="~/js/journal.min.js" asp-append-version="true" type="text/javascript"></script>
+      </environment>
+}
+

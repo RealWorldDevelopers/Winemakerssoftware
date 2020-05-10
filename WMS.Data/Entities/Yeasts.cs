@@ -19,8 +19,8 @@ namespace WMS.Data.Entities
         public double? Alcohol { get; set; }
         public string Note { get; set; }
 
-        public YeastBrand BrandNavigation { get; set; }
-        public YeastStyle StyleNavigation { get; set; }
-        public ICollection<YeastPair> YeastPair { get; set; }
+        public virtual YeastBrand BrandNavigation { get; set; }
+        public virtual YeastStyle StyleNavigation { get; set; }
+        public virtual ICollection<YeastPair> YeastPair { get; set; }
     }
 }

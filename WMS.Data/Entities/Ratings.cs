@@ -11,6 +11,6 @@ namespace WMS.Data.Entities
         public int? RecipeId { get; set; }
         public string OriginIp { get; set; }
 
-        public Recipes Recipe { get; set; }
+        public virtual Recipes Recipe { get; set; }
     }
 }

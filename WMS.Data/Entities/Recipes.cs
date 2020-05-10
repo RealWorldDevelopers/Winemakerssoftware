@@ -7,6 +7,7 @@ namespace WMS.Data.Entities
     {
         public Recipes()
         {
+            Batches = new HashSet<Batches>();
             PicturesXref = new HashSet<PicturesXref>();
         }
 
@@ -23,8 +24,9 @@ namespace WMS.Data.Entities
         public bool? Enabled { get; set; }
         public bool? NeedsApproved { get; set; }
 
-        public Varieties Variety { get; set; }
-        public Ratings Ratings { get; set; }
-        public ICollection<PicturesXref> PicturesXref { get; set; }
+        public virtual Varieties Variety { get; set; }
+        public virtual Ratings Ratings { get; set; }
+        public virtual ICollection<Batches> Batches { get; set; }
+        public virtual ICollection<PicturesXref> PicturesXref { get; set; }
     }
 }

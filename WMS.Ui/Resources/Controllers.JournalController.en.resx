@@ -117,10 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddGeneralError" xml:space="preserve">
+    <value>Sorry, something went wrong.  Please review your entry and try again.</value>
+    <comment>Alert Message for General Error in Adding of Batch</comment>
+  </data>
+  <data name="AddSuccess" xml:space="preserve">
+    <value>CONGRATULATIONS. Your batch has been successfully added.</value>
+    <comment>Alert Message for Successful Add of Batch</comment>
+  </data>
   <data name="PageDesc" xml:space="preserve">
     <value>A place to log the progress of a batch of your favorite wine.</value>
   </data>
+  <data name="PageDescAdd" xml:space="preserve">
+    <value>Add a new batch to the collection.</value>
+  </data>
+  <data name="PageDescDetails" xml:space="preserve">
+    <value>View details of a single batch.</value>
+  </data>
   <data name="PageTitle" xml:space="preserve">
-    <value>Journals</value>
+    <value>Journal</value>
+  </data>
+  <data name="PageTitleAdd" xml:space="preserve">
+    <value>Journal - Add</value>
+  </data>
+  <data name="PageTitleDetails" xml:space="preserve">
+    <value>Journal</value>
   </data>
 </root>

@@ -7,6 +7,7 @@ namespace WMS.Data.Entities
     {
         public Varieties()
         {
+            Batches = new HashSet<Batches>();
             Recipes = new HashSet<Recipes>();
             YeastPair = new HashSet<YeastPair>();
         }
@@ -17,8 +18,9 @@ namespace WMS.Data.Entities
         public int? CategoryId { get; set; }
         public bool? Enabled { get; set; }
 
-        public Categories Category { get; set; }
-        public ICollection<Recipes> Recipes { get; set; }
-        public ICollection<YeastPair> YeastPair { get; set; }
+        public virtual Categories Category { get; set; }
+        public virtual ICollection<Batches> Batches { get; set; }
+        public virtual ICollection<Recipes> Recipes { get; set; }
+        public virtual ICollection<YeastPair> YeastPair { get; set; }
     }
 }

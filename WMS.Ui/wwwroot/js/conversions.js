@@ -92,7 +92,7 @@
       }
    });
 
-   // calculate Celsius on Fahrenheit Entry
+   // calculate Fahrenheit on Celsius Entry
    $('body').off('keyup', '#Celsius');
    $('body').on('keyup', '#Celsius', function () {
       var celsius = parseFloat($(this).val());

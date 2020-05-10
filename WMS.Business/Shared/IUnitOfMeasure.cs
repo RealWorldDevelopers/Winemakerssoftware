@@ -1,9 +1,11 @@
-﻿namespace WMS.Business.Common
+﻿
+
+namespace WMS.Business.Common
 {
    /// <summary>
-   /// Data Transfer Object representing a Code Literal Type Table with an added optional foreign key property
+   /// Data Transfer Object representing a Unit of Measure
    /// </summary>
-   public interface ICode
+   public interface IUnitOfMeasure
    {
       /// <summary>
       /// Code Unique Identifier
@@ -11,15 +13,14 @@
       int Id { get; set; }
 
       /// <summary>
-      /// Code Foreign Key
+      /// Literal Name of Code
       /// </summary>
-      /// <remarks>Optional</remarks>
-      int? ParentId { get; set; }
+      string Abbreviation { get; set; }
 
       /// <summary>
       /// Literal Name of Code
       /// </summary>
-      string Literal { get; set; }
+      string UnitOfMeasure { get; set; }
 
       /// <summary>
       /// Description of Code
@@ -34,5 +35,4 @@
 
 
    }
-
 }

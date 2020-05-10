@@ -16,7 +16,7 @@ namespace WMS.Data.Entities
         public string Description { get; set; }
         public bool? Enabled { get; set; }
 
-        public ICollection<Varieties> Varieties { get; set; }
-        public ICollection<YeastPair> YeastPair { get; set; }
+        public virtual ICollection<Varieties> Varieties { get; set; }
+        public virtual ICollection<YeastPair> YeastPair { get; set; }
     }
 }

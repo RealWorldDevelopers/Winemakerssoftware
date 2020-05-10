@@ -9,7 +9,7 @@ namespace WMS.Data.Entities
         public int? RecipeId { get; set; }
         public int? ImageId { get; set; }
 
-        public Images Image { get; set; }
-        public Recipes Recipe { get; set; }
+        public virtual Images Image { get; set; }
+        public virtual Recipes Recipe { get; set; }
     }
 }

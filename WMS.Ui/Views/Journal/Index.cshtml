@@ -1,16 +1,60 @@
-﻿
-@model WMS.Ui.Models.Journal.JournalViewModel
-
+﻿@model WMS.Ui.Models.Journal.JournalViewModel
 <div class="card">
-    <div class="card-header bg-secondary text-light">
-        <h1>Journal</h1>
-    </div>
-    <div class="card-body">
-        sw add to cache <br />
+   <div class="card-header bg-secondary text-light">
+      <h1>@ViewData["Title"]</h1>
+   </div>
+   <div class="card-body">
 
-        check with lighthous <br />
+      Show Screens Shots if not logged in <br /><br />
+      must look good mobile <br /><br />
 
-        check with wave <br />
-    </div>
-    <div class="card-footer bg-secondary text-light"></div>
+
+
+      <div>
+         <label class="d-none d-md-block">
+            <input class="form-control" inputmode="search" type="search" placeholder="Search for ..." id="batchSearch" />
+
+         </label>
+      </div>
+
+      <br /><br />
+
+      sort and/or filter for active
+
+      <br /><br />
+
+      <a href="/journal/add" class="btn btn-outline-secondary btn-block" title="Add a New Batch">
+         Add New Batch (on create link to Recipe)
+      </a>
+
+
+      <br /><br />
+
+      <div class="card-columns">
+         @foreach (var batch in Model.Batches)
+         {
+            <div class="card">
+               <div class="card-header bg-dark text-light h3">Year - Variety - BatchNumber</div>
+               <div class="card-body">
+                  <div>
+                     a card for a batch <br />
+                     link/shortcut  visible here to scoring <br />
+                     <br />
+                  </div>
+               </div>
+            </div>
+         }
+      </div>
+
+   </div>
 </div>
+
+
+@section Scripts{
+   @*<environment include="Development">
+         <script src="~/js/yeast.js" asp-append-version="true" type="text/javascript"></script>
+      </environment>
+      <environment exclude="Development">
+         <script src="~/js/yeast.min.js" asp-append-version="true" type="text/javascript"></script>
+      </environment>*@
+}
