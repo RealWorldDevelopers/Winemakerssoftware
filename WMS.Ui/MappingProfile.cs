@@ -59,9 +59,38 @@ namespace WMS.Ui
 
          CreateMap<WMS.Data.Entities.UnitsOfMeasure, Business.Common.IUnitOfMeasure>().ReverseMap();
 
-         CreateMap<WMS.Data.Entities.Batches, Business.Journal.Dto.BatchDto>().ReverseMap();
+         CreateMap<WMS.Data.Entities.Batches, Business.Journal.Dto.BatchDto>()
+            .ForMember(dest => dest.VolumeUom, opt => opt.Ignore())
+            .ForMember(dest => dest.Variety, opt => opt.Ignore())
+            .ForMember(dest => dest.Target, opt => opt.Ignore())
+            .AfterMap((src, dest) => { dest.VolumeUom = src.VolumeUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.VolumeUomId.Value } : null; })
+            .AfterMap((src, dest) => { dest.Variety = src.VarietyId.HasValue ? new Business.Common.Code { Id = src.VarietyId.Value } : null; })
+            .AfterMap((src, dest) => { dest.Target = src.TargetId.HasValue ? new Business.Journal.Dto.TargetDto { Id = src.TargetId.Value } : null; });
 
-         CreateMap<WMS.Data.Entities.Targets, Business.Journal.Dto.TargetDto>().ReverseMap();
+         CreateMap<Business.Journal.Dto.BatchDto, WMS.Data.Entities.Batches>()
+            .ForMember(dest => dest.VolumeUom, opt => opt.Ignore())
+            .ForMember(dest => dest.Variety, opt => opt.Ignore())
+            .ForMember(dest => dest.Target, opt => opt.Ignore())
+            .ForMember(dest => dest.VolumeUomId, opt => opt.MapFrom(src => src.VolumeUom.Id))
+            .ForMember(dest => dest.VarietyId, opt => opt.MapFrom(src => src.Variety.Id))
+            .ForMember(dest => dest.TargetId, opt => opt.MapFrom(src => src.Target.Id));
+
+         CreateMap<WMS.Data.Entities.Targets, Business.Journal.Dto.TargetDto>()
+            .ForMember(dest => dest.TempUom, opt => opt.Ignore())
+            .ForMember(dest => dest.StartSugarUom, opt => opt.Ignore())
+            .ForMember(dest => dest.EndSugarUom, opt => opt.Ignore())
+            .AfterMap((src, dest) => { dest.TempUom = src.TempUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.TempUomId.Value } : null; })
+            .AfterMap((src, dest) => { dest.StartSugarUom = src.StartSugarUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.StartSugarUomId.Value } : null; })
+            .AfterMap((src, dest) => { dest.EndSugarUom = src.EndSugarUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.EndSugarUomId.Value } : null; });
+
+         CreateMap<Business.Journal.Dto.TargetDto, WMS.Data.Entities.Targets>()
+            .ForMember(dest => dest.TempUom, opt => opt.Ignore())
+            .ForMember(dest => dest.StartSugarUom, opt => opt.Ignore())
+            .ForMember(dest => dest.EndSugarUom, opt => opt.Ignore())
+            .ForMember(dest => dest.TempUomId, opt => opt.MapFrom(src => src.TempUom.Id))
+            .ForMember(dest => dest.StartSugarUomId, opt => opt.MapFrom(src => src.StartSugarUom.Id))
+            .ForMember(dest => dest.EndSugarUomId, opt => opt.MapFrom(src => src.EndSugarUom.Id));
+
 
          CreateMap<WMS.Data.Entities.PicturesXref, Business.Recipe.Dto.ImageFileDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ImageId));

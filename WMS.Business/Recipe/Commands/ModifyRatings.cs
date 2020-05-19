@@ -6,6 +6,7 @@ using WMS.Business.Recipe.Dto;
 using WMS.Business.Common;
 using WMS.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace WMS.Business.Recipe.Commands
 {
@@ -36,6 +37,9 @@ namespace WMS.Business.Recipe.Commands
       /// <inheritdoc cref="ICommand{T}.Add(T)"/>
       public RatingDto Add(RatingDto dto)
       {
+         if (dto == null)
+            throw new ArgumentNullException(nameof(dto));
+
          var entity = _mapper.Map<Data.Entities.Ratings>(dto);
 
          // Update entity in DbSet
@@ -44,8 +48,7 @@ namespace WMS.Business.Recipe.Commands
          // Save changes in database
          _dbContext.SaveChanges();
 
-         if (dto != null)
-            dto.Id = entity.Id;
+         dto.Id = entity.Id;
 
          return dto;
       }
@@ -58,6 +61,9 @@ namespace WMS.Business.Recipe.Commands
       /// <inheritdoc cref="ICommand{T}.AddAsync(T)"/>
       public async Task<RatingDto> AddAsync(RatingDto dto)
       {
+         if (dto == null)
+            throw new ArgumentNullException(nameof(dto));
+
          var entity = _mapper.Map<Data.Entities.Ratings>(dto);
 
          // Update entity in DbSet
@@ -66,8 +72,7 @@ namespace WMS.Business.Recipe.Commands
          // Save changes in database
          await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-         if (dto != null)
-            dto.Id = entity.Id;
+         dto.Id = entity.Id;
 
          return dto;
       }

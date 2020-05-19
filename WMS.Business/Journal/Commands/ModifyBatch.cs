@@ -46,7 +46,7 @@ namespace WMS.Business.Journal.Commands
          // Save changes in database
          _dbContext.SaveChanges();
 
-         //dto.Id = entity.Id;
+         dto.Id = entity.Id;
          return dto;
       }
 
@@ -69,7 +69,7 @@ namespace WMS.Business.Journal.Commands
          // Save changes in database
          await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-         //dto.Id = entity.Id;
+         dto.Id = entity.Id;
          return dto;
       }
 
@@ -88,13 +88,13 @@ namespace WMS.Business.Journal.Commands
          entity.Complete = dto.Complete;
          entity.RecipeId = dto.RecipeId;
          entity.SubmittedBy = dto.SubmittedBy;
-         entity.TargetId = dto.TargetId;
+         entity.TargetId = dto.Target.Id;
          entity.Title = dto.Title;
          entity.Description = dto.Description;
-         entity.VarietyId = dto.VarietyId;
+         entity.VarietyId = dto.Variety.Id;
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
-         entity.VolumeUomId = dto.VolumeUomId; 
+         entity.VolumeUomId = dto.VolumeUom.Id; 
 
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);
@@ -120,13 +120,13 @@ namespace WMS.Business.Journal.Commands
          entity.Complete = dto.Complete;
          entity.RecipeId = dto.RecipeId;
          entity.SubmittedBy = dto.SubmittedBy;
-         entity.TargetId = dto.TargetId;
+         entity.TargetId = dto.Target.Id;
          entity.Title = dto.Title;
          entity.Description = dto.Description;
-         entity.VarietyId = dto.VarietyId;
+         entity.VarietyId = dto.Variety.Id;
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
-         entity.VolumeUomId = dto.VolumeUomId;
+         entity.VolumeUomId = dto.VolumeUom.Id;
 
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);

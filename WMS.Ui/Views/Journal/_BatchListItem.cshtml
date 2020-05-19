@@ -1,14 +1,24 @@
-﻿@model WMS.Ui.Models.Journal.BatchViewModel
-<div class="card-body card-text text-left">
+﻿@model WMS.Ui.Models.Journal.BatchListItemViewModel
+<div class="card">
+   <div class="card-header bg-dark text-light h3">
+      <div>@Model.Title</div>
+      <div>@Model.Vintage - @Model.Variety</div>
+   </div>
+   <div class="card-body">
 
-   <ul class="list-group-flush">
+      <p class="card-text">@Model.Description</p>
+      <p class="card-text"><strong>Current Stage:</strong> @Model.CurrentStage</p>
+      <p class="card-text">@Model.LastStatus</p>
 
-
-      @foreach (var entry in Model.Entries)
+      @if (!Model.BatchComplete)
       {
-         <partial name="_EntryListItem" model="entry" />
+         <btn class="btn btn-primary">Score Batch</btn>
+      }
+      else
+      {
+         <btn class="btn btn-primary">Quick Entry</btn> <btn class="btn btn-primary">Full Details</btn>
       }
 
-   </ul>
+   </div>
 
 </div>

@@ -47,7 +47,7 @@ namespace WMS.Business.Journal.Commands
          // Save changes in database
          _dbContext.SaveChanges();
 
-         //dto.Id = entity.Id;
+         dto.Id = entity.Id;
          return dto;
       }
 
@@ -70,7 +70,7 @@ namespace WMS.Business.Journal.Commands
          // Save changes in database
          await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-         //dto.Id = entity.Id;
+         dto.Id = entity.Id;
          return dto;
       }
 
@@ -87,13 +87,13 @@ namespace WMS.Business.Journal.Commands
 
          var entity = _dbContext.Targets.First(r => r.Id == dto.Id);
          entity.EndSugar = dto.EndSugar;
-         entity.EndSugarUomId = dto.EndSugarUomId;
+         entity.EndSugarUomId = dto.EndSugarUom.Id;
          entity.PH = dto.pH;
          entity.StartSugar = dto.StartSugar;
-         entity.StartSugarUomId = dto.StartSugarUomId;
+         entity.StartSugarUomId = dto.StartSugarUom.Id;
          entity.Ta = dto.TA;
          entity.Temp = dto.Temp;
-         entity.TempUomId = dto.TempUomId;
+         entity.TempUomId = dto.TempUom.Id;
 
          // Update entity in DbSet
          _dbContext.Targets.Update(entity);
@@ -117,13 +117,13 @@ namespace WMS.Business.Journal.Commands
 
          var entity = await _dbContext.Targets.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
          entity.EndSugar = dto.EndSugar;
-         entity.EndSugarUomId = dto.EndSugarUomId;
+         entity.EndSugarUomId = dto.EndSugarUom.Id;
          entity.PH = dto.pH;
          entity.StartSugar = dto.StartSugar;
-         entity.StartSugarUomId = dto.StartSugarUomId;
+         entity.StartSugarUomId = dto.StartSugarUom.Id;
          entity.Ta = dto.TA;
          entity.Temp = dto.Temp;
-         entity.TempUomId = dto.TempUomId;
+         entity.TempUomId = dto.TempUom.Id;
 
          // Update entity in DbSet
          _dbContext.Targets.Update(entity);

@@ -33,16 +33,7 @@
       <div class="card-columns">
          @foreach (var batch in Model.Batches)
          {
-            <div class="card">
-               <div class="card-header bg-dark text-light h3">Year - Variety - BatchNumber</div>
-               <div class="card-body">
-                  <div>
-                     a card for a batch <br />
-                     link/shortcut  visible here to scoring <br />
-                     <br />
-                  </div>
-               </div>
-            </div>
+            <partial name="_BatchListItem" model="batch" />            
          }
       </div>
 

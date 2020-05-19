@@ -121,10 +121,9 @@ namespace WMS.Ui.Models.Recipes
             return new RecipesViewModel();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2008:Do not create tasks without passing a TaskScheduler", Justification = "<Pending>")]
         public Task<RecipeListItemViewModel> BuildRecipeListItemModel(Business.Recipe.Dto.RecipeDto recipeDto)
         {
-            Task<RecipeListItemViewModel> t = Task.Factory.StartNew<RecipeListItemViewModel>(() =>
+            Task<RecipeListItemViewModel> t = Task.Run(() =>
             {
                 Uri recipeUri = new Uri(_recipeUrl + "/" + recipeDto.Id.ToString(CultureInfo.CurrentCulture), UriKind.Relative);
 

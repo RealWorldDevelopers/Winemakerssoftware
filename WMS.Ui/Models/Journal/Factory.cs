@@ -1,22 +1,102 @@
 ﻿
 
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using WMS.Business.Common;
 
 namespace WMS.Ui.Models.Journal
 {
    public class Factory : IFactory
    {
+      private readonly AppSettings _appSettings;
+
+      private readonly Uri _batchUrl;
+
+      public Factory(IOptions<AppSettings> appSettings)
+      {
+         _appSettings = appSettings?.Value;
+         _batchUrl = new Uri(_appSettings.URLs.JournalBatch, UriKind.Relative);
+      }
+
       public JournalViewModel CreateJournalModel()
       {
          return new JournalViewModel();
       }
 
-      public AddBatchViewModel CreateAddBatchModel(List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, 
-         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList, AddBatchViewModel model = null)
+      public Task<BatchListItemViewModel> BuildBatchListItemModel(Business.Journal.Dto.BatchDto batchDto)
+      {
+         Task<BatchListItemViewModel> t = Task.Run(() =>
+         {
+            Uri batchUri = new Uri(_batchUrl + "/" + batchDto.Id.Value.ToString(CultureInfo.CurrentCulture), UriKind.Relative);
+
+            var model = new BatchListItemViewModel
+            {
+               Id = batchDto.Id.Value,
+               Title = batchDto.Title,
+               Vintage = batchDto.Vintage,
+               Variety = batchDto.Variety != null ? batchDto.Variety.Literal : string.Empty,
+               Description = batchDto.Description,
+               CurrentStage = "CurrentStage",
+               LastStatus = "01-01-2020: last SG and Temp or last so2 or last score",
+               BatchUrl = batchUri
+            };
+            return model;
+         });
+         return t;
+      }
+
+      public List<BatchListItemViewModel> BuildBatchListItemModels(List<Business.Journal.Dto.BatchDto> dtoBatchList)
+      {
+         var modelList = new List<BatchListItemViewModel>();
+
+         var batchStack = new Stack<Business.Journal.Dto.BatchDto>(dtoBatchList);
+
+         // Create 1 per core, and then as they finish, create another:   
+         List<Task<BatchListItemViewModel>> tasks = new List<Task<BatchListItemViewModel>>();
+
+         int numBatches = batchStack.Count;
+         int numCores = Environment.ProcessorCount;
+
+         // if numCors > N use only N  
+         if (numCores > numBatches)
+            numCores = numBatches;
+
+         // create initial set of tasks:        
+         for (int i = 0; i < numCores; i++)
+         {
+            Task<BatchListItemViewModel> t = BuildBatchListItemModel(batchStack.Pop());
+            tasks.Add(t);
+         }
+
+         // now, as they finish, create more:
+         int done = 0;
+         while (done < numBatches)
+         {
+            int index = Task.WaitAny(tasks.ToArray());
+            done++;
+            modelList.Add(tasks[index].Result);
+            tasks.RemoveAt(index);
+            if (batchStack.Count > 0)
+            {
+               Task<BatchListItemViewModel> t = BuildBatchListItemModel(batchStack.Pop());
+               tasks.Add(t);
+            }
+         }
+
+         return modelList;
+      }
+
+
+
+
+
+      public BatchViewModel CreateBatchModel(List<ICode> dtoVarietyList, List<ICode> dtoCategoryList,
+         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList, BatchViewModel model = null)
       {
          var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
          var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);
@@ -25,7 +105,7 @@ namespace WMS.Ui.Models.Journal
 
          var newModel = model;
          if (newModel == null)
-            newModel = new AddBatchViewModel();
+            newModel = new BatchViewModel();
 
          newModel.Varieties = varieties;
          newModel.VolumeUOMs = uomVolumeList;

@@ -1,4 +1,5 @@
 ﻿using WMS.Business.Common;
+using WMS.Business.Journal.Dto;
 
 namespace WMS.Business.Journal.Queries
 {
@@ -7,6 +8,12 @@ namespace WMS.Business.Journal.Queries
    /// </summary>
    public interface IFactory
    {
+      /// <summary>
+      /// Create a Batches Query
+      /// </summary>
+      /// <returns><see cref="IQuery{BatchDto}"/></returns>
+      IQuery<BatchDto> CreateBatchesQuery();
+
       /// <summary>
       /// Create a Batch Volume UOM Query
       /// </summary>

@@ -40,7 +40,7 @@ namespace WMS.Business.Yeast.Commands
             // Save changes in database
             _dbContext.SaveChanges();
 
-            //dto.Id = entity.Id;
+            dto.Id = entity.Id;
             return dto;
         }
 
@@ -63,7 +63,7 @@ namespace WMS.Business.Yeast.Commands
             // Save changes in database
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-            //dto.Id = entity.Id;
+            dto.Id = entity.Id;
             return dto;
         }
 

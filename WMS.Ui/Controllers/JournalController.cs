@@ -8,21 +8,23 @@ using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using System;
+using WMS.Business.Common;
+using System.Linq;
+using WMS.Business.Journal.Dto;
 
 namespace WMS.Ui.Controllers
 {
-   // TODO [Authorize(Roles = "GeneralUser")]
    public class JournalController : BaseController
    {
       private readonly IStringLocalizer<JournalController> _localizer;
-      private readonly IFactory _modelFactory;
+      private readonly Models.Journal.IFactory _modelFactory;
       private readonly Business.Recipe.Queries.IFactory _recipeQueryFactory;
       private readonly Business.Journal.Queries.IFactory _journalQueryFactory;
       private readonly Business.Journal.Commands.IFactory _journalCommandFactory;
 
       public JournalController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
          Business.Journal.Commands.IFactory journalCommandFactory, Business.Journal.Queries.IFactory journalQueryFactory,
-         Business.Recipe.Queries.IFactory recipeQueryFactory, IStringLocalizer<JournalController> localizer, IFactory modelFactory, TelemetryClient telemetry) :
+         Business.Recipe.Queries.IFactory recipeQueryFactory, IStringLocalizer<JournalController> localizer, Models.Journal.IFactory modelFactory, TelemetryClient telemetry) :
           base(configuration, userManager, roleManager, telemetry)
       {
          _localizer = localizer;
@@ -33,18 +35,24 @@ namespace WMS.Ui.Controllers
       }
 
       /// <summary>
-      /// 
+      /// Main Landing Page for Journals
       /// </summary>
-      /// <returns></returns>
-      public IActionResult Index()
+      public async Task<IActionResult> Index()
       {
          ViewData["Title"] = _localizer["PageTitle"];
          ViewData["PageDesc"] = _localizer["PageDesc"];
 
+         var getBatchesQuery = _journalQueryFactory.CreateBatchesQuery();
+         var batchesDto = await getBatchesQuery.ExecuteAsync().ConfigureAwait(false);
+         var journalModel = _modelFactory.CreateJournalModel();
 
+         var batchItemsModel = _modelFactory.BuildBatchListItemModels(batchesDto);
 
-         var model = _modelFactory.CreateJournalModel();
-         return View(model);
+         journalModel.Batches = batchItemsModel
+             .OrderByDescending(r => r.Vintage)
+             .ThenBy(r => r.Variety);
+
+         return View(journalModel);
 
       }
 
@@ -71,8 +79,7 @@ namespace WMS.Ui.Controllers
          var varietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
          var vList = await varietiesQuery.ExecuteAsync().ConfigureAwait(false);
 
-         var addBatchModel = _modelFactory.CreateAddBatchModel(vList, cList, uomVolumeList, uomSugarList, uomTempList);
-         addBatchModel.User = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         var addBatchModel = _modelFactory.CreateBatchModel(vList, cList, uomVolumeList, uomSugarList, uomTempList);
 
          return View(addBatchModel);
       }
@@ -80,12 +87,12 @@ namespace WMS.Ui.Controllers
       /// <summary>
       /// Submit Method of Add a New Batch 
       /// </summary>
-      /// <param name="model">Details from Add Batch Page as <see cref="AddBatchViewModel"/></param>
+      /// <param name="model">Details from Add Batch Page as <see cref="BatchViewModel"/></param>
       /// <returns>Returns to Empty Add Batch Entry Page with Success or Failure Alert Message</returns>
-      //[Authorize(Roles = "GeneralUser")]
+      //TODO [Authorize(Roles = "GeneralUser")]
       [HttpPost]
       [ValidateAntiForgeryToken]
-      public async Task<IActionResult> Add(AddBatchViewModel model)
+      public async Task<IActionResult> Add(BatchViewModel model)
       {
          if (model == null)
             throw new ArgumentNullException(nameof(model));
@@ -122,54 +129,57 @@ namespace WMS.Ui.Controllers
          // using model validation attributes, if model state says errors do nothing           
          if (!ModelState.IsValid)
          {
-            var addModel = _modelFactory.CreateAddBatchModel(vList, cList, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchModel(vList, cList, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], true);
             return View(addModel);
          }
 
-         // convert add model to batch and target dto     
-         var targetDto = new Business.Journal.Dto.TargetDto
+         var targetDto = new TargetDto();
+         if (model.HasTargetData())
          {
-            Temp = model.FermentationTemp,
-            TempUomId = model.TempUOM,
-            pH = model.pH,
-            TA = model.TA,
-            StartSugar = model.StartingSugar,
-            StartSugarUomId = model.StartSugarUOM,
-            EndSugar = model.EndingSugar,
-            EndSugarUomId = model.EndSugarUOM
-         };
+            // convert add model to batch and target dto   
+            targetDto.Temp = model.FermentationTemp;
+            targetDto.pH = model.pH;
+            targetDto.TA = model.TA;
+            targetDto.StartSugar = model.StartingSugar;
+            targetDto.EndSugar = model.EndingSugar;
 
-         //recipeDto.Id = 1;  // for testing only
-         var updateTargetCommand = _journalCommandFactory.CreateTargetsCommand();
-         targetDto = await updateTargetCommand.AddAsync(targetDto).ConfigureAwait(false);
+            targetDto.TempUom = new UnitOfMeasure { Id = model.TempUOM.Value };
+            targetDto.StartSugarUom = new UnitOfMeasure { Id = model.StartSugarUOM.Value };
+            targetDto.EndSugarUom = new UnitOfMeasure { Id = model.EndSugarUOM.Value };
 
-         var batchDto = new Business.Journal.Dto.BatchDto
+            var updateTargetCommand = _journalCommandFactory.CreateTargetsCommand();
+            targetDto = await updateTargetCommand.AddAsync(targetDto).ConfigureAwait(false);
+         }
+
+         var batchDto = new BatchDto
          {
-            TargetId = targetDto.Id,
             Description = model.Description,
-            Vintage= model.Vintage,
-            Volume=model.Volume,
-            VolumeUomId= model.VolumeUOM,
-            VarietyId= model.VarietyId,
-            Complete=false,            
-            SubmittedBy = submittedBy.Id,
+            Vintage = model.Vintage,
+            Volume = model.Volume,
+            Complete = false,
+            // TODO SubmittedBy = submittedBy.Id,
             Title = model.Title
          };
+                  
+         batchDto.Target = targetDto;
+         batchDto.VolumeUom = new UnitOfMeasure { Id = model.VolumeUOM.Value };
+         batchDto.Variety = new Code { Id = model.VarietyId.Value };
 
          var updateBatchCommand = _journalCommandFactory.CreateBatchesCommand();
          batchDto = await updateBatchCommand.AddAsync(batchDto).ConfigureAwait(false);
 
          // tell user good job and clear or go to thank you page           
          ModelState.Clear();
-         var addBatchModel = _modelFactory.CreateAddBatchModel(vList, cList, uomVolumeList, uomSugarList, uomTempList);
-         addBatchModel.User = submittedBy;
+         var addBatchModel = _modelFactory.CreateBatchModel(vList, cList, uomVolumeList, uomSugarList, uomTempList);
+         // addBatchModel.User = submittedBy;
 
          Success(_localizer["AddSuccess"], true);
 
          return View(addBatchModel);
 
       }
+
 
 
    }

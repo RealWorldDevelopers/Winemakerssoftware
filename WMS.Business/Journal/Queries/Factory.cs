@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WMS.Business.Common;
+using WMS.Business.Journal.Dto;
 using WMS.Data;
 
 namespace WMS.Business.Journal.Queries
@@ -10,7 +11,7 @@ namespace WMS.Business.Journal.Queries
    /// <inheritdoc cref="IFactory"/>>
    public class Factory : IFactory
    {
-      private readonly WMSContext _uomContext;
+      private readonly WMSContext _dbContext;
       private readonly IMapper _mapper;
 
       /// <summary>
@@ -20,8 +21,17 @@ namespace WMS.Business.Journal.Queries
       /// <param name="mapper">AutoMapper Instance as <see cref="IMapper"/></param>
       public Factory(WMSContext dbContext, IMapper mapper)
       {
-         _uomContext = dbContext;
+         _dbContext = dbContext;
          _mapper = mapper;
+      }
+
+      /// <summary>
+      /// Instance of Create Batches Query
+      /// </summary>
+      /// <inheritdoc cref="IFactory.CreateBatchesQuery"/>>
+      public IQuery<BatchDto> CreateBatchesQuery()
+      {
+         return new GetBatches(_dbContext, _mapper);
       }
 
       /// <summary>
@@ -30,7 +40,7 @@ namespace WMS.Business.Journal.Queries
       /// <inheritdoc cref="IFactory.CreateBatchVolumeUOM"/>>
       public IQuery<IUnitOfMeasure> CreateBatchVolumeUOMQuery()
       {
-         return new GetBatchVolumeUOM(_uomContext, _mapper);
+         return new GetBatchVolumeUOM(_dbContext, _mapper);
       }
 
       /// <summary>
@@ -39,7 +49,7 @@ namespace WMS.Business.Journal.Queries
       /// <inheritdoc cref="IFactory.CreateBatchVolumeUOM"/>>
       public IQuery<IUnitOfMeasure> CreateBatchTempUOMQuery()
       {
-         return new GetBatchTempUOM(_uomContext, _mapper);
+         return new GetBatchTempUOM(_dbContext, _mapper);
       }
 
       /// <summary>
@@ -48,7 +58,7 @@ namespace WMS.Business.Journal.Queries
       /// <inheritdoc cref="IFactory.CreateBatchVolumeUOM"/>>
       public IQuery<IUnitOfMeasure> CreateBatchSugarUOMQuery()
       {
-         return new GetBatchSugarUOM(_uomContext, _mapper);
+         return new GetBatchSugarUOM(_dbContext, _mapper);
       }
 
    }

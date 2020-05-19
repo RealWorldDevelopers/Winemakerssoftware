@@ -6,9 +6,16 @@ using WMS.Ui.Models.Validation;
 
 namespace WMS.Ui.Models.Journal
 {
-   public class AddBatchViewModel
+   public class BatchViewModel
    {
-      public ApplicationUser User { get; set; }
+      public BatchViewModel()
+      {
+         Entries = new List<BatchEntryViewModel> {
+            new BatchEntryViewModel(), new BatchEntryViewModel(), new BatchEntryViewModel(),
+            new BatchEntryViewModel(), new BatchEntryViewModel(), new BatchEntryViewModel()};
+      }
+
+      public List<BatchEntryViewModel> Entries { get; }
 
       [Required(ErrorMessage = "Title is required")]
       [StringLength(100, MinimumLength = 8, ErrorMessage = "Title much be at least 8 characters but no more than 100.")]
@@ -26,7 +33,7 @@ namespace WMS.Ui.Models.Journal
       public int? VolumeUOM { get; set; }
 
       [Required(ErrorMessage = "Vintage is required")]
-      [Range(2019, 2040, ErrorMessage = "Enter a Valid Year for Vintage")]
+      [Range(2016, 2040, ErrorMessage = "Enter a Valid Year for Vintage")]
       public int? Vintage { get; set; }
 
       [Required(ErrorMessage = "Variety is required")]
@@ -62,6 +69,13 @@ namespace WMS.Ui.Models.Journal
       public int? TempUOM { get; set; }
 
 
+      public bool HasTargetData()
+      {
+         if (pH.HasValue || FermentationTemp.HasValue || TA.HasValue || EndingSugar.HasValue || StartingSugar.HasValue)
+            return true;
+
+         return false;
+      }
 
       public IEnumerable<SelectListItem> Varieties { get; set; }
       public IEnumerable<SelectListItem> VolumeUOMs { get; set; }

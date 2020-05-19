@@ -1,4 +1,6 @@
 ﻿
+using WMS.Business.Common;
+
 namespace WMS.Business.Journal.Dto
 {
    /// <summary>
@@ -29,7 +31,7 @@ namespace WMS.Business.Journal.Dto
       /// <summary>
       /// Unit of Measure for Volume
       /// </summary>
-      public int? VolumeUomId { get; set; }
+      public IUnitOfMeasure VolumeUom { get; set; }
 
       /// <summary>
       /// Foreign Key of Associated User who Submitted Batch
@@ -44,12 +46,12 @@ namespace WMS.Business.Journal.Dto
       /// <summary>
       /// Foreign Key of Variety for Batch
       /// </summary>
-      public int? VarietyId { get; set; }
+      public ICode Variety { get; set; }
 
       /// <summary>
       /// Foreign Key of a Set of Targets for Batch
       /// </summary>
-      public int? TargetId { get; set; }
+      public TargetDto Target { get; set; }
 
       /// <summary>
       /// Foreign Key of Related Recipe for Batch

@@ -8,40 +8,12 @@ using System.Linq;
 namespace WMS.Ui.Models.Journal
 {
    public class JournalViewModel
-   {
-      public JournalViewModel()
-      {
-         Batches = new List<BatchViewModel> {
-            new BatchViewModel(),new BatchViewModel(), new BatchViewModel(),
-            new BatchViewModel(), new BatchViewModel(), new BatchViewModel() };
-      }
-
-      public List<BatchViewModel> Batches { get; }
+   {     
+      public IEnumerable<BatchListItemViewModel> Batches { get; set; }      
 
    }
 
-
-   public class BatchViewModel
-   {
-      public BatchViewModel()
-      {
-         Entries = new List<BatchEntryViewModel> {
-            new BatchEntryViewModel(), new BatchEntryViewModel(), new BatchEntryViewModel(),
-            new BatchEntryViewModel(), new BatchEntryViewModel(), new BatchEntryViewModel()};
-      }
-
-      public int Id { get; set; }
-
-      public int Vintage { get; set; } 
-
-      public int Variety { get; set; } 
-
-      public int RecipeId { get; set; }
-
-      public List<BatchEntryViewModel> Entries { get; }
-
-   }
-
+     
    public class BatchEntryViewModel
    {
       public BatchEntryViewModel()

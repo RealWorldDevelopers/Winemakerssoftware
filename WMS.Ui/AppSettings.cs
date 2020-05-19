@@ -44,6 +44,7 @@
       public string ImageSite { get; set; }
       public string ImageHeaderFile { get; set; }
       public string RecipesRecipe { get; set; }
+      public string JournalBatch { get; set; }
       public string ImageRecipes { get; set; }
       public string Stream { get; set; }
       public string StreamThumbs { get; set; }

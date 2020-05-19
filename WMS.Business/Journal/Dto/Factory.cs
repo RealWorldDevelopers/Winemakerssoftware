@@ -1,4 +1,6 @@
 ﻿
+using WMS.Business.Common;
+
 namespace WMS.Business.Journal.Dto
 {
    /// <summary>
@@ -8,8 +10,8 @@ namespace WMS.Business.Journal.Dto
    public class Factory : IFactory
    {
       /// <inheritdoc cref="IFactory.CreateNewBatch"/>>
-      public BatchDto CreateNewBatch(int? id, string title, string description, double? volume, int? volumeUomId,
-          string submittedBy, int? vintage, int? varietyId, int? targetId, int? recipeId, bool? complete)
+      public BatchDto CreateNewBatch(int? id, string title, string description, double? volume, IUnitOfMeasure volumeUom,
+          string submittedBy, int? vintage, ICode variety, TargetDto target, int? recipeId, bool? complete)
       {
          var dto = new BatchDto
          {
@@ -17,11 +19,11 @@ namespace WMS.Business.Journal.Dto
             Title = title,
             Description = description,
             Volume = volume,
-            VolumeUomId = volumeUomId,
+            VolumeUom = volumeUom,
             SubmittedBy = submittedBy,
             Vintage = vintage,
-            VarietyId = varietyId,
-            TargetId = targetId,
+            Variety = variety,
+            Target = target,
             RecipeId = recipeId,
             Complete = complete
          };
@@ -30,20 +32,20 @@ namespace WMS.Business.Journal.Dto
       }
 
       /// <inheritdoc cref="IFactory.CreateNewTarget"/>>
-      public TargetDto CreateNewTarget(int? id, double? temp, int? tempUomId, double? pH, double? ta, 
-         double? startSugar, int? startSugarUomId, double? endSugar, int? endSugarUomId)
+      public TargetDto CreateNewTarget(int? id, double? temp, IUnitOfMeasure tempUom, double? pH, double? ta, 
+         double? startSugar, IUnitOfMeasure startSugarUom, double? endSugar, IUnitOfMeasure endSugarUom)
       {
          var dto = new TargetDto
          {
             Id = id,
             Temp = temp,
-            TempUomId = tempUomId,
+            TempUom = tempUom,
             pH = pH,
             TA = ta,
             StartSugar = startSugar,
-            StartSugarUomId = startSugarUomId,
+            StartSugarUom = startSugarUom,
             EndSugar = endSugar,
-            EndSugarUomId = endSugarUomId
+            EndSugarUom = endSugarUom
          };
 
          return dto;

@@ -1,4 +1,6 @@
 ﻿
+using WMS.Business.Common;
+
 namespace WMS.Business.Journal.Dto
 {
    /// <summary>
@@ -19,7 +21,7 @@ namespace WMS.Business.Journal.Dto
       /// <summary>
       /// Unit of Measure for Temp
       /// </summary>
-      public int? TempUomId { get; set; }
+      public IUnitOfMeasure TempUom { get; set; }
 
       /// <summary>
       /// Target pH
@@ -39,7 +41,7 @@ namespace WMS.Business.Journal.Dto
       /// <summary>
       /// Unit of Measure for Starting Sugar
       /// </summary>
-      public int? StartSugarUomId { get; set; }
+      public IUnitOfMeasure StartSugarUom { get; set; }
 
       /// <summary>
       /// Target Ending Sugar
@@ -49,7 +51,7 @@ namespace WMS.Business.Journal.Dto
       /// <summary>
       /// Unit of Measure for Ending Sugar
       /// </summary>
-      public int? EndSugarUomId { get; set; }
+      public IUnitOfMeasure EndSugarUom { get; set; }
 
    }
 }
