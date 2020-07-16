@@ -15,13 +15,14 @@ namespace WMS.Data
             : base(options)
         {
         }
-        
+
         public virtual DbSet<Batches> Batches { get; set; }
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Images> Images { get; set; }
         public virtual DbSet<PicturesXref> PicturesXref { get; set; }
         public virtual DbSet<Ratings> Ratings { get; set; }
         public virtual DbSet<Recipes> Recipes { get; set; }
+        public virtual DbSet<Scores> Scores { get; set; }
         public virtual DbSet<Targets> Targets { get; set; }
         public virtual DbSet<UnitsOfMeasure> UnitsOfMeasure { get; set; }
         public virtual DbSet<Varieties> Varieties { get; set; }
@@ -30,9 +31,9 @@ namespace WMS.Data
         public virtual DbSet<YeastStyle> YeastStyle { get; set; }
         public virtual DbSet<Yeasts> Yeasts { get; set; }
 
-         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-             modelBuilder.Entity<Batches>(entity =>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {            
+            modelBuilder.Entity<Batches>(entity =>
             {
                 entity.Property(e => e.SubmittedBy).HasMaxLength(450);
 
@@ -57,6 +58,11 @@ namespace WMS.Data
                     .WithMany(p => p.Batches)
                     .HasForeignKey(d => d.VolumeUomId)
                     .HasConstraintName("FK_Batches_UnitsOfMeasure");
+
+                entity.HasOne(d => d.Yeast)
+                    .WithMany(p => p.Batches)
+                    .HasForeignKey(d => d.YeastId)
+                    .HasConstraintName("FK_Batches_Yeasts");
             });
 
             modelBuilder.Entity<Categories>(entity =>
@@ -126,10 +132,48 @@ namespace WMS.Data
                     .IsRequired()
                     .HasMaxLength(250);
 
+                entity.HasOne(d => d.Target)
+                    .WithMany(p => p.Recipes)
+                    .HasForeignKey(d => d.TargetId)
+                    .HasConstraintName("FK_Recipes_Targets");
+
                 entity.HasOne(d => d.Variety)
                     .WithMany(p => p.Recipes)
                     .HasForeignKey(d => d.VarietyId)
                     .HasConstraintName("FK_Recipes_Varieties");
+
+                entity.HasOne(d => d.Yeast)
+                    .WithMany(p => p.Recipes)
+                    .HasForeignKey(d => d.YeastId)
+                    .HasConstraintName("FK_Recipes_Yeasts");
+            });
+
+            modelBuilder.Entity<Scores>(entity =>
+            {
+                entity.Property(e => e.AfterTasteNote).HasMaxLength(100);
+
+                entity.Property(e => e.AppearanceNote).HasMaxLength(100);
+
+                entity.Property(e => e.AromaNote).HasMaxLength(100);
+
+                entity.Property(e => e.Comments).HasMaxLength(500);
+
+                entity.Property(e => e.Contest).HasMaxLength(50);
+
+                entity.Property(e => e.DateScored).HasColumnType("datetime");
+
+                entity.Property(e => e.Dryness).HasMaxLength(50);
+
+                entity.Property(e => e.Medal).HasMaxLength(50);
+
+                entity.Property(e => e.Sweetness).HasMaxLength(50);
+
+                entity.Property(e => e.TasteNote).HasMaxLength(100);
+
+                entity.HasOne(d => d.Batch)
+                    .WithMany(p => p.Scores)
+                    .HasForeignKey(d => d.BatchId)
+                    .HasConstraintName("FK_Scores_Batches");
             });
 
             modelBuilder.Entity<Targets>(entity =>

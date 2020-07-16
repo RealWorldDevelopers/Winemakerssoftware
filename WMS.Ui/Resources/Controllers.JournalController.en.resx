@@ -125,6 +125,10 @@
     <value>CONGRATULATIONS. Your batch has been successfully added.</value>
     <comment>Alert Message for Successful Add of Batch</comment>
   </data>
+  <data name="NoLogIn" xml:space="preserve">
+    <value>Sorry, you must be logged in to use this feature.</value>
+    <comment>Alert Message for Not Being Logged In</comment>
+  </data>
   <data name="PageDesc" xml:space="preserve">
     <value>A place to log the progress of a batch of your favorite wine.</value>
   </data>

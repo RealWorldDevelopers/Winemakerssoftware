@@ -62,10 +62,31 @@ namespace WMS.Business.Journal.Commands
          if (dto == null)
             throw new ArgumentNullException(nameof(dto));
 
-         var entity = _mapper.Map<Targets>(dto);
+         //var entity = _mapper.Map<Targets>(dto); // TODO left off here no map build it
+
+         var entity = new Targets
+         {
+            Temp = dto.Temp,
+            //TempUomId = dto.TempUom.Id,
+            PH = dto.pH,
+            Ta = dto.TA,
+            StartSugar = dto.StartSugar,
+            // StartSugarUomId = dto.StartSugarUom.Id,
+            EndSugar = dto.EndSugar,
+            //  EndSugarUomId = dto.EndSugarUom.Id
+         };
+
+         if (dto.TempUom.Id > 0)
+            entity.TempUomId = dto.TempUom.Id;
+
+         if (dto.StartSugarUom.Id > 0)
+            entity.StartSugarUomId = dto.StartSugarUom.Id;
+
+         if (dto.EndSugarUom.Id > 0)
+            entity.EndSugarUomId = dto.EndSugarUom.Id;
 
          // add new recipe
-         await _dbContext.Targets.AddAsync(entity).ConfigureAwait(false);
+         await _dbContext.Targets.AddAsync(entity);
 
          // Save changes in database
          await _dbContext.SaveChangesAsync().ConfigureAwait(false);

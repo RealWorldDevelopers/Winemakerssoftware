@@ -15,6 +15,8 @@ namespace WMS.Data.Entities
         public string Title { get; set; }
         public int? VarietyId { get; set; }
         public string Description { get; set; }
+        public int? TargetId { get; set; }
+        public int? YeastId { get; set; }
         public string Ingredients { get; set; }
         public string Instructions { get; set; }
         public string SubmittedBy { get; set; }
@@ -24,7 +26,9 @@ namespace WMS.Data.Entities
         public bool? Enabled { get; set; }
         public bool? NeedsApproved { get; set; }
 
+        public virtual Targets Target { get; set; }
         public virtual Varieties Variety { get; set; }
+        public virtual Yeasts Yeast { get; set; }
         public virtual Ratings Ratings { get; set; }
         public virtual ICollection<Batches> Batches { get; set; }
         public virtual ICollection<PicturesXref> PicturesXref { get; set; }

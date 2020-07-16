@@ -221,11 +221,21 @@ $(document).ready(function () {
       var $form = $('#frmSO2Dose');
       if ($form.valid()) {
 
-         var startingSO2 = +$('#CurrentSO2Reading').val();
-         var endingSO2 = +$('#GoalSO2').val();
+         var startingSO2 = parseFloat($('#CurrentSO2Reading').val());
+         var endingSO2 = parseFloat($('#GoalSO2').val());
          if (endingSO2 > 50) {
             endingSO2 = 50;
          }
+
+         var netSo2 = (endingSO2 > 0 && endingSO2 > startingSO2) ? endingSO2 - startingSO2 : endingSO2;
+
+
+
+
+
+
+
+
 
          var liters;
          var gallons;
@@ -491,17 +501,27 @@ $(document).ready(function () {
          }
       }
 
+      var red = true;
+      var pH = $('#pH').val();
+      var wineTemp = FahrenheitToCelsius(68);
+      if ($('input[name=optSO2DoseVariety]:checked', '#frmSO2Dose').val() === 'white') {
+         red = false;
+      }
+      var target = CalcTargetSO2(red, pH, wineTemp);
+      $('#GoalSO2').val(target);
+
    });
 
-   $('#frmSO2Dose').off('keyup', '#DoseSO2Calculator_pH');
-   $('#frmSO2Dose').on('keyup', '#DoseSO2Calculator_pH', function (e) {
+   $('#frmSO2Dose').off('keyup', '#pH');
+   $('#frmSO2Dose').on('keyup', '#pH', function (e) {
       var red = true;
       if ($('input[name=optSO2DoseVariety]:checked', '#frmSO2Dose').val() === 'white') {
          red = false;
       }
 
-      var pH = $('#DoseSO2Calculator_pH').val();
-      var target = CalcTargetSO2(pH, red);
+      var pH = $('#pH').val();
+      var temp = FahrenheitToCelsius(68);
+      var target = CalcTargetSO2(red, pH, temp);
 
       $('#GoalSO2').val(target);
 

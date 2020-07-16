@@ -125,6 +125,10 @@
     <value>CONGRATULATIONS. Your recipe has been successfully submitted for review.</value>
     <comment>Alert Message for Successful Add of Recipe</comment>
   </data>
+  <data name="NoLogIn" xml:space="preserve">
+    <value>Sorry, you must be logged in to use this feature.</value>
+    <comment>Alert Message for Not Being Logged In</comment>
+  </data>
   <data name="PageDesc" xml:space="preserve">
     <value>View a collection of recipes.</value>
   </data>

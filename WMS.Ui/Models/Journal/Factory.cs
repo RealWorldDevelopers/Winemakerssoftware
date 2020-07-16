@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
+using WMS.Business.Journal.Dto;
+using WMS.Business.Yeast.Dto;
 
 namespace WMS.Ui.Models.Journal
 {
@@ -91,30 +94,51 @@ namespace WMS.Ui.Models.Journal
          return modelList;
       }
 
-
-
-
-
-      public BatchViewModel CreateBatchModel(List<ICode> dtoVarietyList, List<ICode> dtoCategoryList,
-         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList, BatchViewModel model = null)
+      public TargetViewModel CreateTargetViewModel(TargetDto target, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
       {
-         var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
-         var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);
+
          var uomSugarList = CreateSelectList("Unit of Measure", dtoSugarUOMList);
          var uomTempList = CreateSelectList("Unit of Measure", dtoTempUOMList);
 
-         var newModel = model;
-         if (newModel == null)
-            newModel = new BatchViewModel();
+         var model = new TargetViewModel
+         {
+            SugarUOMs = uomSugarList,
+            TempUOMs = uomTempList
+         };
 
-         newModel.Varieties = varieties;
-         newModel.VolumeUOMs = uomVolumeList;
-         newModel.SugarUOMs = uomSugarList;
-         newModel.TempUOMs = uomTempList;
+         if (target != null)
+         {
+            model.EndingSugar = target.EndSugar;
+            model.EndSugarUOM = target.EndSugarUom.Id;
+            model.FermentationTemp = target.Temp;
+            model.TempUOM = target.TempUom.Id;
+            model.StartingSugar = target.StartSugar;
+            model.StartSugarUOM = target.StartSugarUom.Id;
+            model.TA = target.TA;
+            model.pH = target.pH;
+         }
+
+         return model;
+      }
+
+      public BatchViewModel CreateBatchModel(List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
+         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList,
+         TargetDto target = null)
+      {
+         var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
+         var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);    
+         var yeastsList = CreateSelectList("Yeast", dtoYeastList);
+
+         var newModel = new BatchViewModel
+         {
+            Varieties = varieties,
+            VolumeUOMs = uomVolumeList,
+            Yeasts = yeastsList,
+            Target = CreateTargetViewModel(target, dtoSugarUOMList, dtoTempUOMList)
+         };       
 
          return newModel;
       }
-
 
 
       public List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList, List<ICode> dtoParentList)
@@ -180,6 +204,43 @@ namespace WMS.Ui.Models.Journal
                };
                list.Add(selectItem);
             }
+         }
+
+         return list;
+      }
+
+
+      public List<SelectListItem> CreateSelectList(string title, List<YeastDto> dtoList)
+      {
+         var list = new List<SelectListItem>();
+         var group = new SelectListGroup { Name = "" };
+         var sortedList = dtoList.OrderBy(c => c.Brand.Literal).ThenBy(c => c.Trademark);
+
+         var selectItem = new SelectListItem
+         {
+            Value = "",
+            Text = "Select a " + title,
+            Disabled = true,
+            Selected = true,
+            Group = new SelectListGroup { Disabled = true, Name = "" }
+         };
+         list.Add(selectItem);
+
+         foreach (var dto in sortedList)
+         {
+            selectItem = new SelectListItem
+            {
+               Value = dto.Id.ToString(CultureInfo.CurrentCulture),
+               Text = dto.Trademark
+            };
+            if (dto.Brand != null)
+            {
+               if (group.Name != dto.Brand.Literal)
+                  group = new SelectListGroup { Name = dto.Brand.Literal };
+
+               selectItem.Group = group;
+            }
+            list.Add(selectItem);
          }
 
          return list;

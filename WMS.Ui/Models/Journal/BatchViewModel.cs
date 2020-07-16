@@ -36,52 +36,19 @@ namespace WMS.Ui.Models.Journal
       [Range(2016, 2040, ErrorMessage = "Enter a Valid Year for Vintage")]
       public int? Vintage { get; set; }
 
+      public int? RecipeId { get; set; }
+
       [Required(ErrorMessage = "Variety is required")]
       public int? VarietyId { get; set; }
 
+      [Required(ErrorMessage = "Yeast is required")]
+      public int? YeastId { get; set; }
 
-      [Range(0, 32)] // Brix id is 5
-      [RangeIf(.990, 1.130, "StartSugarUOM", Comparison.IsNotEqualTo, 5)]
-      public double? StartingSugar { get; set; }
-
-      [RequiredIf("StartingSugar", Comparison.IsNotEqualTo, "", ErrorMessage = "UOM is required")]
-      public int? StartSugarUOM { get; set; }
-
-      [Range(0, 32)] // Brix id is 5
-      [RangeIf(.990, 1.130, "EndSugarUOM", Comparison.IsNotEqualTo, 5)]
-      public double? EndingSugar { get; set; }
-
-      [RequiredIf("EndingSugar", Comparison.IsNotEqualTo, "", ErrorMessage = "UOM is required")]
-      public int? EndSugarUOM { get; set; }
-
-
-      [Range(0, 60, ErrorMessage = "TA should be between 0 and 60")]
-      public double? TA { get; set; }
-
-      [Range(2.5, 4.5, ErrorMessage = "pH should be between 2.5 and 4.5")]
-      public double? pH { get; set; }
-
-      [Range(1, 85)] // Celsius id is 4
-      [RangeIf(33, 85, "TempUOM", Comparison.IsNotEqualTo, 4)]
-      public double? FermentationTemp { get; set; }
-
-      [RequiredIf("FermentationTemp", Comparison.IsNotEqualTo, "", ErrorMessage = "UOM is required")]
-      public int? TempUOM { get; set; }
-
-
-      public bool HasTargetData()
-      {
-         if (pH.HasValue || FermentationTemp.HasValue || TA.HasValue || EndingSugar.HasValue || StartingSugar.HasValue)
-            return true;
-
-         return false;
-      }
-
+      public TargetViewModel Target { get; set; }
+           
       public IEnumerable<SelectListItem> Varieties { get; set; }
       public IEnumerable<SelectListItem> VolumeUOMs { get; set; }
-      public IEnumerable<SelectListItem> TempUOMs { get; set; }
-      public IEnumerable<SelectListItem> SugarUOMs { get; set; }
-
+      public IEnumerable<SelectListItem> Yeasts { get; set; }
 
    }
 }

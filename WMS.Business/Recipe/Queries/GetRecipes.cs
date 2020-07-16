@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
+using WMS.Business.Journal.Dto;
 using WMS.Business.Recipe.Dto;
+using WMS.Business.Yeast.Dto;
 using WMS.Data;
 
 namespace WMS.Business.Recipe.Queries
@@ -38,11 +40,14 @@ namespace WMS.Business.Recipe.Queries
       public List<RecipeDto> Execute()
       {
          // NOTE: Not loading images on purpose to avoid slowing down first page loading
+         // NOTE: Not loading target on purpose to avoid slowing down first page loading
 
          var recipes = _dbContext.Recipes.Include("PicturesXref").Include("Ratings").ToList();
          var list = _mapper.Map<List<RecipeDto>>(recipes);
          var categories = _dbContext.Categories.ToList();
          var varieties = _dbContext.Varieties.ToList();
+         var yeasts = _dbContext.Yeasts.ToList();
+         var targets = _dbContext.Targets.ToList();
 
          foreach (var item in list)
          {
@@ -52,6 +57,16 @@ namespace WMS.Business.Recipe.Queries
                item.Variety.Literal = code.Variety;
                var cat = _dbContext.Categories.SingleOrDefault(a => a.Id == code.CategoryId);
                item.Category = _mapper.Map<ICode>(cat);
+            }
+            if (item.Yeast != null)
+            {
+               var y = _dbContext.Yeasts.SingleOrDefault(a => a.Id == item.Yeast.Id);
+               item.Yeast = _mapper.Map<YeastDto>(y);
+            }
+            if (item.Target?.Id.HasValue == true)
+            {
+               var t = targets.SingleOrDefault(t => t.Id == item.Target.Id);
+               item.Target = _mapper.Map<TargetDto>(t);
             }
          }
 
@@ -85,6 +100,20 @@ namespace WMS.Business.Recipe.Queries
             dto.Category = _dbContext.Categories.ProjectTo<ICode>(_mapper.ConfigurationProvider).SingleOrDefault(a => a.Id == code.CategoryId);
          }
 
+         if (dto.Yeast != null)
+         {
+            var yeast = _dbContext.Yeasts.SingleOrDefault(a => a.Id == dto.Yeast.Id);
+            dto.Yeast = _mapper.Map<YeastDto>(yeast);
+            dto.Yeast.Brand = _dbContext.YeastBrand.ProjectTo<ICode>(_mapper.ConfigurationProvider)
+              .SingleOrDefault(a => a.Id == dto.Yeast.Brand.Id);
+         }
+
+         if (dto.Target != null)
+         {
+            var target = _dbContext.Targets.SingleOrDefault(a => a.Id == dto.Target.Id);
+            dto.Target = _mapper.Map<TargetDto>(target);
+         }
+
          return dto;
       }
 
@@ -96,6 +125,7 @@ namespace WMS.Business.Recipe.Queries
       public async Task<List<RecipeDto>> ExecuteAsync()
       {
          // NOTE: Not loading images on purpose to avoid slowing down first page loading
+         // NOTE: Not loading target on purpose to avoid slowing down first page loading
 
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
@@ -112,6 +142,14 @@ namespace WMS.Business.Recipe.Queries
          tasks.Add(t3);
          var varieties = await t3.ConfigureAwait(false);
 
+         var t4 = Task.Run(async () => await _dbContext.Yeasts.ToListAsync().ConfigureAwait(false));
+         tasks.Add(t4);
+         var yeasts = await t4.ConfigureAwait(false);
+
+         var t5 = Task.Run(async () => await _dbContext.Targets.ToListAsync().ConfigureAwait(false));
+         tasks.Add(t5);
+         var targets = await t5.ConfigureAwait(false);
+
          Task.WaitAll(tasks.ToArray());
 
          foreach (var item in list)
@@ -120,9 +158,20 @@ namespace WMS.Business.Recipe.Queries
             {
                var code = varieties.SingleOrDefault(a => a.Id == item.Variety.Id);
                item.Variety.Literal = code.Variety;
-               var cat = await _dbContext.Categories.SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);
+               var cat = categories.SingleOrDefault(a => a.Id == code.CategoryId);
                item.Category = _mapper.Map<ICode>(cat);
             }
+            if (item.Yeast != null)
+            {
+               var y = yeasts.SingleOrDefault(a => a.Id == item.Yeast.Id);
+               item.Yeast = _mapper.Map<YeastDto>(y);
+            }
+            if (item.Target?.Id.HasValue == true)
+            {
+               var t = targets.SingleOrDefault(t => t.Id == item.Target.Id);
+               item.Target = _mapper.Map<TargetDto>(t);
+            }
+
          }
 
          return list;
@@ -153,7 +202,31 @@ namespace WMS.Business.Recipe.Queries
             var code = await _dbContext.Varieties.SingleOrDefaultAsync(a => a.Id == dto.Variety.Id).ConfigureAwait(false);
             dto.Variety.Literal = code.Variety;
             dto.Category = await _dbContext.Categories.ProjectTo<ICode>(_mapper.ConfigurationProvider)
-               .SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);            
+               .SingleOrDefaultAsync(a => a.Id == code.CategoryId).ConfigureAwait(false);
+         }
+
+         if (dto.Yeast != null)
+         {
+            var yeast = await _dbContext.Yeasts.SingleOrDefaultAsync(a => a.Id == dto.Yeast.Id).ConfigureAwait(false);
+            dto.Yeast = _mapper.Map<YeastDto>(yeast);
+            dto.Yeast.Brand = await _dbContext.YeastBrand.ProjectTo<ICode>(_mapper.ConfigurationProvider)
+               .SingleOrDefaultAsync(a => a.Id == dto.Yeast.Brand.Id).ConfigureAwait(false);
+         }
+
+         if (dto.Target != null)
+         {
+            var target = await _dbContext.Targets.SingleOrDefaultAsync(a => a.Id == dto.Target.Id).ConfigureAwait(false);
+            dto.Target = _mapper.Map<TargetDto>(target);
+
+            if (dto.Target.StartSugarUom != null)
+               dto.Target.StartSugarUom = await _dbContext.UnitsOfMeasure.ProjectTo<UnitOfMeasure>(_mapper.ConfigurationProvider)
+                  .SingleOrDefaultAsync(m => m.Id == dto.Target.StartSugarUom.Id).ConfigureAwait(false);
+            if (dto.Target.TempUom != null)
+               dto.Target.TempUom = await _dbContext.UnitsOfMeasure.ProjectTo<UnitOfMeasure>(_mapper.ConfigurationProvider)
+                  .SingleOrDefaultAsync(m => m.Id == dto.Target.TempUom.Id).ConfigureAwait(false);
+            if (dto.Target.EndSugarUom != null)
+               dto.Target.EndSugarUom = await _dbContext.UnitsOfMeasure.ProjectTo<UnitOfMeasure>(_mapper.ConfigurationProvider)
+                  .SingleOrDefaultAsync(m => m.Id == dto.Target.EndSugarUom.Id).ConfigureAwait(false);
          }
 
          return dto;

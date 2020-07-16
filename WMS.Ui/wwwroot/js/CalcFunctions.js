@@ -132,30 +132,6 @@ function CalcAlcohol(start, end, useBrix) {
    }
 }
 
-function CalcTargetSO2(pH, red) {
-   try {
-
-      var target = 40;
-      var whiteAdjustment = 10;
-      if (red === true) {
-         target = 35;
-         whiteAdjustment = 0;
-      }
-
-      if (pH > 3) {
-         target = (pH - 3) * 100;
-         target = target + whiteAdjustment;
-      }
-      if (target > 50) {
-         target = 50;
-      }
-      return target;
-
-   } catch (err) {
-      console.error(err);
-   }
-}
-
 function CalcSugar(starting, ending, volume, useBrix) {
    try {
       var startingSugar = GetSugarContent(starting, useBrix) * volume;
@@ -218,5 +194,36 @@ function GetSugarContent(reading, useBrix) {
    } catch (err) {
       console.error(err);
    }
+}
+
+function CalcTargetSO2(red, pH, tempOfWineC) {
+   try {
+      var wineTemp = parseInt(tempOfWineC);
+
+      // default value
+      var alcoholByVolume = 13.8;
+
+      // red = .5  white = .8
+      var desiredSO2 = .8;
+
+      // white = 10  red = 100 ?
+      var percentAdjust = 10;
+
+      // adjust for red
+      if (red === true) {
+         percentAdjust = 100;
+         desiredSO2 = .5;
+      }
+
+      var target = ((percentAdjust / 100) + 1) * (desiredSO2 * (1 + Math.pow(10, pH - (1.92 + ((alcoholByVolume - 10) * 0.02) + (wineTemp - 20) * 0.031))));
+
+      target = Math.round(target);
+
+      return target;
+
+   } catch (err) {
+      console.error(err);
+   }
+
 }
 

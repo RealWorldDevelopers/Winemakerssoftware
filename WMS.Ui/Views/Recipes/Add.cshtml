@@ -8,24 +8,6 @@
    <div class="card-body">
       <form asp-controller="Recipes" asp-action="Add" method="POST" enctype="multipart/form-data">
 
-         <div class="card" id="user">
-            <div class="card-header bg-dark text-light">
-               <i>Enter your Name and Email Address:</i>
-            </div>
-            <div class="card-body">
-               <div class="row">
-                  <div class="col-sm-6">
-                     <input class="form-control" type="text" placeholder="First Name" required asp-for="User.FirstName" aria-label="FirstName" readonly>
-                     <input class="form-control" type="text" placeholder="Last Name" required asp-for="User.LastName" aria-label="LastName" readonly>
-                  </div>
-                  <div class="col-sm-6">
-                     <input class="form-control" type="text" placeholder="User Name" required asp-for="User.UserName" aria-label="UserName" readonly>
-                     <input class="form-control" inputmode="email" type="email" placeholder="Email (Will be kept Private)" required asp-for="User.Email" aria-label="Email" readonly>
-                  </div>
-               </div>
-            </div>
-         </div>
-
          <div class="card" id="classification">
             <div class="card-header bg-dark text-light">
                <i>Enter your Title, Description and Variety:</i>
@@ -54,21 +36,66 @@
 
          <div class="card" id="details">
             <div class="card-header bg-dark text-light">
-               <i>Enter your Ingredients and Instructions (HTML is not allowed):</i>
+               <i>Enter your Target Values, Ingredients and Instructions (HTML is not allowed):</i>
             </div>
-            <div class="card-body">
+            <div class="card-body">               
                <div class="row">
                   <div class="col-sm-6">
-                     <textarea class="form-control" rows="5" asp-for="Ingredients" required aria-label="Ingredients"
-                               placeholder="Ingredients for 6 US Gallons: (example)&#10;1/2 tsp KMeta&#10;1/2 lb Sugar"></textarea>
+                     <select class="custom-select" aria-label="Select a Variety" asp-for="YeastId" asp-items="Model.Yeasts"></select>
+                     <span asp-validation-for="YeastId" class="text-danger"></span>
+                  </div>                 
+               </div>
+               <div class="row">
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="Target.StartingSugar" maxlength="5">
+                     <span asp-validation-for="Target.StartingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                     <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
+                     <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
+                     <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="Target.EndingSugar" maxlength="5">
+                     <span asp-validation-for="Target.EndingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                     <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="Target.TA" maxlength="4">
+                     <span asp-validation-for="Target.TA" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="Target.pH" maxlength="4">
+                     <span asp-validation-for="Target.pH" class="text-danger"></span>
+                  </div>
+               </div>
+
+               <div class="row mt-2">
+                  <div class="col-sm-6">   
+                     <textarea class="form-control" rows="5" asp-for="Ingredients" aria-label="Ingredients"
+                               placeholder="Leave Blank for Default&#10;&#10;Ingredients for 6 US Gallons: (example)&#10;1/2 tsp KMeta&#10;1/2 lb Sugar"></textarea>
                      <span asp-validation-for="Ingredients" class="text-danger"></span>
+
                   </div>
                   <div class="col-sm-6">
-                     <textarea class="form-control" rows="5" asp-for="Instructions" required aria-label="Instructions"
-                               placeholder="Instructions:&#10;Step No 1 - Primary Fermentation: (example)&#10;In a Food Grade plastic fermenter..."></textarea>
+                     <textarea class="form-control" rows="5" asp-for="Instructions" aria-label="Instructions"
+                               placeholder="Leave Blank for Default&#10;&#10;Instructions: (example)&#10;Step No 1 - Primary Fermentation&#10;In a Food Grade plastic fermenter..."></textarea>
                      <span asp-validation-for="Instructions" class="text-danger"></span>
                   </div>
                </div>
+
             </div>
          </div>
 

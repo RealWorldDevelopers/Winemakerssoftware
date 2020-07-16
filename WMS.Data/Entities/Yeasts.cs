@@ -7,6 +7,8 @@ namespace WMS.Data.Entities
     {
         public Yeasts()
         {
+            Batches = new HashSet<Batches>();
+            Recipes = new HashSet<Recipes>();
             YeastPair = new HashSet<YeastPair>();
         }
 
@@ -21,6 +23,8 @@ namespace WMS.Data.Entities
 
         public virtual YeastBrand BrandNavigation { get; set; }
         public virtual YeastStyle StyleNavigation { get; set; }
+        public virtual ICollection<Batches> Batches { get; set; }
+        public virtual ICollection<Recipes> Recipes { get; set; }
         public virtual ICollection<YeastPair> YeastPair { get; set; }
     }
 }

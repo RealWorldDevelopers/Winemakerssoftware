@@ -24,22 +24,65 @@
 
    <!-- recipe body -->
    <div class="card-body">
-      <div class="row">
-         <!-- details section -->
-         <div class="col-sm-8">
+
+      <div class="d-flex flex-wrap">
+         <div class="p-2 order-md-1">
             <h3><i>Category</i> : <strong>@Model.Category</strong></h3>
             <h3><i>Variety</i> : <strong>@Model.Variety</strong></h3>
-
+            <h3><i>Yeast</i> : <strong>@Model.Yeast</strong></h3>
             <h4><i>Ingredients:</i></h4>
-            <div class="instructionText m-3">@Model.Ingredients</div>
-            <h4><i>Instructions:</i></h4>
-            <div class="instructionText m-3">@Model.Instructions</div>
+            @if (string.IsNullOrWhiteSpace(Model.Ingredients))
+            {
+               <div class="m-3">
+                  <partial name="_DefaultIngredients" />
+               </div>
+            }
+            else
+            {
+               <div class="instructionText m-3">@Model.Ingredients</div>
+            }
+
+            @if (Model.Targets.Count > 0)
+            {
+               <h4><i>Target Values:</i></h4>
+               <div class="m-3">
+                  @foreach (var line in Model.Targets)
+                  {
+                     <div>@line</div>
+                  }
+               </div>
+            }
          </div>
-         <!-- sub menu -->
-         <div class="col-sm-4">
-            <!-- links -->
+
+         <div class="p-2 order-md-3 flex-md-shrink-1">
+            <h4><i>Instructions:</i></h4>
+            @if (string.IsNullOrWhiteSpace(Model.Instructions))
+            {
+               <div class="m-3">
+                  <partial name="_DefaultInstructions" />
+               </div>
+            }
+            else
+            {
+               <div class="instructionText m-3">@Model.Instructions</div>
+            }
+         </div>
+
+         <div class="p-2 ml-auto order-md-2">
+            <!-- sub menu -->
             <p><a class="printer" href="#"><i class="fa fa-print">&nbsp Printer Friendly Version</i></a></p>
             <p><a href="/recipes/add"><i class="fa fa-plus">&nbsp Submit New Recipe</i></a></p>
+
+            <form asp-area="" asp-controller="Journal" asp-action="AddFromRecipe" method="post" id="addBatchFromRecipe">
+               <p>
+                  <label class="d-none"><input type="hidden" name="recipeId" value="@Model.Id" />Hidden Label</label>
+                  <label class="d-none"><input type="hidden" name="varietyId" value="@Model.VarietyId" />Hidden Label</label>
+                  <label class="d-none"><input type="hidden" name="targetId" value="@Model.TargetId" />Hidden Label</label>
+                  <label class="d-none"><input type="hidden" name="yeastId" value="@Model.YeastId" />Hidden Label</label>
+                  <button type="submit" class="btn btn-outline-primary btn-sm">Make a Batch</button>                 
+               </p>
+            </form>
+
             <!-- hit counter -->
             <div class="card">
                <div class="card-header">
@@ -79,7 +122,6 @@
                </div>
             }
          }
-
       </div>
 
    </div>

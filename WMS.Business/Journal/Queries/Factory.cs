@@ -35,6 +35,15 @@ namespace WMS.Business.Journal.Queries
       }
 
       /// <summary>
+      /// Instance of Create Targets Query
+      /// </summary>
+      /// <inheritdoc cref="IFactory.CreateTargetsQuery"/>>
+      public IQuery<TargetDto> CreateTargetsQuery()
+      {
+         return new GetTargets(_dbContext, _mapper);
+      }
+
+      /// <summary>
       /// Instance of Create Units of Measure Query
       /// </summary>
       /// <inheritdoc cref="IFactory.CreateBatchVolumeUOM"/>>
@@ -61,5 +70,6 @@ namespace WMS.Business.Journal.Queries
          return new GetBatchSugarUOM(_dbContext, _mapper);
       }
 
+      
    }
 }

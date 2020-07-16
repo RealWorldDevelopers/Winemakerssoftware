@@ -8,6 +8,7 @@ namespace WMS.Data.Entities
         public Targets()
         {
             Batches = new HashSet<Batches>();
+            Recipes = new HashSet<Recipes>();
         }
 
         public int Id { get; set; }
@@ -24,5 +25,6 @@ namespace WMS.Data.Entities
         public virtual UnitsOfMeasure StartSugarUom { get; set; }
         public virtual UnitsOfMeasure TempUom { get; set; }
         public virtual ICollection<Batches> Batches { get; set; }
+        public virtual ICollection<Recipes> Recipes { get; set; }
     }
 }

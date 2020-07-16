@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
+using WMS.Business.Yeast.Dto;
 using WMS.Ui.Models;
 using WMS.Ui.Models.Recipes;
 
@@ -25,16 +26,18 @@ namespace WMS.Ui.Controllers
    {
       private readonly AppSettings _appSettings;
       private readonly IEmailAgent _emailAgent;
-      private readonly IFactory _modelFactory;
+      private readonly Models.Recipes.IFactory _modelFactory;
       private readonly Business.Recipe.Queries.IFactory _queryFactory;
       private readonly Business.Recipe.Commands.IFactory _commandsFactory;
+      private readonly Business.Yeast.Queries.IFactory _yeastQueryFactory;
+      private readonly Business.Journal.Queries.IFactory _journalQueryFactory;
       private readonly Business.Recipe.Dto.IFactory _dtoFactory;
       private readonly IStringLocalizer<RecipesController> _localizer;
 
       public RecipesController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration,
           IOptions<AppSettings> appSettings, Business.Recipe.Queries.IFactory queryFactory, Business.Recipe.Commands.IFactory commandsFactory,
-          Business.Recipe.Dto.IFactory dtoFactory, IFactory modelFactory, IEmailAgent emailAgent,
-          IStringLocalizer<RecipesController> localizer, TelemetryClient telemetry)
+          Business.Yeast.Queries.IFactory yeastQueryFactory, Business.Journal.Queries.IFactory journalQueryFactory, Business.Recipe.Dto.IFactory dtoFactory,
+          Models.Recipes.IFactory modelFactory, IEmailAgent emailAgent, IStringLocalizer<RecipesController> localizer, TelemetryClient telemetry)
           : base(configuration, userManager, roleManager, telemetry)
       {
          _appSettings = appSettings?.Value;
@@ -43,6 +46,8 @@ namespace WMS.Ui.Controllers
          _modelFactory = modelFactory;
          _queryFactory = queryFactory;
          _commandsFactory = commandsFactory;
+         _yeastQueryFactory = yeastQueryFactory;
+         _journalQueryFactory = journalQueryFactory;
          _dtoFactory = dtoFactory;
       }
 
@@ -57,7 +62,7 @@ namespace WMS.Ui.Controllers
 
          var getRecipesQuery = _queryFactory.CreateRecipesQuery();
 
-         var recipesDto = await getRecipesQuery.ExecuteAsync().ConfigureAwait(false);         
+         var recipesDto = await getRecipesQuery.ExecuteAsync().ConfigureAwait(false);
 
          var recipesModel = _modelFactory.CreateRecipesModel();
          var recipeItemsModel = _modelFactory.BuildRecipeListItemModels(recipesDto);
@@ -105,7 +110,17 @@ namespace WMS.Ui.Controllers
          var getVarietiesQuery = _queryFactory.CreateVarietiesQuery();
          var vList = await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false);
 
-         var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
+         var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
+         var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var batchTempQuery = _journalQueryFactory.CreateBatchTempUOMQuery();
+         var uomTempList = await batchTempQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var batchSugarQuery = _journalQueryFactory.CreateBatchSugarUOMQuery();
+         var uomSugarList = await batchSugarQuery.ExecuteAsync().ConfigureAwait(false);
+
+
+         var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, yList, uomSugarList, uomTempList);
          addRecipeModel.User = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
 
          return View(addRecipeModel);
@@ -130,33 +145,58 @@ namespace WMS.Ui.Controllers
          var getVarietiesQuery = _queryFactory.CreateVarietiesQuery();
          var vList = await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false);
 
+         var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
+         var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var batchTempQuery = _journalQueryFactory.CreateBatchTempUOMQuery();
+         var uomTempList = await batchTempQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var batchSugarQuery = _journalQueryFactory.CreateBatchSugarUOMQuery();
+         var uomSugarList = await batchSugarQuery.ExecuteAsync().ConfigureAwait(false);
+
          // must be logged in to continue
          var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          if (submittedBy == null)
          {
-            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, model);
-            Warning(_localizer["AddGeneralError"], false);
+            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, yList, uomSugarList, uomTempList, model);
+            Warning(_localizer["NoLogIn"], false);
             return View(addRecipeModel);
          }
 
          // using model validation attributes, if model state says errors do nothing           
          if (!ModelState.IsValid)
          {
-            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, model);
+            var addRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, yList, uomSugarList, uomTempList, model);
             Warning(_localizer["AddGeneralError"], true);
             return View(addRecipeModel);
          }
 
-         // validate model.VarietyId then proceed
          ICode variety = null;
          if (int.TryParse(model?.VarietyId, out int varietyId))
             variety = vList.FirstOrDefault(c => c.Id == varietyId);
 
-         // validate model.CategoryId then proceed
          ICode category = null;
          if (variety != null && variety.ParentId.HasValue)
             category = cList.FirstOrDefault(c => c.Id == variety.ParentId.Value);
 
+         YeastDto yeast = null;
+         if (int.TryParse(model?.YeastId, out int yeastId))
+            yeast = yList.FirstOrDefault(y => y.Id == yeastId);
+
+         Business.Journal.Dto.TargetDto target = null;
+
+         if (model.Target.HasTargetData())
+            target = new Business.Journal.Dto.TargetDto
+            {
+               EndSugar = model.Target.EndingSugar,
+               EndSugarUom = uomSugarList.FirstOrDefault(u => u.Id == model.Target.EndSugarUOM.Value),
+               pH = model.Target.pH,
+               StartSugar = model.Target.StartingSugar,
+               StartSugarUom = uomSugarList.FirstOrDefault(u => u.Id == model.Target.StartSugarUOM.Value),
+               TA = model.Target.TA,
+               Temp = model.Target.FermentationTemp,
+               TempUom = uomTempList.FirstOrDefault(u => u.Id == model.Target.TempUOM.Value)
+            };
 
          // convert add model to recipe dto
          var recipeDto = new Business.Recipe.Dto.RecipeDto
@@ -169,13 +209,16 @@ namespace WMS.Ui.Controllers
             NeedsApproved = true,
             Rating = null,
             SubmittedBy = submittedBy.Id,
+            Target = target,
             Title = model.Title,
+            Yeast = yeast,
             Variety = variety
          };
 
          //recipeDto.Id = 1;  // for testing only
          var updateRecipesCommand = _commandsFactory.CreateRecipesCommand();
          recipeDto = await updateRecipesCommand.AddAsync(recipeDto).ConfigureAwait(false);
+
 
          // process uploaded files
          if (model.Images != null)
@@ -220,7 +263,7 @@ namespace WMS.Ui.Controllers
 
          // tell user good job and clear or go to thank you page           
          ModelState.Clear();
-         var addNewRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList);
+         var addNewRecipeModel = _modelFactory.CreateAddRecipeModel(cList, vList, yList, uomSugarList, uomTempList);
          addNewRecipeModel.User = submittedBy;
 
          Success(_localizer["AddSuccess"], true);

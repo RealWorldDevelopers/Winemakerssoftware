@@ -15,6 +15,12 @@ namespace WMS.Business.Journal.Queries
       IQuery<BatchDto> CreateBatchesQuery();
 
       /// <summary>
+      /// Create a Targets Query
+      /// </summary>
+      /// <returns><see cref="IQuery{TargetDto}"/></returns>
+      IQuery<TargetDto> CreateTargetsQuery();
+
+      /// <summary>
       /// Create a Batch Volume UOM Query
       /// </summary>
       /// <returns><see cref="IQuery{IUnitOfMeasure}"/></returns>

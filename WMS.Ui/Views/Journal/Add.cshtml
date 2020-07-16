@@ -59,39 +59,45 @@
             </div>
             <div class="card-body">
                <div class="row">
-                  <div class="col-sm-3 pr-0">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="StartingSugar" maxlength="5">
-                     <span asp-validation-for="StartingSugar" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="StartSugarUOM" asp-items="Model.SugarUOMs"></select>
-                     <span asp-validation-for="StartSugarUOM" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-3 pr-0">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="FermentationTemp" maxlength="4">
-                     <span asp-validation-for="FermentationTemp" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="TempUOM" asp-items="Model.TempUOMs"></select>
-                     <span asp-validation-for="TempUOM" class="text-danger"></span>
+                  <div class="col-sm-6">
+                     <select class="custom-select" aria-label="Select a Variety" asp-for="YeastId" asp-items="Model.Yeasts"></select>
+                     <span asp-validation-for="YeastId" class="text-danger"></span>
                   </div>
                </div>
                <div class="row">
                   <div class="col-sm-3 pr-0">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="EndingSugar" maxlength="5">
-                     <span asp-validation-for="EndingSugar" class="text-danger"></span>
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="Target.StartingSugar" maxlength="5">
+                     <span asp-validation-for="Target.StartingSugar" class="text-danger"></span>
                   </div>
                   <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="EndSugarUOM" asp-items="Model.SugarUOMs"></select>
-                     <span asp-validation-for="EndSugarUOM" class="text-danger"></span>
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                     <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
+                     <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
+                     <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-3 pr-0">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="Target.EndingSugar" maxlength="5">
+                     <span asp-validation-for="Target.EndingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                     <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
                   </div>
                   <div class="col-sm-3">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="TA" maxlength="4">
-                     <span asp-validation-for="TA" class="text-danger"></span>
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="Target.TA" maxlength="4">
+                     <span asp-validation-for="Target.TA" class="text-danger"></span>
                   </div>
                   <div class="col-sm-3">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="pH" maxlength="4">
-                     <span asp-validation-for="pH" class="text-danger"></span>
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="Target.pH" maxlength="4">
+                     <span asp-validation-for="Target.pH" class="text-danger"></span>
                   </div>
                </div>
             </div>
@@ -121,10 +127,10 @@
 
 @section Scripts{
    <environment include="Development">
-         <script src="~/js/journal.js" asp-append-version="true" type="text/javascript"></script>
-      </environment>
-      <environment exclude="Development">
-         <script src="~/js/journal.min.js" asp-append-version="true" type="text/javascript"></script>
-      </environment>
+      <script src="~/js/journal.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/journal.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
 }
 

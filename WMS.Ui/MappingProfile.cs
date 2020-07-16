@@ -91,6 +91,7 @@ namespace WMS.Ui
             .ForMember(dest => dest.StartSugarUomId, opt => opt.MapFrom(src => src.StartSugarUom.Id))
             .ForMember(dest => dest.EndSugarUomId, opt => opt.MapFrom(src => src.EndSugarUom.Id));
 
+         CreateMap<WMS.Data.Entities.UnitsOfMeasure, Business.Common.UnitOfMeasure>().ReverseMap();
 
          CreateMap<WMS.Data.Entities.PicturesXref, Business.Recipe.Dto.ImageFileDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ImageId));
@@ -105,18 +106,9 @@ namespace WMS.Ui
             .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Variety))
             .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.CategoryId)).ReverseMap();
 
-         //CreateMap< Business.Common.Dto.ICode, WMS.Data.Entities.Varieties>()
-         //   .ConstructUsing(src => new Business.Common.Code())
-         //   .ForMember(dest => dest.Variety, opt => opt.MapFrom(src => src.Literal))
-         //   .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.ParentId));
-
          CreateMap<WMS.Data.Entities.Categories, Business.Common.ICode>()
             .ConstructUsing(src => new Business.Common.Code())
-            .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Category)).ReverseMap();
-
-         //CreateMap< Business.Common.Dto.ICode, WMS.Data.Entities.Categories>()
-         // .ConstructUsing(src => new Business.Common.Code())
-         // .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Literal));          
+            .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Category)).ReverseMap();          
 
          CreateMap<WMS.Data.Entities.YeastBrand, Business.Common.ICode>()
             .ConstructUsing(src => new Business.Common.Code())
@@ -126,10 +118,15 @@ namespace WMS.Ui
             .ConstructUsing(src => new Business.Common.Code())
             .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Style));
 
+         // Convert Recipes Entity into Recipe DTO
          CreateMap<WMS.Data.Entities.Recipes, Business.Recipe.Dto.RecipeDto>()
              .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Ratings))
-             .AfterMap((src, dest) => { dest.Variety = src.VarietyId.HasValue ? new Business.Common.Code { Id = src.VarietyId.Value } : null; });
+             .AfterMap((src, dest) => { dest.Variety = src.VarietyId.HasValue ? new Business.Common.Code { Id = src.VarietyId.Value } : null; })
+             .AfterMap((src, dest) => { dest.Yeast = src.YeastId.HasValue ? new Business.Yeast.Dto.YeastDto { Id = src.YeastId.Value } : null; })
+             .AfterMap((src, dest) => { dest.Target = src.TargetId.HasValue ? new Business.Journal.Dto.TargetDto { Id = src.TargetId.Value } : null; });
 
+
+         // Convert Recipe DTO into Recipes Entity
          CreateMap<Business.Recipe.Dto.RecipeDto, WMS.Data.Entities.Recipes>().ConvertUsing(new RecipesConverter());
 
          CreateMap<WMS.Data.Entities.Yeasts, Business.Yeast.Dto.YeastDto>()
@@ -143,7 +140,7 @@ namespace WMS.Ui
       }
 
       /// <summary>
-      /// Convert Recipes Entity into Recipe DTO
+      /// Convert Recipe DTO into Recipes Entity 
       /// </summary>
       sealed class RecipesConverter : ITypeConverter<Business.Recipe.Dto.RecipeDto, WMS.Data.Entities.Recipes>
       {
@@ -153,7 +150,9 @@ namespace WMS.Ui
             var entity = new WMS.Data.Entities.Recipes
             {
                Title = source.Title,
-               VarietyId = source.Variety.Id,
+               VarietyId = source.Variety?.Id,
+               YeastId = source.Yeast?.Id,
+               TargetId = source.Target?.Id,
                Description = source.Description,
                Ingredients = source.Ingredients,
                Instructions = source.Instructions,

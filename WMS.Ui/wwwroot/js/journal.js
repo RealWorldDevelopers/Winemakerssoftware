@@ -1,5 +1,13 @@
 $(document).ready(function () {
 
+   // score batch button click
+   $('body').off('click', 'button[name="scoreBatchButton"]');
+   $('body').on('click', 'button[name="scoreBatchButton"]', function () {
+      var id = $(this).data('id');
+      onScoreClick(id, '1', '2', '3', '4', '5', '6');
+      alert(id);
+   });
+
    // all inputs numeric only
    $('body').off('keypress', '#batchInfo input');
    $('body').on('keypress', '#batchInfo input', function (e) {
@@ -67,4 +75,15 @@ $(document).ready(function () {
 
 
 });
+
+function onScoreClick(id, title, style, tempMin, tempMax, alcohol, note) {
+   // alert('it works' + id);
+   document.getElementById("scoreBatchModal_title").innerHTML = title;
+   document.getElementById("scoreBatchModal_style").innerHTML = style;
+   document.getElementById("scoreBatchModal_tempMin").innerHTML = tempMin;
+   document.getElementById("scoreBatchModal_tempMax").innerHTML = tempMax;
+   document.getElementById("scoreBatchModal_alcohol").innerHTML = alcohol;
+   document.getElementById("scoreBatchModal_note").innerHTML = note;
+   $("#scoreBatchModal").modal();
+}
 

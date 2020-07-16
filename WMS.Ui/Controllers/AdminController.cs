@@ -21,6 +21,7 @@ using System.IO;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
+using WMS.Business.Journal.Dto;
 
 namespace WMS.Ui.Controllers
 {
@@ -34,12 +35,14 @@ namespace WMS.Ui.Controllers
       private readonly Business.Recipe.Commands.IFactory _recipeCommandFactory;
       private readonly Business.Yeast.Queries.IFactory _yeastQueryFactory;
       private readonly Business.Yeast.Commands.IFactory _yeastCommandFactory;
+      private readonly Business.Journal.Queries.IFactory _journalQueryFactory;
+      private readonly Business.Journal.Commands.IFactory _journalCommandFactory;
 
       private readonly IStringLocalizer<AdminController> _localizer;
 
       public AdminController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
           Business.Recipe.Queries.IFactory recipeQueryFactory, Business.Recipe.Commands.IFactory recipeCommandFactory, Business.Yeast.Queries.IFactory yeastQueryFactory,
-          Business.Yeast.Commands.IFactory yeastCommandFactory, IMapper mapper, Models.Admin.IFactory modelFactory,
+          Business.Journal.Commands.IFactory journalCommandFactory, Business.Journal.Queries.IFactory journalQueryFactory, Business.Yeast.Commands.IFactory yeastCommandFactory, IMapper mapper, Models.Admin.IFactory modelFactory,
           IOptions<AppSettings> appSettings, IStringLocalizer<AdminController> localizer, TelemetryClient telemetry) : base(configuration, userManager, roleManager, telemetry)
       {
          _localizer = localizer;
@@ -50,6 +53,8 @@ namespace WMS.Ui.Controllers
          _recipeCommandFactory = recipeCommandFactory;
          _yeastQueryFactory = yeastQueryFactory;
          _yeastCommandFactory = yeastCommandFactory;
+         _journalQueryFactory = journalQueryFactory;
+         _journalCommandFactory = journalCommandFactory;
       }
 
       public async Task<IActionResult> Index(string id)
@@ -89,7 +94,6 @@ namespace WMS.Ui.Controllers
          Task.WaitAll(tasks.ToArray());
 
 
-
          var model = _modelFactory.CreateAdminModel(id);
 
          // make sure admin security role exist
@@ -109,7 +113,7 @@ namespace WMS.Ui.Controllers
          }
 
          // gather users data
-         var users = UserManagerAgent.Users.ToList();         
+         var users = UserManagerAgent.Users.ToList();
          var userVms = _mapper.Map<List<UserViewModel>>(users);
          model.UsersViewModel.Users.Clear();
          model.UsersViewModel.Users.AddRange(userVms);
@@ -157,6 +161,14 @@ namespace WMS.Ui.Controllers
 
          var recipeQry = _recipeQueryFactory.CreateRecipesQuery();
          var dto = await recipeQry.ExecuteAsync(Id).ConfigureAwait(false);
+
+         if (dto.Target != null)
+         {
+            var targetQry = _journalQueryFactory.CreateTargetsQuery();
+            var targetDto = await targetQry.ExecuteAsync(dto.Target.Id.Value).ConfigureAwait(false);
+            dto.Target = targetDto;
+         }
+
          var model = _modelFactory.CreateRecipeViewModel(dto);
 
          var user = await UserManagerAgent.FindByIdAsync(dto.SubmittedBy).ConfigureAwait(false);
@@ -180,12 +192,69 @@ namespace WMS.Ui.Controllers
          var dto = await qry.ExecuteAsync(model.Id).ConfigureAwait(false);
          dto.Title = model.Title;
          dto.Variety.Id = model.Variety.Id;
+         dto.Yeast.Id = model.Yeast.Id;
          dto.Description = model.Description;
          dto.Enabled = model.Enabled;
          dto.Hits = model.Hits;
          dto.Ingredients = model.Ingredients;
          dto.Instructions = model.Instructions;
          dto.NeedsApproved = model.NeedsApproved;
+
+         if (model.Target.HasTargetData())
+         {
+            var tCmd = _journalCommandFactory.CreateTargetsCommand();
+
+            if (dto.Target?.Id.HasValue == true)
+            {
+               // update target               
+               var tQry = _journalQueryFactory.CreateTargetsQuery();
+               var t = await tQry.ExecuteAsync(dto.Target.Id.Value).ConfigureAwait(false);
+               t.EndSugar = model.Target.EndingSugar;
+               t.pH = model.Target.pH;
+               t.StartSugar = model.Target.StartingSugar;
+               t.TA = model.Target.TA;
+               t.Temp = model.Target.FermentationTemp;
+
+               if (model.Target.StartSugarUOM != null)
+                  t.StartSugarUom = new UnitOfMeasure() { Id = model.Target.StartSugarUOM.Value };
+
+               if (model.Target.TempUOM != null)
+                  t.TempUom = new UnitOfMeasure() { Id = model.Target.TempUOM.Value };
+
+               if (model.Target.EndSugarUOM != null)
+                  t.EndSugarUom = new UnitOfMeasure() { Id = model.Target.EndSugarUOM.Value };
+
+               var result = await tCmd.UpdateAsync(t).ConfigureAwait(false);
+               dto.Target = result;
+            }
+            else
+            {
+               // add target
+               var t = new TargetDto
+               {
+                  EndSugar = model.Target.EndingSugar,
+                  pH = model.Target.pH,
+                  StartSugar = model.Target.StartingSugar,
+                  TA = model.Target.TA,
+                  Temp = model.Target.FermentationTemp,
+                  StartSugarUom = new UnitOfMeasure(),
+                  TempUom = new UnitOfMeasure(),
+                  EndSugarUom = new UnitOfMeasure()
+               };
+
+               if (model.Target.StartSugarUOM != null)
+                  t.StartSugarUom.Id = model.Target.StartSugarUOM.Value;
+
+               if (model.Target.TempUOM != null)
+                  t.TempUom.Id = model.Target.TempUOM.Value;
+
+               if (model.Target.EndSugarUOM != null)
+                  t.EndSugarUom.Id = model.Target.EndSugarUOM.Value;
+
+               var result = await tCmd.AddAsync(t).ConfigureAwait(false);
+               dto.Target = result;
+            }
+         }
 
          var cmd = _recipeCommandFactory.CreateRecipesCommand();
          await cmd.UpdateAsync(dto).ConfigureAwait(false);
