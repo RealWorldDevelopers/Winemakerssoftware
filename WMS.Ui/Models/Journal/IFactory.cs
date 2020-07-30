@@ -11,8 +11,8 @@ namespace WMS.Ui.Models.Journal
    {
       JournalViewModel CreateJournalModel();
       TargetViewModel CreateTargetViewModel(TargetDto target, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList);
-      BatchViewModel CreateBatchModel(List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
-         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList, TargetDto target = null);
+      BatchViewModel CreateBatchModel(BatchDto dto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
+         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList);
       Task<BatchListItemViewModel> BuildBatchListItemModel(Business.Journal.Dto.BatchDto batchDto);
       List<BatchListItemViewModel> BuildBatchListItemModels(List<Business.Journal.Dto.BatchDto> dtoBatchList);
       List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList, List<ICode> dtoParentList);

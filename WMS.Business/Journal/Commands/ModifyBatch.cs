@@ -40,8 +40,19 @@ namespace WMS.Business.Journal.Commands
 
          var entity = _mapper.Map<Batches>(dto);
 
-         // add new recipe
+         // add new batch
          _dbContext.Batches.Add(entity);
+
+         // if entity has recipe id update recipe's target id
+         if (entity.RecipeId.HasValue && entity.TargetId.HasValue)
+         {
+            var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == entity.RecipeId);
+            if (!recipeEntity.TargetId.HasValue)
+            {
+               recipeEntity.TargetId = entity.TargetId;
+               _dbContext.Recipes.Update(recipeEntity);
+            }
+         }
 
          // Save changes in database
          _dbContext.SaveChanges();
@@ -63,8 +74,19 @@ namespace WMS.Business.Journal.Commands
 
          var entity = _mapper.Map<Batches>(dto);
 
-         // add new recipe
+         // add new batch
          await _dbContext.Batches.AddAsync(entity).ConfigureAwait(false);
+
+         // if entity has recipe id update recipe's target id
+         if (entity.RecipeId.HasValue && entity.TargetId.HasValue)
+         {
+            var recipeEntity = await _dbContext.Recipes.FirstOrDefaultAsync(r => r.Id == entity.RecipeId).ConfigureAwait(false);
+            if (!recipeEntity.TargetId.HasValue)
+            {
+               recipeEntity.TargetId = entity.TargetId;
+               _dbContext.Recipes.Update(recipeEntity);
+            }
+         }
 
          // Save changes in database
          await _dbContext.SaveChangesAsync().ConfigureAwait(false);
@@ -94,10 +116,21 @@ namespace WMS.Business.Journal.Commands
          entity.VarietyId = dto.Variety.Id;
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
-         entity.VolumeUomId = dto.VolumeUom.Id; 
+         entity.VolumeUomId = dto.VolumeUom.Id;
 
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);
+
+         // if entity has recipe id update recipe's target id
+         if (entity.RecipeId.HasValue && entity.TargetId.HasValue)
+         {
+            var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == entity.RecipeId);
+            if (!recipeEntity.TargetId.HasValue)
+            {
+               recipeEntity.TargetId = entity.TargetId;
+               _dbContext.Recipes.Update(recipeEntity);
+            }
+         }
 
          // Save changes in database
          _dbContext.SaveChanges();
@@ -130,6 +163,17 @@ namespace WMS.Business.Journal.Commands
 
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);
+
+         // if entity has recipe id update recipe's target id
+         if (entity.RecipeId.HasValue && entity.TargetId.HasValue)
+         {
+            var recipeEntity = await _dbContext.Recipes.FirstOrDefaultAsync(r => r.Id == entity.RecipeId).ConfigureAwait(false);
+            if (!recipeEntity.TargetId.HasValue)
+            {
+               recipeEntity.TargetId = entity.TargetId;
+               _dbContext.Recipes.Update(recipeEntity);
+            }
+         }
 
          // Save changes in database
          await _dbContext.SaveChangesAsync().ConfigureAwait(false);

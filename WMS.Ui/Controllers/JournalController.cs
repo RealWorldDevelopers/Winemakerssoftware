@@ -14,6 +14,8 @@ using WMS.Business.Journal.Dto;
 
 namespace WMS.Ui.Controllers
 {
+   // TODO set privilages for controller / actions [Authorize(Roles = "GeneralUser")] not sure about this high level...
+   [Authorize(Roles = "Admin")]
    public class JournalController : BaseController
    {
       private readonly IStringLocalizer<JournalController> _localizer;
@@ -85,7 +87,7 @@ namespace WMS.Ui.Controllers
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
-         var addBatchModel = _modelFactory.CreateBatchModel(vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
 
          return View(addBatchModel);
       }
@@ -93,6 +95,7 @@ namespace WMS.Ui.Controllers
       /// <summary>
       /// Opening Page for Entering New Batch from an existing Recipe
       /// </summary>
+     // [Authorize(Roles = "GeneralUser")]
       [HttpPost]
       public async Task<IActionResult> AddFromRecipe(int? recipeId, int? yeastId, int? varietyId, int? targetId)
       {
@@ -117,14 +120,14 @@ namespace WMS.Ui.Controllers
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
-         TargetDto target = null;
+         BatchDto batch = new BatchDto();
          if (targetId.HasValue)
          {
             var getTargetsQuery = _journalQueryFactory.CreateTargetsQuery();
-            target = getTargetsQuery.Execute(targetId.Value);
+            batch.Target = getTargetsQuery.Execute(targetId.Value);
          }
 
-         var addBatchModel = _modelFactory.CreateBatchModel(vList, cList, yList, uomVolumeList, uomSugarList, uomTempList, target);
+         var addBatchModel = _modelFactory.CreateBatchModel(batch, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
          addBatchModel.VarietyId = varietyId;
          addBatchModel.RecipeId = recipeId;
          addBatchModel.YeastId = yeastId;
@@ -137,7 +140,7 @@ namespace WMS.Ui.Controllers
       /// </summary>
       /// <param name="model">Details from Add Batch Page as <see cref="BatchViewModel"/></param>
       /// <returns>Returns to Empty Add Batch Entry Page with Success or Failure Alert Message</returns>
-      //TODO [Authorize(Roles = "GeneralUser")]
+     // [Authorize(Roles = "GeneralUser")]
       [HttpPost]
       [ValidateAntiForgeryToken]
       public async Task<IActionResult> Add(BatchViewModel model)
@@ -166,19 +169,19 @@ namespace WMS.Ui.Controllers
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
-         // TODO must be logged in to continue
+         // must be logged in to continue
          var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
-         //if (submittedBy == null)
-         //{
-         //   var addModel = _modelFactory.CreateAddBatchModel(vList, uomVolumeList, uomSugarList, uomTempList);
-         //   Warning(_localizer["AddGeneralError"], false);
-         //   return View(addModel);
-         //}
+         if (submittedBy == null)
+         {
+            var addModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+            Warning(_localizer["AddGeneralError"], false);
+            return View(addModel);
+         }
 
          // using model validation attributes, if model state says errors do nothing           
          if (!ModelState.IsValid)
          {
-            var addModel = _modelFactory.CreateBatchModel(vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], true);
             return View(addModel);
          }
@@ -207,7 +210,7 @@ namespace WMS.Ui.Controllers
             Vintage = model.Vintage,
             Volume = model.Volume,
             Complete = false,
-            // TODO SubmittedBy = submittedBy.Id,
+            SubmittedBy = submittedBy.Id,
             Title = model.Title
          };
 
@@ -216,12 +219,11 @@ namespace WMS.Ui.Controllers
          batchDto.Variety = new Code { Id = model.VarietyId.Value };
 
          var updateBatchCommand = _journalCommandFactory.CreateBatchesCommand();
-         batchDto = await updateBatchCommand.AddAsync(batchDto).ConfigureAwait(false);
+         await updateBatchCommand.AddAsync(batchDto).ConfigureAwait(false);
 
          // tell user good job and clear or go to thank you page           
          ModelState.Clear();
-         var addBatchModel = _modelFactory.CreateBatchModel(vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
-         // addBatchModel.User = submittedBy;
+         var addBatchModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
 
          Success(_localizer["AddSuccess"], true);
 
@@ -230,6 +232,43 @@ namespace WMS.Ui.Controllers
       }
 
 
+      /// <summary>
+      /// Main entry page to edit a batch detailed
+      /// </summary>
+     // [Authorize(Roles = "GeneralUser")]
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> EditBatch(int Id)
+      {
+         ViewData["Title"] = _localizer["PageTitleDetails"];
+         ViewData["PageDesc"] = _localizer["PageDescDetails"];
+
+         var batchTempQuery = _journalQueryFactory.CreateBatchTempUOMQuery();
+         var uomTempList = await batchTempQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var batchSugarQuery = _journalQueryFactory.CreateBatchSugarUOMQuery();
+         var uomSugarList = await batchSugarQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var batchVolumeQuery = _journalQueryFactory.CreateBatchVolumeUOMQuery();
+         var uomVolumeList = await batchVolumeQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var getCategoriesQuery = _recipeQueryFactory.CreateCategoriesQuery();
+         var cList = await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var varietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
+         var vList = await varietiesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
+         var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var qry = _journalQueryFactory.CreateBatchesQuery();
+         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+
+         var model = _modelFactory.CreateBatchModel(dto, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+
+         return View("UpdateBatch", model);
+
+      }
 
    }
 

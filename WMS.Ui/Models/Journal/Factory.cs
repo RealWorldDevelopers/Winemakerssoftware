@@ -31,7 +31,7 @@ namespace WMS.Ui.Models.Journal
          return new JournalViewModel();
       }
 
-      public Task<BatchListItemViewModel> BuildBatchListItemModel(Business.Journal.Dto.BatchDto batchDto)
+      public Task<BatchListItemViewModel> BuildBatchListItemModel(BatchDto batchDto)
       {
          Task<BatchListItemViewModel> t = Task.Run(() =>
          {
@@ -53,11 +53,11 @@ namespace WMS.Ui.Models.Journal
          return t;
       }
 
-      public List<BatchListItemViewModel> BuildBatchListItemModels(List<Business.Journal.Dto.BatchDto> dtoBatchList)
+      public List<BatchListItemViewModel> BuildBatchListItemModels(List<BatchDto> dtoBatchList)
       {
          var modelList = new List<BatchListItemViewModel>();
 
-         var batchStack = new Stack<Business.Journal.Dto.BatchDto>(dtoBatchList);
+         var batchStack = new Stack<BatchDto>(dtoBatchList);
 
          // Create 1 per core, and then as they finish, create another:   
          List<Task<BatchListItemViewModel>> tasks = new List<Task<BatchListItemViewModel>>();
@@ -109,11 +109,11 @@ namespace WMS.Ui.Models.Journal
          if (target != null)
          {
             model.EndingSugar = target.EndSugar;
-            model.EndSugarUOM = target.EndSugarUom.Id;
+            model.EndSugarUOM = target.EndSugarUom?.Id;
             model.FermentationTemp = target.Temp;
-            model.TempUOM = target.TempUom.Id;
+            model.TempUOM = target.TempUom?.Id;
             model.StartingSugar = target.StartSugar;
-            model.StartSugarUOM = target.StartSugarUom.Id;
+            model.StartSugarUOM = target.StartSugarUom?.Id;
             model.TA = target.TA;
             model.pH = target.pH;
          }
@@ -121,9 +121,8 @@ namespace WMS.Ui.Models.Journal
          return model;
       }
 
-      public BatchViewModel CreateBatchModel(List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
-         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList,
-         TargetDto target = null)
+      public BatchViewModel CreateBatchModel(BatchDto dto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
+         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
       {
          var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
          var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);    
@@ -133,9 +132,20 @@ namespace WMS.Ui.Models.Journal
          {
             Varieties = varieties,
             VolumeUOMs = uomVolumeList,
-            Yeasts = yeastsList,
-            Target = CreateTargetViewModel(target, dtoSugarUOMList, dtoTempUOMList)
-         };       
+            Yeasts = yeastsList
+         };
+
+         if (dto == null)
+         {
+            newModel.Target = CreateTargetViewModel(null, dtoSugarUOMList, dtoTempUOMList);
+         }
+         else
+         {
+            // TODO fill in newModel from DTO
+
+
+            newModel.Target = CreateTargetViewModel(dto.Target, dtoSugarUOMList, dtoTempUOMList);
+         }
 
          return newModel;
       }

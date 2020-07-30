@@ -23,10 +23,7 @@
 
       <br /><br />
 
-      <a href="/journal/add" class="btn btn-outline-secondary btn-block" title="Add a New Batch">
-         Add New Batch (on create link to Recipe)
-      </a>
-
+      <a href="/journal/add" class="btn btn-outline-secondary btn-block" title="Add a New Batch">Add New Batch</a>
 
       <br /><br />
 
@@ -39,6 +36,10 @@
 
    </div>
 </div>
+
+<form id="frmEditBatch" asp-controller="Journal" asp-action="EditBatch" method="POST" enctype="multipart/form-data">
+   <label class="d-none"><input hidden name="Id" id="editBatchId" />Hidden Label</label>
+</form>
 
 
 @section Scripts{

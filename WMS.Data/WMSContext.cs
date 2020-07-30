@@ -15,7 +15,8 @@ namespace WMS.Data
             : base(options)
         {
         }
-
+        
+        public virtual DbSet<BatchEntries> BatchEntries { get; set; }
         public virtual DbSet<Batches> Batches { get; set; }
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Images> Images { get; set; }
@@ -31,8 +32,25 @@ namespace WMS.Data
         public virtual DbSet<YeastStyle> YeastStyle { get; set; }
         public virtual DbSet<Yeasts> Yeasts { get; set; }
 
+        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {            
+        {
+            modelBuilder.Entity<BatchEntries>(entity =>
+            {
+                entity.Property(e => e.ActionDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Additions).HasMaxLength(4000);
+
+                entity.Property(e => e.EntryDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.PH).HasColumnName("pH");
+
+                entity.Property(e => e.So2).HasColumnName("SO2");
+
+                entity.Property(e => e.Ta).HasColumnName("TA");
+            });
+
             modelBuilder.Entity<Batches>(entity =>
             {
                 entity.Property(e => e.SubmittedBy).HasMaxLength(450);

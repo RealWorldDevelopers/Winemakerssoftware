@@ -1,12 +1,6 @@
 $(document).ready(function () {
 
-   // score batch button click
-   $('body').off('click', 'button[name="scoreBatchButton"]');
-   $('body').on('click', 'button[name="scoreBatchButton"]', function () {
-      var id = $(this).data('id');
-      onScoreClick(id, '1', '2', '3', '4', '5', '6');
-      alert(id);
-   });
+  
 
    // all inputs numeric only
    $('body').off('keypress', '#batchInfo input');
@@ -72,7 +66,24 @@ $(document).ready(function () {
       }, 5);
    });
 
+   // detailed batch edit
+   $('body').off('click', 'button[name="editBatchDetailsButton"]');
+   $('body').on('click', 'button[name="editBatchDetailsButton"]', function () {
+      var id = $(this).data('id');
+      $('#editBatchId').val(id);
+      $('#frmEditBatch').submit();
+   });
 
+   // quick edit batch
+   // TODO
+
+   // score batch button click
+   $('body').off('click', 'button[name="scoreBatchButton"]');
+   $('body').on('click', 'button[name="scoreBatchButton"]', function () {
+      var id = $(this).data('id');
+      onScoreClick(id, '1', '2', '3', '4', '5', '6');
+      alert(id);
+   });
 
 });
 

@@ -29,8 +29,8 @@ namespace WMS.Business.Journal.Queries
          _dbContext = dbContext;
          _mapper = mapper;
       }
-            
-     
+
+
       /// <summary>
       /// Query all Batches in SQL DB
       /// </summary>
@@ -54,6 +54,11 @@ namespace WMS.Business.Journal.Queries
          var Batch = _dbContext.Batches
             .FirstOrDefault(r => r.Id == id);
          var dto = _mapper.Map<BatchDto>(Batch);
+         if (dto.Target?.Id.HasValue == true)
+         {
+            var target =  _dbContext.Targets.FirstOrDefault(t => t.Id == dto.Target.Id);
+            dto.Target = _mapper.Map<TargetDto>(target);
+         }
          return dto;
       }
 
@@ -81,6 +86,13 @@ namespace WMS.Business.Journal.Queries
             .FirstOrDefaultAsync(r => r.Id == id)
             .ConfigureAwait(false);
          var dto = _mapper.Map<BatchDto>(Batch);
+         if (dto.Target?.Id.HasValue == true)
+         {
+            var target = await _dbContext.Targets
+               .FirstOrDefaultAsync(t => t.Id == dto.Target.Id)
+               .ConfigureAwait(false);
+            dto.Target = _mapper.Map<TargetDto>(target);
+         }
          return dto;
       }
 

@@ -12,12 +12,14 @@
 
       @if (!Model.BatchComplete)
       {
-         <button name="scoreBatchButton" class="btn btn-primary" data-id="@Model.Id">Score Batch</button>
+      <button class="btn btn-primary" name="scoreBatchButton" data-id="@Model.Id">Score Batch</button>
       }
       else
-      {
-         <btn class="btn btn-primary">Quick Entry</btn> <btn class="btn btn-primary">Full Details</btn>
+      { 
+      <button class="btn btn-primary" name="editBatchQuickButton" data-id="@Model.Id">Quick Entry</button>
       }
+
+      <button class="btn btn-primary" name="editBatchDetailsButton" data-id="@Model.Id">Full Details</button>
 
    </div>
 
