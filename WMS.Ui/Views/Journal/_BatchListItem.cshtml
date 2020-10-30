@@ -10,7 +10,7 @@
       <p class="card-text"><strong>Current Stage:</strong> @Model.CurrentStage</p>
       <p class="card-text">@Model.LastStatus</p>
 
-      @if (!Model.BatchComplete)
+      @if (Model.BatchComplete)
       {
       <button class="btn btn-primary" name="scoreBatchButton" data-id="@Model.Id">Score Batch</button>
       }

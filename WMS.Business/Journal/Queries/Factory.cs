@@ -35,6 +35,15 @@ namespace WMS.Business.Journal.Queries
       }
 
       /// <summary>
+      /// Instance of Create Batch Entries Query
+      /// </summary>
+      /// <inheritdoc cref="IFactory.CreateBatchEntriesQuery"/>>
+      public IQuery<BatchEntryDto> CreateBatchEntriesQuery()
+      {
+         return new GetBatchEntries(_dbContext, _mapper);
+      }
+
+      /// <summary>
       /// Instance of Create Targets Query
       /// </summary>
       /// <inheritdoc cref="IFactory.CreateTargetsQuery"/>>

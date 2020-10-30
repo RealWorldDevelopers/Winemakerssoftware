@@ -39,6 +39,7 @@ namespace WMS.Ui.Models.Journal
 
             var model = new BatchListItemViewModel
             {
+               BatchComplete = batchDto.Complete ?? false,
                Id = batchDto.Id.Value,
                Title = batchDto.Title,
                Vintage = batchDto.Vintage,
@@ -108,6 +109,7 @@ namespace WMS.Ui.Models.Journal
 
          if (target != null)
          {
+            model.Id = target.Id;
             model.EndingSugar = target.EndSugar;
             model.EndSugarUOM = target.EndSugarUom?.Id;
             model.FermentationTemp = target.Temp;
@@ -125,7 +127,7 @@ namespace WMS.Ui.Models.Journal
          List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
       {
          var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
-         var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);    
+         var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);
          var yeastsList = CreateSelectList("Yeast", dtoYeastList);
 
          var newModel = new BatchViewModel
@@ -141,9 +143,14 @@ namespace WMS.Ui.Models.Journal
          }
          else
          {
-            // TODO fill in newModel from DTO
-
-
+            newModel.Complete = dto.Complete ?? false;
+            newModel.Description = dto.Description;
+            newModel.RecipeId = dto.RecipeId;
+            newModel.Title = dto.Title;
+            newModel.VarietyId = dto.Variety?.Id;
+            newModel.Vintage = dto.Vintage;
+            newModel.Volume = dto.Volume;
+            newModel.YeastId = dto.YeastId;
             newModel.Target = CreateTargetViewModel(dto.Target, dtoSugarUOMList, dtoTempUOMList);
          }
 

@@ -14,8 +14,8 @@ using WMS.Business.Journal.Dto;
 
 namespace WMS.Ui.Controllers
 {
-   // TODO set privilages for controller / actions [Authorize(Roles = "GeneralUser")] not sure about this high level...
-   [Authorize(Roles = "Admin")]
+   // TODO set privileges for controller
+   //[Authorize(Roles = "GeneralUser")]
    public class JournalController : BaseController
    {
       private readonly IStringLocalizer<JournalController> _localizer;
@@ -53,7 +53,8 @@ namespace WMS.Ui.Controllers
          var batchItemsModel = _modelFactory.BuildBatchListItemModels(batchesDto);
 
          journalModel.Batches = batchItemsModel
-             .OrderByDescending(r => r.Vintage)
+             .OrderBy(r => r.BatchComplete)
+             .ThenByDescending(r => r.Vintage)
              .ThenBy(r => r.Variety);
 
          return View(journalModel);
@@ -95,7 +96,6 @@ namespace WMS.Ui.Controllers
       /// <summary>
       /// Opening Page for Entering New Batch from an existing Recipe
       /// </summary>
-     // [Authorize(Roles = "GeneralUser")]
       [HttpPost]
       public async Task<IActionResult> AddFromRecipe(int? recipeId, int? yeastId, int? varietyId, int? targetId)
       {
@@ -140,7 +140,6 @@ namespace WMS.Ui.Controllers
       /// </summary>
       /// <param name="model">Details from Add Batch Page as <see cref="BatchViewModel"/></param>
       /// <returns>Returns to Empty Add Batch Entry Page with Success or Failure Alert Message</returns>
-     // [Authorize(Roles = "GeneralUser")]
       [HttpPost]
       [ValidateAntiForgeryToken]
       public async Task<IActionResult> Add(BatchViewModel model)
@@ -186,7 +185,17 @@ namespace WMS.Ui.Controllers
             return View(addModel);
          }
 
-         var targetDto = new TargetDto();
+         TargetDto targetDto;
+         if (model.Target.Id.HasValue)
+         {
+            var targetQuery = _journalQueryFactory.CreateTargetsQuery();
+            targetDto = targetQuery.Execute(model.Target.Id.Value);
+         }
+         else
+         {
+            targetDto = new TargetDto();
+         }
+
          if (model.Target.HasTargetData())
          {
             // convert add model to batch and target dto   
@@ -196,12 +205,18 @@ namespace WMS.Ui.Controllers
             targetDto.StartSugar = model.Target.StartingSugar;
             targetDto.EndSugar = model.Target.EndingSugar;
 
-            targetDto.TempUom = new UnitOfMeasure { Id = model.Target.TempUOM.Value };
-            targetDto.StartSugarUom = new UnitOfMeasure { Id = model.Target.StartSugarUOM.Value };
-            targetDto.EndSugarUom = new UnitOfMeasure { Id = model.Target.EndSugarUOM.Value };
+            if (model.Target.TempUOM.HasValue)
+               targetDto.TempUom = new UnitOfMeasure { Id = model.Target.TempUOM.Value };
+            if (model.Target.StartSugarUOM.HasValue)
+               targetDto.StartSugarUom = new UnitOfMeasure { Id = model.Target.StartSugarUOM.Value };
+            if (model.Target.EndSugarUOM.HasValue)
+               targetDto.EndSugarUom = new UnitOfMeasure { Id = model.Target.EndSugarUOM.Value };
 
             var updateTargetCommand = _journalCommandFactory.CreateTargetsCommand();
-            targetDto = await updateTargetCommand.AddAsync(targetDto).ConfigureAwait(false);
+            if (targetDto.Id.HasValue)
+               targetDto = await updateTargetCommand.UpdateAsync(targetDto).ConfigureAwait(false);
+            else
+               targetDto = await updateTargetCommand.AddAsync(targetDto).ConfigureAwait(false);
          }
 
          var batchDto = new BatchDto
@@ -210,8 +225,10 @@ namespace WMS.Ui.Controllers
             Vintage = model.Vintage,
             Volume = model.Volume,
             Complete = false,
-            SubmittedBy = submittedBy.Id,
-            Title = model.Title
+            SubmittedBy = submittedBy?.Id,
+            Title = model.Title,
+            YeastId = model.YeastId,
+            RecipeId = model.RecipeId
          };
 
          batchDto.Target = targetDto;
@@ -235,7 +252,6 @@ namespace WMS.Ui.Controllers
       /// <summary>
       /// Main entry page to edit a batch detailed
       /// </summary>
-     // [Authorize(Roles = "GeneralUser")]
       [HttpPost]
       [ValidateAntiForgeryToken]
       public async Task<IActionResult> EditBatch(int Id)

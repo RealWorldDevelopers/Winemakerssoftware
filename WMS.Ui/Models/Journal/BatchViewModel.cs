@@ -8,6 +8,10 @@ namespace WMS.Ui.Models.Journal
 {
    public class BatchViewModel
    {
+      public int? Id { get; set; }
+
+      public bool Complete { get; set; }
+
       public BatchViewModel()
       {
          Entries = new List<BatchEntryViewModel> {
@@ -27,7 +31,7 @@ namespace WMS.Ui.Models.Journal
 
       [Required(ErrorMessage = "Volume is required")]
       [Range(1, 999, ErrorMessage = "Volume should be between 1 and 999")]
-      public int? Volume { get; set; }
+      public double? Volume { get; set; }
 
       [Required(ErrorMessage = "UOM is required")]
       public int? VolumeUOM { get; set; }

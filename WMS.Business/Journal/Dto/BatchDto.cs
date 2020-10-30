@@ -59,6 +59,11 @@ namespace WMS.Business.Journal.Dto
       public int? RecipeId { get; set; }
 
       /// <summary>
+      /// Foreign Key of Related Yeast for Batch
+      /// </summary>
+      public int? YeastId { get; set; }
+
+      /// <summary>
       /// Is Batch Completed
       /// </summary>
       public bool? Complete { get; set; }

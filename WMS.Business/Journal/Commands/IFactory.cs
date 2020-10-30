@@ -16,5 +16,12 @@ namespace WMS.Business.Journal.Commands
       /// </summary>
       /// <returns><see cref="ICommand{TargetDto}"/></returns>
       public ICommand<TargetDto> CreateTargetsCommand();
+
+      /// <summary>
+      /// Create a <see cref="BatchEntryDto"/> Command Object
+      /// </summary>
+      /// <returns><see cref="ICommand{BatchEntryDto}"/></returns>
+      ICommand<BatchEntryDto> CreateBatchEntriesCommand();
+
    }
 }

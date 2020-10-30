@@ -229,14 +229,6 @@ $(document).ready(function () {
 
          var netSo2 = (endingSO2 > 0 && endingSO2 > startingSO2) ? endingSO2 - startingSO2 : endingSO2;
 
-
-
-
-
-
-
-
-
          var liters;
          var gallons;
          if ($('input[name=optUomSO2DoseVolume]:checked', '#frmSO2Dose').val() === 'metric') {

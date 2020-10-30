@@ -1,4 +1,5 @@
-﻿using WMS.Business.Common;
+﻿using System;
+using WMS.Business.Common;
 
 namespace WMS.Business.Journal.Dto
 {
@@ -43,6 +44,31 @@ namespace WMS.Business.Journal.Dto
       /// <returns></returns>
       TargetDto CreateNewTarget(int? id, double? temp, IUnitOfMeasure tempUom, double? pH, double? ta,
          double? startSugar, IUnitOfMeasure startSugarUom, double? endSugar, IUnitOfMeasure endSugarUom);
+
+      /// <summary>
+      /// Creates a New <see cref="BatchEntryDto"/> Instance
+      /// </summary>
+      /// <param name="id">Primary Key as <see cref="int"/></param>
+      /// <param name="batchId">Foreign Key as <see cref="int"/></param>
+      /// <param name="entryDateTime">Database Transaction DateTime</param>
+      /// <param name="actionDateTime">DateTime of Action</param>
+      /// <param name="so2">SO2 Level at time of Action</param>
+      /// <param name="temp">Temperature at time of Action</param>
+      /// <param name="tempUom">Foreign Key to a Unit of Measure for Temp</param>
+      /// <param name="pH">pH Level at time of Action</param>
+      /// <param name="ta">TA Level at time of Action</param>
+      /// <param name="sugar">Sugar Level at time of Action</param>
+      /// <param name="sugarUom">Foreign Key to a Unit of Measure for Sugar</param>
+      /// <param name="additions">Items Added at tome of Action</param>
+      /// <param name="comments">Observation Notes</param>
+      /// <param name="racked">Did Action include Racking</param>
+      /// <param name="filtered">Did Action include Filtering</param>
+      /// <param name="bottled">Did Action include Bottling</param>
+      /// <returns></returns>
+      BatchEntryDto CreateNewBatchEntry(int? id, int? batchId, DateTime? entryDateTime, DateTime? actionDateTime,
+         double? so2, double? temp, IUnitOfMeasure tempUom, double? pH, double? ta, double? sugar, IUnitOfMeasure sugarUom,
+         string additions, string comments, bool? racked, bool? filtered, bool? bottled);
+
 
    }
 }

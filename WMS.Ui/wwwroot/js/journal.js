@@ -75,14 +75,17 @@ $(document).ready(function () {
    });
 
    // quick edit batch
-   // TODO
+   $('body').off('click', 'button[name="editBatchQuickButton"]');
+   $('body').on('click', 'button[name="editBatchQuickButton"]', function () {
+      var id = $(this).data('id');
+      showAddEntry(id);   
+   });
 
    // score batch button click
    $('body').off('click', 'button[name="scoreBatchButton"]');
    $('body').on('click', 'button[name="scoreBatchButton"]', function () {
       var id = $(this).data('id');
-      onScoreClick(id, '1', '2', '3', '4', '5', '6');
-      alert(id);
+      onScoreClick(id, '1', '2', '3', '4', '5', '6');     
    });
 
 });
@@ -98,3 +101,24 @@ function onScoreClick(id, title, style, tempMin, tempMax, alcohol, note) {
    $("#scoreBatchModal").modal();
 }
 
+function showAddEntry(id) {
+   $("#batchEntryModal_id").val(id);
+   $("#batchEntryModal").modal();
+}
+
+function addBatchEntry(id, starValue, tokenName, tokenValue) {
+   // alert('update star value happened');
+   const uri = '/api/recipes';
+   var jwt = $('#RatingJwt').val();
+   $.ajax({
+      url: rootUri + uri + '/rating/' + id,
+      type: 'PUT',
+      headers: { "Authorization": 'Bearer ' + jwt },
+      contentType: 'application/json',
+      data: JSON.stringify({ 'starValue': starValue }),
+      success: function (result) { console.log('successful rating update call'); },
+      error: function (xmlHttpRequest, textStatus, errorThrown) { console.log('Exception: ' + errorThrown); }
+
+   });
+
+}

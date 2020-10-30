@@ -8,6 +8,8 @@ namespace WMS.Ui.Models.Journal
 {
    public class TargetViewModel
    {
+      public int? Id { get; set; }
+
       [Range(0, 32)] // Brix id is 5
       [RangeIf(.990, 1.130, "StartSugarUOM", Comparison.IsNotEqualTo, 5)]
       public double? StartingSugar { get; set; }

@@ -15,6 +15,12 @@ namespace WMS.Business.Journal.Queries
       IQuery<BatchDto> CreateBatchesQuery();
 
       /// <summary>
+      /// Create a Batch Entries Query
+      /// </summary>
+      /// <returns><see cref="IQuery{BatchEntryDto}"/></returns>
+      IQuery<BatchEntryDto> CreateBatchEntriesQuery();
+
+      /// <summary>
       /// Create a Targets Query
       /// </summary>
       /// <returns><see cref="IQuery{TargetDto}"/></returns>
