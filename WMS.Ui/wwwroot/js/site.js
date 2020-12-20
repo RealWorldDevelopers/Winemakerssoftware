@@ -41,6 +41,9 @@ $(document).ready(function () {
       showLoader();
    });
 
+   // CSP: disable automatic style injection on chartJS objects
+   Chart.platform.disableCSSInjection = true;
+
    // hover effect images
    $('body').off('click', 'a.info');
    $('body').on('click', 'a.info', function () {
@@ -61,8 +64,8 @@ $(document).ready(function () {
    $('[data-toggle="tooltip"]').tooltip();
 
    // initialize popovers
-   $('[data-toggle="popover"]').popover(); 
-  
+   $('[data-toggle="popover"]').popover();
+
    // Prompt user to install app
    if (typeof promptEvt !== 'undefined') {
       promptEvt.prompt();
@@ -123,7 +126,7 @@ function formatNumericForDisplay(num, places, fixed) {
 
 function clearValidation(formId) {
    // get the form inside we are working - change selector to your form as needed
-   var form = $('#'+formId);
+   var form = $('#' + formId);
 
    // get validator object
    var validator = form.validate();
@@ -139,6 +142,30 @@ function clearValidation(formId) {
    validator.resetForm();
 }
 
+function formatDate(date) {
+   //alert(date);
+   var dt = new Date(date);
+   var mon = dt.getMonth() + 1;
+   var day = dt.getDate();
+   var yr = dt.getFullYear();
+   var ds = mon + '/' + day + '/' + yr;
+   return ds;
+}
+
+var formatDateTime = function (date) {
+   //alert(date);
+   var dt = new Date(date);
+   var mon = dt.getMonth() + 1;
+   var day = dt.getDate();
+   var yr = dt.getFullYear();
+   var hr = dt.getHours();
+   var min = dt.getMinutes();
+   var tz = (hr < 12 ? 'AM' : 'PM');
+   hr = (hr > 12 ? (hr - 12) : hr);
+
+   ds = mon + '/' + day + '/' + yr + ' ' + ('0' + hr).slice(-2) + ':' + ('0' + min).slice(-2) + " " + tz;
+   return ds;
+}
 
 // TODO use to grey scale objects not in the cache when offline (SW Toolbox video) like available menu choices
 //function() {

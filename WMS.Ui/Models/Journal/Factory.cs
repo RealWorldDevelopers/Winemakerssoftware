@@ -46,7 +46,7 @@ namespace WMS.Ui.Models.Journal
                Variety = batchDto.Variety != null ? batchDto.Variety.Literal : string.Empty,
                Description = batchDto.Description,
                CurrentStage = "CurrentStage",
-               LastStatus = "01-01-2020: last SG and Temp or last so2 or last score",
+               LastStatus = "01-01-2020: last SG and Temp or last so2",
                BatchUrl = batchUri
             };
             return model;
@@ -123,7 +123,7 @@ namespace WMS.Ui.Models.Journal
          return model;
       }
 
-      public BatchViewModel CreateBatchModel(BatchDto dto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
+      public BatchViewModel CreateBatchModel(BatchDto dto, List<BatchEntryDto> entriesDto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
          List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
       {
          var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
@@ -143,6 +143,7 @@ namespace WMS.Ui.Models.Journal
          }
          else
          {
+            newModel.Id = dto.Id;
             newModel.Complete = dto.Complete ?? false;
             newModel.Description = dto.Description;
             newModel.RecipeId = dto.RecipeId;
@@ -154,7 +155,100 @@ namespace WMS.Ui.Models.Journal
             newModel.Target = CreateTargetViewModel(dto.Target, dtoSugarUOMList, dtoTempUOMList);
          }
 
+         if (entriesDto != null)
+         {
+            foreach (var entry in entriesDto)
+            {
+               var e = CreateBatchEntryViewModel(entry);  
+               newModel.Entries.Add(e);
+            }
+
+            newModel.Summary = CreatBatchSummaryViewModel(entriesDto);
+         }
          return newModel;
+      }
+
+      public BatchEntryViewModel CreateBatchEntryViewModel(BatchEntryDto entry)
+      {
+         if (entry == null) 
+         {
+            return new BatchEntryViewModel();
+         }
+         else
+         {
+            var e = new BatchEntryViewModel
+            {
+               Id = entry.Id,
+               BatchId = entry.BatchId,
+               Additions = entry.Additions,
+               Bottled = entry.Bottled,
+               Comments = entry.Comments,
+               EntryDateTime = entry.EntryDateTime,
+               Filtered = entry.Filtered,
+               pH = entry.pH,
+               Racked = entry.Racked,
+               So2 = entry.So2,
+               Sugar = entry.Sugar,
+               SugarUomId = entry.SugarUom?.Id,
+               SugarUom = entry.SugarUom?.Abbreviation,
+               Ta = entry.Ta,
+               Temp = entry.Temp,
+               TempUomId = entry.TempUom?.Id,
+               TempUom = entry.TempUom?.Abbreviation
+            };
+
+            if (entry.ActionDateTime.HasValue)
+               e.ActionDateTime = entry.ActionDateTime.Value.ToLocalTime();
+            else
+               e.ActionDateTime = entry.EntryDateTime.Value.ToLocalTime();
+
+            return e;
+         }
+         
+      }
+
+      public BatchSummaryViewModel CreatBatchSummaryViewModel(List<BatchEntryDto> entriesDto)
+      {
+         // calculate status data
+         var sortedEntries = entriesDto.OrderByDescending(e => e.ActionDateTime).ThenByDescending(e => e.EntryDateTime);
+         var model = new BatchSummaryViewModel();
+
+         var tmpEntry = sortedEntries.FirstOrDefault(e => e.Bottled.HasValue && e.Bottled.Value == true);
+         model.BottledOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.Racked.HasValue && e.Racked.Value == true);
+         model.RackedOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.Filtered.HasValue && e.Filtered.Value == true);
+         model.FilteredOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.Sugar.HasValue);
+         model.SugarOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.SugarOnUom = tmpEntry?.SugarUom?.Abbreviation;
+         model.SugarOnValue = tmpEntry?.Sugar;
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.Temp.HasValue);
+         model.TempOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.TempOnUom = tmpEntry?.TempUom?.Abbreviation;
+         model.TempOnValue = tmpEntry?.Temp;
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.pH.HasValue);
+         model.pHOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.pHOnValue = tmpEntry?.pH;
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.Ta.HasValue);
+         model.TaOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.TaOnValue = tmpEntry?.Ta;
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => e.So2.HasValue);
+         model.So2OnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.So2OnValue = tmpEntry?.So2;
+
+         tmpEntry = sortedEntries.FirstOrDefault(e => string.IsNullOrEmpty(e.Comments) == false);
+         model.CommentsOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.CommentsOnValue = tmpEntry?.Comments;
+
+         return model;
       }
 
 

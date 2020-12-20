@@ -1,6 +1,8 @@
+var statusChart;
+
 $(document).ready(function () {
 
-  
+   localStorage.removeItem('latestEntryAdded')
 
    // all inputs numeric only
    $('body').off('keypress', '#batchInfo input');
@@ -52,6 +54,7 @@ $(document).ready(function () {
 
    });
 
+
    // all inputs paste events numeric only
    $('body').off('paste', '#batchTargets :input');
    $('body').on('paste', '#batchTargets :input', function () {
@@ -75,50 +78,535 @@ $(document).ready(function () {
    });
 
    // quick edit batch
-   $('body').off('click', 'button[name="editBatchQuickButton"]');
-   $('body').on('click', 'button[name="editBatchQuickButton"]', function () {
+   $('body').off('click', 'button[name="showBatchEntryQuickButton"]');
+   $('body').on('click', 'button[name="showBatchEntryQuickButton"]', function () {
       var id = $(this).data('id');
-      showAddEntry(id);   
+      // alert(id);
+      showAddEntry(id);
    });
 
-   // score batch button click
-   $('body').off('click', 'button[name="scoreBatchButton"]');
-   $('body').on('click', 'button[name="scoreBatchButton"]', function () {
+   $('body').off('click', 'button[name="showBatchEntryButton"]');
+   $('body').on('click', 'button[name="showBatchEntryButton"]', function () {
       var id = $(this).data('id');
-      onScoreClick(id, '1', '2', '3', '4', '5', '6');     
+      // alert(id);
+      showAddEntry(id);
+
+      // Retrieve the new entry from storage and display in list
+      $('#batchEntryModal').on('hidden.bs.modal', function () {
+         var lastEntry = localStorage.getItem('latestEntryAdded');
+         if (lastEntry) {
+            var retrievedObject = JSON.parse(lastEntry);
+            buildDisplayEntry(retrievedObject);
+            addToChart(retrievedObject);
+            updateStatus(retrievedObject);
+         }
+      })
    });
+
+   // add batch entry click
+   $('body').off('click', 'button[name="addBatchEntryButton"]');
+   $('body').on('click', 'button[name="addBatchEntryButton"]', function () {
+      var id = $('#batchEntryModal_id').val();
+      addBatchEntry(id);
+   });
+
+   // delete batch entry click
+   $('body').off('click', 'button[name="delBatchEntryButton"]');
+   $('body').on('click', 'button[name="delBatchEntryButton"]', function () {
+      if (confirm('Are you sure?')) {
+         var id = $(this).data('id');
+         var parent = $(this).parent().parent().parent();
+         deleteBatchEntry(id, parent);
+      }
+   });
+
+   // load status chart 
+   if (window.location.href.lastIndexOf('EditBatch') >= 0) {
+      var id = $('#updateBatchId').val();
+      getStatusChart(id);
+   }
 
 });
 
-function onScoreClick(id, title, style, tempMin, tempMax, alcohol, note) {
-   // alert('it works' + id);
-   document.getElementById("scoreBatchModal_title").innerHTML = title;
-   document.getElementById("scoreBatchModal_style").innerHTML = style;
-   document.getElementById("scoreBatchModal_tempMin").innerHTML = tempMin;
-   document.getElementById("scoreBatchModal_tempMax").innerHTML = tempMax;
-   document.getElementById("scoreBatchModal_alcohol").innerHTML = alcohol;
-   document.getElementById("scoreBatchModal_note").innerHTML = note;
-   $("#scoreBatchModal").modal();
-}
+function deleteBatchEntry(id, el) {
 
-function showAddEntry(id) {
-   $("#batchEntryModal_id").val(id);
-   $("#batchEntryModal").modal();
-}
+   const uri = '/api/journal';
+   var jwt = $('#BatchJwt').val();
 
-function addBatchEntry(id, starValue, tokenName, tokenValue) {
-   // alert('update star value happened');
-   const uri = '/api/recipes';
-   var jwt = $('#RatingJwt').val();
    $.ajax({
-      url: rootUri + uri + '/rating/' + id,
-      type: 'PUT',
-      headers: { "Authorization": 'Bearer ' + jwt },
+      url: rootUri + uri + '/batchEntry/' + id,
+      type: 'POST',
+      headers: { 'Authorization': 'Bearer ' + jwt },
       contentType: 'application/json',
-      data: JSON.stringify({ 'starValue': starValue }),
-      success: function (result) { console.log('successful rating update call'); },
-      error: function (xmlHttpRequest, textStatus, errorThrown) { console.log('Exception: ' + errorThrown); }
+      success: function (result) {
+         console.log('successful deletion batch entry');
 
+         // hide local
+         el.addClass('d-none');
+      },
+      error: function (xmlHttpRequest, textStatus, errorThrown) {
+         alert('something went wrong');
+         console.log('Exception: ' + errorThrown);
+      }
+   });
+}
+
+function addBatchEntry(id) {
+   // clear former results
+   localStorage.removeItem('latestEntryAdded')
+
+   // validate date
+   var aDate = new Date(Date.now());
+   if ($('#batchEntryModal_actionDate').val()) {
+      // var tmpDate = new Date($('#batchEntryModal_actionDate').val());
+      var tmpDate = new Date($('#batchEntryModal_actionDate').val().replace(/-/g, '\/'));
+
+      // in last 30 days
+      var targetDate = new Date();
+      targetDate.setDate(aDate.getDate() - 30);
+      if (tmpDate < Date.now() && tmpDate > targetDate) {
+         aDate = tmpDate;
+      }
+   }
+
+   // alert(aDate);
+
+   // validate temp
+   var temp = parseFloat($('#batchEntryModal_temp').val());
+   if (!$.isNumeric(temp) || temp > 90 || temp < 0) {
+      temp = null;
+   };
+   var tempUom = parseInt($('input[name="optEntryTemp"]:checked').val());
+   if (!Number.isInteger(tempUom)) {
+      tempUom = null;
+   };
+
+   // validate sugar
+   var sugar = parseFloat($('#batchEntryModal_sugar').val());
+   if (!$.isNumeric(sugar) || sugar > 30 || sugar < .8) {
+      sugar = null;
+   };
+   var sugarUom = parseInt($('input[name="optEntrySugar"]:checked').val());
+   if (!Number.isInteger(sugarUom)) {
+      sugarUom = null;
+   };
+
+   // validate pH
+   var ph = parseFloat($('#batchEntryModal_ph').val());
+   if (!$.isNumeric(ph) || ph > 30 || ph < .8) {
+      ph = null;
+   };
+
+   // validate TA
+   var ta = parseFloat($('#batchEntryModal_ta').val());
+   if (!$.isNumeric(ta) || ta > 30 || ta < .8) {
+      ta = null;
+   };
+
+   // validate SO2
+   var so2 = parseFloat($('#batchEntryModal_so2').val());
+   if (!$.isNumeric(so2) || so2 > 30 || so2 < .8) {
+      so2 = null;
+   };
+
+   const uri = '/api/journal';
+   var jwt = $('#BatchJwt').val();
+
+   var batchEntry = {
+      //BatchId: id,
+      Racked: $('#batchEntryModal_racked').is(':checked'),
+      Filtered: $('#batchEntryModal_filtered').is(':checked'),
+      Bottled: $('#batchEntryModal_bottled').is(':checked'),
+      //EntryDateTime: new Date(Date.now()) ,
+      ActionDateTime: aDate,
+      Temp: temp,
+      TempUomId: tempUom,
+      Sugar: sugar,
+      SugarUomId: sugarUom,
+      pH: ph,
+      Ta: ta,
+      So2: so2,
+      Additions: $('#batchEntryModal_additions').val(),
+      Comments: $('#batchEntryModal_comments').val(),
+   };
+
+   $.ajax({
+      url: rootUri + uri + '/batchEntry/' + id,
+      type: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + jwt },
+      contentType: 'application/json',
+      data: JSON.stringify(batchEntry),
+      success: function (result) {
+         // add updated model to local storage        
+         localStorage.setItem('latestEntryAdded', JSON.stringify(result));
+
+         console.log('successful batch entry created');
+
+         // close modal window
+         $('.toast').toast({ delay: 2000 });
+         $('.toast').toast('show');
+         $('.toast').on('hidden.bs.toast', function () {
+            $('#batchEntryModal').modal('hide');
+         });
+      },
+      error: function (xmlHttpRequest, textStatus, errorThrown) {
+         alert('something went wrong');
+         console.log('Exception: ' + errorThrown);
+      }
+   });
+
+
+}
+
+function getStatusChart(id) {
+
+   const uri = '/api/journal/batchChart/';
+   var jwt = $('#BatchJwt').val();
+
+   $.ajax({
+      url: rootUri + uri + id,
+      type: 'GET',
+      headers: { "Authorization": 'Bearer ' + jwt },  
+      contentType: 'application/json',
+      success: function (data) {
+         //console.log('successful chart data call');
+
+         var timeValues = data.times;
+         var tempValues = data.temp;
+         var sugarValues = data.sugar;
+
+         var tempLineColor = 'rgba(255,0,0,1)';
+         var sugarLineColor = 'rgba(0,0,255,1)';
+
+         var config = {
+            type: 'line',
+            data: {
+               labels: timeValues,
+               datasets: [{
+                  label: 'Sugar',
+                  backgroundColor: sugarLineColor,
+                  borderColor: sugarLineColor,
+                  data: sugarValues,
+                  yAxisID: 'y-axis-1',
+                  fill: false,
+               }, {
+                  label: 'Temp',
+                  fill: false,
+                  backgroundColor: tempLineColor,
+                  borderColor: tempLineColor,
+                  yAxisID: 'y-axis-2',
+                  data: tempValues,
+               }]
+            },
+            options: {
+               responsive: true,
+               title: {
+                  display: true,
+                  text: 'Fermentation'
+               },
+               tooltips: {
+                  mode: 'index',
+                  intersect: false,
+               },
+               hover: {
+                  mode: 'nearest',
+                  intersect: true
+               },
+               scales: {
+                  xAxes: [{
+                     display: true,
+                     scaleLabel: {
+                        display: true,
+                        labelString: 'Date'
+                     }
+                  }],
+                  yAxes: [{
+                     type: 'linear',
+                     display: true,
+                     position: 'left',
+                     id: 'y-axis-1',
+                     scaleLabel: {
+                        display: true,
+                        labelString: 'Sugar'
+                     }
+                  }, {
+                     type: 'linear',
+                     display: true,
+                     position: 'right',
+                     id: 'y-axis-2',
+                     scaleLabel: {
+                        display: true,
+                        labelString: 'Temp'
+                     }
+                  }]
+               }
+            }
+         };
+
+         var ctx = $('#statusChart');
+         statusChart = new Chart(ctx, config);
+
+      },
+      error: function (xmlHttpRequest, textStatus, errorThrown) {
+         console.log('Chart Data Exception: ' + errorThrown);
+      }
    });
 
 }
+
+function showAddEntry(id) {
+   //alert(id);
+   $('#batchEntryModal_id').val(id);
+   $('#batchEntryModal').modal();
+}
+
+function addToChart(batchEntry) {
+
+   if (batchEntry) {
+
+      if (statusChart) {
+
+         var aDate = void (0);
+         if (batchEntry.actionDateTime) {
+            aDate = batchEntry.actionDateTime;
+         }
+
+         if (aDate) {
+            var sugar = void (0);
+            // make sugar always SG 
+            if (batchEntry.sugarUom) {
+               if (batchEntry.sugarUom === 'Brix') {
+                  sugar = ConvertBrixToSG(batchEntry.sugar)
+               } else {
+                  sugar = batchEntry.sugar;
+               }
+            }
+            if (sugar) {
+               var temp = void (0);
+               // make Temp always F
+               if (batchEntry.tempUom) {
+                  if (batchEntry.tempUom === 'C') {
+                     temp = CelsiusToFahrenheit(batchEntry.temp)
+                  } else {
+                     temp = batchEntry.temp;
+                  }
+               }
+               if (temp) {
+                  //alert('yes');
+                  statusChart.data.labels.push(formatDate(aDate));
+                  statusChart.data.datasets[0].data.push(sugar);
+                  statusChart.data.datasets[1].data.push(temp);
+                  statusChart.update();
+               } else {
+                  //alert('missing temp data');
+                  console.log('Chart Update Missing Temp Data');
+               }
+            } else {
+               //alert('missing sugar data');
+               console.log('Chart Update Missing Sugar Data');
+            }
+         } else {
+            //alert('missing activity date');
+            console.log('Chart Update Missing Activity Date');
+         }
+
+      } else {
+         //alert('no chart to update');
+         console.log('Chart Update No Chart Created');
+      }
+
+   } else {
+      //alert('no batch entry data for chart');
+      console.log('Chart Update No Chart Data');
+   }
+}
+
+function updateStatus(batchEntry) {
+
+   if (batchEntry.racked === true) {
+      $('#summaryRacked').removeClass('d-none');
+      $('#summaryRackedOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.filtered) {
+      $('#summaryFiltered').removeClass('d-none');
+      $('#summaryFilteredOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.bottled) {
+      $('#summaryBotted').removeClass('d-none');
+      $('#summaryBottedOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.sugarUom) {
+      $('#summarySugar').removeClass('d-none');
+      $('#summarySugarOnValue').html(batchEntry.sugar);
+      $('#summarySugarOnUom').html(batchEntry.sugarUom);
+      $('#summarySugarOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.tempUom) {
+      $('#summaryTemp').removeClass('d-none');
+      $('#summaryTempOnValue').html(batchEntry.temp);
+      $('#summaryTempOnUom').html(batchEntry.tempUom);
+      $('#summaryTempOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.so2) {
+      $('#summarySo2').removeClass('d-none');
+      $('#summarySo2OnValue').html(batchEntry.so2);
+      $('#summarySo2OnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.pH) {
+      $('#summarypH').removeClass('d-none');
+      $('#summarypHOnValue').html(batchEntry.pH);
+      $('#summarypHOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.ta) {
+      $('#summaryTa').removeClass('d-none');
+      $('#summaryTaOnValue').html(batchEntry.ta);
+      $('#summaryTaOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+   if (batchEntry.comments) {
+      $('#summaryComments').removeClass('d-none');
+      $('#summaryCommentsOnValue').html(batchEntry.comments);
+      $('#summaryCommentsOnDate').html(formatDate(batchEntry.actionDateTime));
+   }
+
+}
+
+function buildDisplayEntry(entry) {
+
+   if (entry) {
+
+      const card = document.createElement('div');
+      card.className = 'card flex-grow-1';
+
+      const cardBody = document.createElement('div');
+      cardBody.className = 'card-body';
+
+      // date line
+      var aDate = new Date(entry.entryDateTime);
+      if (entry.actionDateTime) {
+         aDate = new Date(entry.actionDateTime);
+      }
+      const cardTitle = document.createElement('div');
+      cardTitle.className = 'd-flex card-title h5';
+      cardTitle.innerHTML = formatDateTime(aDate) + '&nbsp;';
+      const delIcon = document.createElement('i');
+      delIcon.className = 'fa fa-trash-o';
+      const delEntryButton = document.createElement('button');
+      delEntryButton.className = 'btn btn-outline-secondary btn-sm';
+      delEntryButton.setAttribute('name', 'delBatchEntryButton');
+      delEntryButton.setAttribute('data-id', entry.id);
+      delEntryButton.appendChild(delIcon);
+      cardTitle.appendChild(delEntryButton);
+      cardBody.appendChild(cardTitle);
+
+      // measurements line
+      const cardMeasurements = document.createElement('div');
+      cardMeasurements.className = 'd-flex ml-3';
+
+      if (entry.sugar && entry.sugarUom) {
+         const cardSugar = document.createElement('div');
+         cardSugar.className = 'p-2';
+         cardSugar.innerHTML = '<strong>' + entry.sugarUom + '</strong>: ' + entry.sugar;
+         cardMeasurements.appendChild(cardSugar);
+      }
+
+      if (entry.pH) {
+         const cardPh = document.createElement('div');
+         cardPh.className = 'p-2';
+         cardPh.innerHTML = '<strong>pH</strong>: ' + entry.pH;
+         cardMeasurements.appendChild(cardPh);
+      }
+
+      if (entry.ta) {
+         const cardTa = document.createElement('div');
+         cardTa.className = 'p-2';
+         cardTa.innerHTML = '<strong>TA</strong>: ' + entry.ta + ' g/L';
+         cardMeasurements.appendChild(cardTa);
+      }
+
+      if (entry.so2) {
+         const cardSo2 = document.createElement('div');
+         cardSo2.className = 'p-2';
+         cardSo2.innerHTML = '<strong>Sulfite</strong>: ' + entry.so2 + ' mg/L';
+         cardMeasurements.appendChild(cardSo2);
+      }
+
+      if (entry.temp && entry.tempUom) {
+         const cardTemp = document.createElement('div');
+         cardTemp.className = 'p-2';
+         cardTemp.innerHTML = '<strong>Temp</strong>: ' + entry.temp + ' &deg;' + entry.tempUom;
+         cardMeasurements.appendChild(cardTemp);
+      }
+
+      cardBody.appendChild(cardMeasurements);
+
+      // racked line
+      const cardRacking = document.createElement('div');
+      cardRacking.className = 'd-flex ml-3';
+
+      if (entry.racked === true) {
+         const cardRacked = document.createElement('div');
+         cardRacked.className = 'p-2';
+         cardRacked.innerHTML = '<strong>Racked</strong>';
+         cardRacking.appendChild(cardRacked);
+      }
+      if (entry.filtered === true) {
+         const cardFiltered = document.createElement('div');
+         cardFiltered.className = 'p-2';
+         cardFiltered.innerHTML = '<strong>Filtered</strong>';
+         cardRacking.appendChild(cardFiltered);
+      }
+      if (entry.bottled === true) {
+         const cardBottled = document.createElement('div');
+         cardBottled.className = 'p-2';
+         cardBottled.innerHTML = '<strong>Bottled</strong>';
+         cardRacking.appendChild(cardBottled);
+      }
+
+      cardBody.appendChild(cardRacking);
+
+      // additions line
+      if (entry.additions) {
+         const cardAdditions = document.createElement('div');
+         cardAdditions.className = 'd-flex ml-3';
+         cardAdditions.innerHTML = '<strong class="pl-2">Additions</strong>: ';
+         const cardAdditionText = document.createElement('textarea');
+         cardAdditionText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
+         cardAdditionText.setAttribute('rows', 3);
+         cardAdditionText.setAttribute('disabled', '');
+         cardAdditionText.innerHTML = entry.additions;
+         cardAdditions.appendChild(cardAdditionText);
+         cardBody.appendChild(cardAdditions);
+      }
+
+      // comments line
+      if (entry.comments) {
+         const cardComments = document.createElement('div');
+         cardComments.className = 'd-flex ml-3';
+         cardComments.innerHTML = '<strong class="pl-2">Comments</strong>: ';
+         const cardCommentText = document.createElement('textarea');
+         cardCommentText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
+         cardCommentText.setAttribute('rows', 3);
+         cardCommentText.setAttribute('disabled', '');
+         cardCommentText.innerHTML = entry.comments;
+         cardComments.appendChild(cardCommentText);
+         cardBody.appendChild(cardComments);
+      }
+
+      card.appendChild(cardBody);
+
+      document.getElementById('batchEntries').prepend(card);
+
+   };
+
+   // clear out storage 
+   localStorage.removeItem('latestEntryAdded')
+}
+

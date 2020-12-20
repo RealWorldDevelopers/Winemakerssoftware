@@ -10,16 +10,12 @@
       <p class="card-text"><strong>Current Stage:</strong> @Model.CurrentStage</p>
       <p class="card-text">@Model.LastStatus</p>
 
-      @if (Model.BatchComplete)
+      @if (!Model.BatchComplete)
       {
-      <button class="btn btn-primary" name="scoreBatchButton" data-id="@Model.Id">Score Batch</button>
-      }
-      else
-      { 
-      <button class="btn btn-primary" name="editBatchQuickButton" data-id="@Model.Id">Quick Entry</button>
+         <button class="btn btn-primary" name="showBatchEntryQuickButton" data-id="@Model.Id">Quick Entry  @Model.Id</button>
       }
 
-      <button class="btn btn-primary" name="editBatchDetailsButton" data-id="@Model.Id">Full Details</button>
+      <button class="btn btn-primary" name="editBatchDetailsButton" data-id="@Model.Id">Full Details @Model.Id</button>
 
    </div>
 

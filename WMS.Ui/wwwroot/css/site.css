@@ -69,8 +69,7 @@ ol, ul, dl {
 }
 
 
-#caption, #yeastModal_title, 
-#scoreBatchModal_title {
+#caption, #yeastModal_title{
    display: block;
    font-size: 1.17em;
    margin-top: 1em;

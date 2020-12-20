@@ -96,7 +96,15 @@ namespace WMS.Business.Journal.Queries
          return dto;
       }
 
+      public List<BatchDto> ExecuteByFK(int fk)
+      {
+         throw new NotImplementedException();
+      }
 
+      public Task<List<BatchDto>> ExecuteByFKAsync(int fk)
+      {
+         throw new NotImplementedException();
+      }
    }
 
 }

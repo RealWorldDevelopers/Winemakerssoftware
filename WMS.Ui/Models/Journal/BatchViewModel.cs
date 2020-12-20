@@ -2,22 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using WMS.Ui.Models.Validation;
 
 namespace WMS.Ui.Models.Journal
 {
-   public class BatchViewModel
+   public class BatchViewModel : BaseViewModel
    {
+      public BatchViewModel()
+      {
+         Entries = new List<BatchEntryViewModel>();
+      }
+
       public int? Id { get; set; }
 
       public bool Complete { get; set; }
 
-      public BatchViewModel()
-      {
-         Entries = new List<BatchEntryViewModel> {
-            new BatchEntryViewModel(), new BatchEntryViewModel(), new BatchEntryViewModel(),
-            new BatchEntryViewModel(), new BatchEntryViewModel(), new BatchEntryViewModel()};
-      }
+      public BatchSummaryViewModel Summary { get; set; }
 
       public List<BatchEntryViewModel> Entries { get; }
 
@@ -49,7 +48,7 @@ namespace WMS.Ui.Models.Journal
       public int? YeastId { get; set; }
 
       public TargetViewModel Target { get; set; }
-           
+
       public IEnumerable<SelectListItem> Varieties { get; set; }
       public IEnumerable<SelectListItem> VolumeUOMs { get; set; }
       public IEnumerable<SelectListItem> Yeasts { get; set; }

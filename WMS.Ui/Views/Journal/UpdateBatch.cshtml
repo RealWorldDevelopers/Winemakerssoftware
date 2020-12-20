@@ -1,25 +1,18 @@
 ﻿@model WMS.Ui.Models.Journal.BatchViewModel
-
+<label class="d-none"><input hidden asp-for="BatchJwt" />Hidden Label</label>
 <div class="card">
    <div class="card-header bg-secondary text-light">
       <h1>@ViewData["Title"]</h1>
    </div>
    <div class="card-body">
-      <div class="row mb-2">
-         <div class="col-sm-10"></div>
-         <div class="col-sm-2">
-            <div class="form-check-inline">
-               <label class="form-check-label">
-                  <input type="checkbox" class="form-check-input" aria-label="Batch Complete" asp-for="Complete"> Completed
-               </label>
-            </div>
-         </div>
-      </div>
+      <label class="d-none"><input hidden name="Id" id="updateBatchId" value="@Model.Id" />Hidden Label</label>
+
+
       <div class="card" id="batchDescription">
          <div class="card-header bg-dark text-light">
             <i>Enter a Title and Short Description:</i>
          </div>
-         <div class="card-body">            
+         <div class="card-body">
             <div class="row">
                <div class="col-sm-12">
                   <input class="form-control" type="text" aria-label="Title" placeholder="Title of Batch" required asp-for="Title" maxlength="100">
@@ -117,59 +110,129 @@
       <div class="card" id="batchStatus">
          <div class="card-header d-flex justify-content-between bg-dark text-light">
             <div><i>Batch Status (Last Known Values)</i></div>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input" aria-label="Batch Complete" asp-for="Complete"> Completed
+               </label>
+            </div>
             <div><a class="text-light" href="#"><i class="fa fa-trash-o"></i></a></div>
          </div>
          <div class="card-body">
-            if complete just show completed on: 07/07/2020 <br />
-            and Scores <br />
-            if bottled show bottled on: 07/07/2020<br />
-            <br />
-            Last Racked: 07/07/2020<br />
-            SG or Brix: 1.009  on 07/07/2020<br />
-            pH: 3.0 on 07/07/2020<br />
-            TA: 16 g/L on 07/07/2020<br />
-            Sulfite: 16 mg/L on07/07/2020<br />
-            <br />
-            7/7/2020: comments go here for last known comment    <br />
+
+            @if (Model.Complete == true)
+            {
+               <div class="d-flex">
+                  <div class="p-2"><strong>Batch Complete</strong></div>
+               </div>
+            }
+            else
+            {
+               <div class="d-none d-md-flex chart-container" aria-label="Chart for Sugar and Temp" role="img">
+                  <canvas id="statusChart"></canvas>
+               </div>
+               <div class="d-flex flex-row">
+                  <div id="summaryBotted" class="@(Model.Summary.BottledOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Bottled on: </strong>
+                     <span id="summaryBottedOnDate">
+                        @(Model.Summary.BottledOnDate.HasValue == true ? Model.Summary.BottledOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+                  <div id="summaryFiltered" class="@(Model.Summary.FilteredOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Filtered on: </strong>
+                     <span id="summaryFilteredOnDate">
+                        @(Model.Summary.FilteredOnDate.HasValue == true ? Model.Summary.FilteredOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+                  <div id="summaryRacked" class="@(Model.Summary.RackedOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Racked on: </strong>
+                     <span id="summaryRackedOnDate">
+                        @(Model.Summary.RackedOnDate.HasValue == true ? Model.Summary.RackedOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+               </div>
+               <div class="d-flex d-md-none flex-row">
+                  <div id="summarySugar" class="@(Model.Summary.SugarOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Sugar: </strong>
+                     <span id="summarySugarOnValue">@Model.Summary.SugarOnValue.ToString()</span>
+                     <span id="summarySugarOnUom">@Model.Summary.SugarOnUom</span> on
+                     <span id="summarySugarOnDate">
+                        @(Model.Summary.SugarOnDate.HasValue == true ? Model.Summary.SugarOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+                  <div id="summaryTemp" class="@(Model.Summary.TempOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Temp: </strong>
+                     <span id="summaryTempOnValue">@Model.Summary.TempOnValue &deg;</span>
+                     <span id="summaryTempOnUom">@Model.Summary.TempOnUom</span> on
+                     <span id="summaryTempOnDate">
+                        @(Model.Summary.TempOnDate.HasValue == true ? Model.Summary.TempOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+               </div>
+               <div class="d-flex flex-row">
+                  <div id="summarypH" class="@(Model.Summary.pHOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>pH: </strong>
+                     <span id="summarypHOnValue">@Model.Summary.pHOnValue.ToString()</span> on
+                     <span id="summarypHOnDate">
+                        @(Model.Summary.pHOnDate.HasValue == true ? Model.Summary.pHOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+                  <div id="summaryTa" class="@(Model.Summary.TaOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>TA: </strong>
+                     <span id="summaryTaOnValue">@Model.Summary.TaOnValue.ToString()</span> on
+                     <span id="summaryTaOnDate">
+                        @(Model.Summary.TaOnDate.HasValue == true ? Model.Summary.TaOnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+                  <div id="summarySo2" class="@(Model.Summary.So2OnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>SO2: </strong>
+                     <span id="summarySo2OnValue">@Model.Summary.So2OnValue.ToString()</span> on
+                     <span id="summarySo2OnDate">
+                        @(Model.Summary.So2OnDate.HasValue == true ? Model.Summary.So2OnDate.Value.ToShortDateString() : "")
+                     </span>
+                  </div>
+               </div>
+               <div class="d-flex">
+                  <div id="summaryComments" class="@(Model.Summary.CommentsOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>
+                        <Span id="summaryCommentsOnDate">
+                           @(Model.Summary.CommentsOnDate.HasValue == true ? Model.Summary.CommentsOnDate.Value.ToShortDateString() : "")
+                        </Span>:
+                     </strong>
+                     <span id="summaryCommentsOnValue">@Model.Summary.CommentsOnValue</span>
+                  </div>
+               </div>
+            }
 
          </div>
       </div>
 
-      <div class="card" id="batchEntries">
+      <div class="card">
          <div class="card-header bg-dark text-light">
             <i>Batch Journal Entries</i>
          </div>
          <div class="card-body">
-            <button class="btn btn-outline-secondary btn-block" title="Add a New Entry">Add New Entry</button>
-
-            <br /><br />
-
-            <div class="card flex-grow-1">
-               <div class="card-body">
-                  <div class="card-title h4">7/20/2020<i class="fa fa-trash-o"></i></div>
-                  <i class="fa fa-trash-o"></i>
-                  <p class="card-text">Some example text.</p>
-                  if complete just show completed on: 07/07/2020 <br />
-                  if bottled show bottled on: 07/07/2020<br />
-                  <br />
-                  Last Racked: 07/07/2020<br />
-                  SG or Brix: 1.009  on 07/07/2020<br />
-                  pH: 3.0 on 07/07/2020<br />
-                  TA: 16 g/L on 07/07/2020<br />
-                  Sulfite: 16 mg/L on07/07/2020<br />
-                  <br />
-                  7/7/2020: comments go here for last known comment    <br />
-
-
-
-
-
-               </div>
+            <div id="name=" batchEntryButton"" class=@(Model.Complete == true ? "d-none" : "")>
+               <button class="btn btn-outline-secondary btn-block" title="Add a New Entry" name="showBatchEntryButton" data-id="@Model.Id">Add New Entry</button>
             </div>
-
+            <div id="batchEntries">
+               @foreach (var entry in Model.Entries)
+               {
+                  <partial name="_EntryListItem" model="entry" />
+               }
+            </div>
          </div>
       </div>
 
    </div>
    <div class="card-footer"></div>
 </div>
+
+@section Scripts{
+   <environment include="Development">
+      <script src="~/js/journal.js" asp-append-version="true" type="text/javascript"></script>
+      <script src="~/js/convertFunctions.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/journal.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

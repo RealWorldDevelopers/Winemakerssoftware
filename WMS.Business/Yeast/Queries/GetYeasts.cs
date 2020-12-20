@@ -131,6 +131,14 @@ namespace WMS.Business.Yeast.Queries
          return dto;
       }
 
+      public List<YeastDto> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
 
+      public Task<List<YeastDto>> ExecuteByFKAsync(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

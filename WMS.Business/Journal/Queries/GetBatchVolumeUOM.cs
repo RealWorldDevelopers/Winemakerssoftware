@@ -81,6 +81,15 @@ namespace WMS.Business.Journal.Queries
          return dto;
       }
 
+      public List<IUnitOfMeasure> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<IUnitOfMeasure>> ExecuteByFKAsync(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 
 }

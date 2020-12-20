@@ -83,5 +83,14 @@ namespace WMS.Business.Recipe.Queries
          return dto;
       }
 
+      public List<RatingDto> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<RatingDto>> ExecuteByFKAsync(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

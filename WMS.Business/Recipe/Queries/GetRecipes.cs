@@ -232,5 +232,14 @@ namespace WMS.Business.Recipe.Queries
          return dto;
       }
 
+      public List<RecipeDto> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<RecipeDto>> ExecuteByFKAsync(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

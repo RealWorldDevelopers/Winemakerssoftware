@@ -1,36 +1,41 @@
 {
   "version": "1.0",
   "defaultProvider": "cdnjs",
-  "libraries": [
-    {
-      "provider": "cdnjs",
-      "library": "twitter-bootstrap@4.4.1",
-      "destination": "wwwroot/lib/twitter-bootstrap/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "sw-toolbox@3.6.1",
-      "destination": "wwwroot/lib/sw-toolbox/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "popper.js@1.15.0",
-      "destination": "wwwroot/lib/popper.js/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "jquery-validate@1.19.1",
-      "destination": "wwwroot/lib/jquery-validate/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "jquery-validation-unobtrusive@3.2.11",
-      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "jquery@3.4.1",
-      "destination": "wwwroot/lib/jquery/"
-    }
-  ]
+   "libraries": [
+      {
+         "provider": "cdnjs",
+         "library": "twitter-bootstrap@4.4.1",
+         "destination": "wwwroot/lib/twitter-bootstrap/"
+      },
+      {
+         "provider": "cdnjs",
+         "library": "sw-toolbox@3.6.1",
+         "destination": "wwwroot/lib/sw-toolbox/"
+      },
+      {
+         "provider": "cdnjs",
+         "library": "popper.js@1.15.0",
+         "destination": "wwwroot/lib/popper.js/"
+      },
+      {
+         "provider": "cdnjs",
+         "library": "jquery-validate@1.19.1",
+         "destination": "wwwroot/lib/jquery-validate/"
+      },
+      {
+         "provider": "cdnjs",
+         "library": "jquery-validation-unobtrusive@3.2.11",
+         "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+      },
+      {
+         "provider": "cdnjs",
+         "library": "jquery@3.4.1",
+         "destination": "wwwroot/lib/jquery/"
+      },
+      {
+         "provider": "cdnjs",
+         "library": "Chart.js@2.9.4",
+         "destination": "wwwroot/lib/chartjs/"
+      }
+   ]
 }

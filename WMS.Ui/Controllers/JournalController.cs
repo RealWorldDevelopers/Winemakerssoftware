@@ -57,9 +57,14 @@ namespace WMS.Ui.Controllers
              .ThenByDescending(r => r.Vintage)
              .ThenBy(r => r.Variety);
 
+         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
+         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
          return View(journalModel);
 
-      }
+      }      
+
 
       /// <summary>
       /// Opening Page for Entering New Batch
@@ -88,7 +93,12 @@ namespace WMS.Ui.Controllers
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
-         var addBatchModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+
+         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
+         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
 
          return View(addBatchModel);
       }
@@ -127,10 +137,15 @@ namespace WMS.Ui.Controllers
             batch.Target = getTargetsQuery.Execute(targetId.Value);
          }
 
-         var addBatchModel = _modelFactory.CreateBatchModel(batch, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchModel(batch, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
          addBatchModel.VarietyId = varietyId;
          addBatchModel.RecipeId = recipeId;
          addBatchModel.YeastId = yeastId;
+
+         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
+         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
 
          return View("Add", addBatchModel);
       }
@@ -172,7 +187,7 @@ namespace WMS.Ui.Controllers
          var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          if (submittedBy == null)
          {
-            var addModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], false);
             return View(addModel);
          }
@@ -180,7 +195,7 @@ namespace WMS.Ui.Controllers
          // using model validation attributes, if model state says errors do nothing           
          if (!ModelState.IsValid)
          {
-            var addModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], true);
             return View(addModel);
          }
@@ -240,9 +255,14 @@ namespace WMS.Ui.Controllers
 
          // tell user good job and clear or go to thank you page           
          ModelState.Clear();
-         var addBatchModel = _modelFactory.CreateBatchModel(null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
 
          Success(_localizer["AddSuccess"], true);
+
+         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
+         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
 
          return View(addBatchModel);
 
@@ -277,10 +297,19 @@ namespace WMS.Ui.Controllers
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
-         var qry = _journalQueryFactory.CreateBatchesQuery();
-         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+         var batchQuery = _journalQueryFactory.CreateBatchesQuery();
+         var batchDto = await batchQuery.ExecuteAsync(Id).ConfigureAwait(false);
 
-         var model = _modelFactory.CreateBatchModel(dto, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var entriesQuery = _journalQueryFactory.CreateBatchEntriesQuery();
+         var entriesDto = await entriesQuery.ExecuteAsync().ConfigureAwait(true);
+         var batchEntriesDto = entriesDto.Where(e => e.BatchId == batchDto.Id)
+            .OrderByDescending(e => e.ActionDateTime).ThenByDescending(e => e.EntryDateTime).ToList();
+
+         var model = _modelFactory.CreateBatchModel(batchDto, batchEntriesDto, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+
+         // validate with User (ApplicationUser) 
+         var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         model.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
 
          return View("UpdateBatch", model);
 

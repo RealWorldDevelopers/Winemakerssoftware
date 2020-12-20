@@ -83,5 +83,14 @@ namespace WMS.Business.Recipe.Queries
          return dto;
       }
 
+      public List<ICode> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<ICode>> ExecuteByFKAsync(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

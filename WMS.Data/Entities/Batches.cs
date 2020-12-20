@@ -5,11 +5,6 @@ namespace WMS.Data.Entities
 {
     public partial class Batches
     {
-        public Batches()
-        {
-            Scores = new HashSet<Scores>();
-        }
-
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -28,6 +23,5 @@ namespace WMS.Data.Entities
         public virtual Varieties Variety { get; set; }
         public virtual UnitsOfMeasure VolumeUom { get; set; }
         public virtual Yeasts Yeast { get; set; }
-        public virtual ICollection<Scores> Scores { get; set; }
     }
 }

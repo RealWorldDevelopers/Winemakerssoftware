@@ -23,7 +23,6 @@ namespace WMS.Data
         public virtual DbSet<PicturesXref> PicturesXref { get; set; }
         public virtual DbSet<Ratings> Ratings { get; set; }
         public virtual DbSet<Recipes> Recipes { get; set; }
-        public virtual DbSet<Scores> Scores { get; set; }
         public virtual DbSet<Targets> Targets { get; set; }
         public virtual DbSet<UnitsOfMeasure> UnitsOfMeasure { get; set; }
         public virtual DbSet<Varieties> Varieties { get; set; }
@@ -32,10 +31,10 @@ namespace WMS.Data
         public virtual DbSet<YeastStyle> YeastStyle { get; set; }
         public virtual DbSet<Yeasts> Yeasts { get; set; }
 
-        
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        {                    
             modelBuilder.Entity<BatchEntries>(entity =>
             {
                 entity.Property(e => e.ActionDateTime).HasColumnType("datetime");
@@ -164,34 +163,6 @@ namespace WMS.Data
                     .WithMany(p => p.Recipes)
                     .HasForeignKey(d => d.YeastId)
                     .HasConstraintName("FK_Recipes_Yeasts");
-            });
-
-            modelBuilder.Entity<Scores>(entity =>
-            {
-                entity.Property(e => e.AfterTasteNote).HasMaxLength(100);
-
-                entity.Property(e => e.AppearanceNote).HasMaxLength(100);
-
-                entity.Property(e => e.AromaNote).HasMaxLength(100);
-
-                entity.Property(e => e.Comments).HasMaxLength(500);
-
-                entity.Property(e => e.Contest).HasMaxLength(50);
-
-                entity.Property(e => e.DateScored).HasColumnType("datetime");
-
-                entity.Property(e => e.Dryness).HasMaxLength(50);
-
-                entity.Property(e => e.Medal).HasMaxLength(50);
-
-                entity.Property(e => e.Sweetness).HasMaxLength(50);
-
-                entity.Property(e => e.TasteNote).HasMaxLength(100);
-
-                entity.HasOne(d => d.Batch)
-                    .WithMany(p => p.Scores)
-                    .HasForeignKey(d => d.BatchId)
-                    .HasConstraintName("FK_Scores_Batches");
             });
 
             modelBuilder.Entity<Targets>(entity =>

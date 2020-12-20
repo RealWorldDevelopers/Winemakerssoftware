@@ -83,6 +83,14 @@ namespace WMS.Business.Image.Queries
          return dto;
       }
 
+      public List<ImageDto> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
 
+      public Task<List<ImageDto>> ExecuteByFKAsync(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

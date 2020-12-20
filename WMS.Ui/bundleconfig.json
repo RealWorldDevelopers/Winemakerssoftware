@@ -107,6 +107,7 @@
    {
       "outputFileName": "wwwroot/js/journal.min.js",
       "inputFiles": [
+         "wwwroot/js/convertFunctions.js",
          "wwwroot/js/journal.js"
       ],
       // Optionally specify minification options

@@ -73,6 +73,14 @@ namespace WMS.Business.Journal.Queries
          return dto;
       }
 
+      public List<TargetDto> ExecuteByFK(int fk)
+      {
+         throw new NotImplementedException();
+      }
 
+      public Task<List<TargetDto>> ExecuteByFKAsync(int fk)
+      {
+         throw new NotImplementedException();
+      }
    }
 }

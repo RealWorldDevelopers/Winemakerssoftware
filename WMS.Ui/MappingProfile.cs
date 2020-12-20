@@ -59,6 +59,16 @@ namespace WMS.Ui
 
          CreateMap<WMS.Data.Entities.UnitsOfMeasure, Business.Common.IUnitOfMeasure>().ReverseMap();
 
+         CreateMap<WMS.Data.Entities.BatchEntries, Business.Journal.Dto.BatchEntryDto>()
+            .ForMember(dest => dest.SugarUom, opt => opt.Ignore())
+            .ForMember(dest => dest.TempUom, opt => opt.Ignore())
+            .AfterMap((src, dest) => { dest.TempUom = src.TempUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.TempUomId.Value } : null; })
+            .AfterMap((src, dest) => { dest.SugarUom = src.SugarUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.SugarUomId.Value } : null; });
+
+         CreateMap<Business.Journal.Dto.BatchEntryDto, WMS.Data.Entities.BatchEntries>()
+             .ForMember(dest => dest.TempUomId, opt => opt.MapFrom(src => src.TempUom.Id))
+             .ForMember(dest => dest.SugarUomId, opt => opt.MapFrom(src => src.SugarUom.Id));
+
          CreateMap<WMS.Data.Entities.Batches, Business.Journal.Dto.BatchDto>()
             .ForMember(dest => dest.VolumeUom, opt => opt.Ignore())
             .ForMember(dest => dest.Variety, opt => opt.Ignore())
@@ -108,7 +118,7 @@ namespace WMS.Ui
 
          CreateMap<WMS.Data.Entities.Categories, Business.Common.ICode>()
             .ConstructUsing(src => new Business.Common.Code())
-            .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Category)).ReverseMap();          
+            .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Category)).ReverseMap();
 
          CreateMap<WMS.Data.Entities.YeastBrand, Business.Common.ICode>()
             .ConstructUsing(src => new Business.Common.Code())
@@ -157,7 +167,7 @@ namespace WMS.Ui
                Ingredients = source.Ingredients,
                Instructions = source.Instructions,
                SubmittedBy = source.SubmittedBy,
-               AddDate = DateTime.Now,
+               AddDate = DateTime.UtcNow,
                Hits = source.Hits,
                Enabled = source.Enabled,
                NeedsApproved = source.NeedsApproved

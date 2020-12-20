@@ -353,3 +353,23 @@ function GallonsToQuarts(gals) {
       console.error(err);
    }
 }
+
+function ConvertSGtoBrix(sg) {
+   try {
+      var brix = (((182.4601 * sg - 775.6821) * sg + 1262.7794) * sg - 669.5622);
+      return brix;
+   } catch (err) {
+      console.error(err);
+   }
+}
+
+function ConvertBrixToSG(brix) {
+   try {
+      var sg = (brix / (258.6 - ((brix / 258.2) * 227.1))) + 1;
+      return sg;
+   } catch (err) {
+      console.error(err);
+   }
+
+}
+

@@ -1,101 +1,100 @@
 ﻿<div class="modal" id="batchEntryModal">
+
    <div class="modal-dialog">
       <div class="modal-content">
 
-         <form>
-            <label class="d-none"><input hidden name="Id" id="batchEntryModal_id" />Hidden Label</label>
+         <label class="d-none"><input hidden name="Id" id="batchEntryModal_id" />Hidden Label</label>
 
-            @*https://stackoverflow.com/questions/267707/how-to-pass-complex-type-using-json-to-asp-net-mvc-controller*@
+         <!-- Modal Header -->
+         <div class="modal-header">
+            <div id="batchEntryModal_title" class="modal-title">New Entry</div>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+         </div>
 
-            <!-- Modal Header -->
-            <div class="modal-header">
-               <div id="batchEntryModal_title" class="modal-title">New Entry</div>
-               <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
+         <!-- Modal body -->
+         <div class="modal-body">
 
-            <!-- Modal body -->
-            <div class="modal-body">
-
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="checkbox" class="form-check-input" value="">Racked
-                  </label>
-               </div>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="checkbox" class="form-check-input" value="">Filtered
-                  </label>
-               </div>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="checkbox" class="form-check-input" value="">Bottled
-                  </label>
-               </div>
-
-
-               <input class="form-control" type="date" placeholder="mm/dd/yyyy" pattern="\d{2}/\d{2}/\d{4}">
-
-
-               <label class="form-control-label">
-                  Temperature
-                  <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Temperature in Degrees" title="Temperature in Degrees" placeholder="Temp" maxlength="2">
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input" id="batchEntryModal_racked" value="">Racked
                </label>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="radio" class="form-check-input" name="optEntryTemp">&#8451;
-                  </label>
-               </div>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="radio" class="form-check-input" name="optEntryTemp">&#8457;
-                  </label>
-               </div>
-
-               <label class="form-control-label">
-                  <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Sugar" title="Sugar" placeholder="Sugar" maxlength="5">
+            </div>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input" id="batchEntryModal_filtered" value="">Filtered
                </label>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="radio" class="form-check-input" name="optEntrySugar">SG
-                  </label>
-               </div>
-               <div class="form-check-inline">
-                  <label class="form-check-label">
-                     <input type="radio" class="form-check-input" name="optEntrySugar">Brix
-                  </label>
-               </div>
-
-               <div>
-                  <label class="form-control-label">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="pH" title="pH" placeholder="pH" maxlength="5">
-                  </label>
-               </div>
-               <div>
-                  <label class="form-control-label">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="TA" title="TA" placeholder="TA" maxlength="5">
-                  </label>
-               </div>
-               <div>
-                  <label class="form-control-label">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Sulfite" title="Sulfite" placeholder="SO2" maxlength="5">
-                  </label>
-               </div>
-
-               <div class="mb-2">
-                  <textarea class="form-control" rows="4" aria-label="Additions" title="Additions" placeholder="Additions"></textarea>
-               </div>
-               <div class="mb-2">
-                  <textarea class="form-control" rows="4" aria-label="Comments" title="Comments" placeholder="Comments"></textarea>
-               </div>
-
+            </div>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input" id="batchEntryModal_bottled" value="">Bottled
+               </label>
             </div>
 
-            <!-- Modal footer -->
-            <div class="modal-footer">
-               <button type="submit" class="btn btn-danger">Add</button>
+
+            <input class="form-control" type="date" id="batchEntryModal_actionDate" placeholder="mm/dd/yyyy" pattern="\d{2}/\d{2}/\d{4}">
+
+
+            <label class="form-control-label">
+               Temperature
+               <input class="form-control" inputmode="decimal" id="batchEntryModal_temp" pattern="[0-9]*" type="text" aria-label="Temperature in Degrees" title="Temperature in Degrees" placeholder="Temp" maxlength="2">
+            </label>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="optEntryTemp" value="4">&#8451;
+               </label>
+            </div>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="optEntryTemp" value="3">&#8457;
+               </label>
             </div>
 
-         </form>
+            <label class="form-control-label">
+               <input class="form-control" inputmode="decimal" id="batchEntryModal_sugar" pattern="[0-9]*" type="text" aria-label="Sugar" title="Sugar" placeholder="Sugar" maxlength="5">
+            </label>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="optEntrySugar" value="6">SG
+               </label>
+            </div>
+            <div class="form-check-inline">
+               <label class="form-check-label">
+                  <input type="radio" class="form-check-input" name="optEntrySugar" value="5">Brix
+               </label>
+            </div>
+
+            <div>
+               <label class="form-control-label">
+                  <input class="form-control" inputmode="decimal" id="batchEntryModal_ph" pattern="[0-9]*" type="text" aria-label="pH" title="pH" placeholder="pH" maxlength="5">
+               </label>
+            </div>
+            <div>
+               <label class="form-control-label">
+                  <input class="form-control" inputmode="decimal" id="batchEntryModal_ta" pattern="[0-9]*" type="text" aria-label="TA" title="TA" placeholder="TA" maxlength="5">
+               </label>
+            </div>
+            <div>
+               <label class="form-control-label">
+                  <input class="form-control" inputmode="decimal" id="batchEntryModal_so2" pattern="[0-9]*" type="text" aria-label="Sulfite" title="Sulfite" placeholder="SO2" maxlength="5">
+               </label>
+            </div>
+
+            <div class="mb-2">
+               <textarea class="form-control numbersOnly" id="batchEntryModal_additions" rows="4" aria-label="Additions" title="Additions" placeholder="Additions"></textarea>
+            </div>
+            <div class="mb-2">
+               <textarea class="form-control" id="batchEntryModal_comments" rows="4" aria-label="Comments" title="Comments" placeholder="Comments"></textarea>
+            </div>
+
+         </div>
+
+         <!-- Modal footer -->
+         <div class="modal-footer">
+            <div class="toast"><div class="toast-body">Completed</div></div>
+            <button class="btn btn-danger" name="addBatchEntryButton">Add</button>
+         </div>
+
+
 
       </div>
    </div>

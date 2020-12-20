@@ -139,12 +139,12 @@
     <value>View details of a single batch.</value>
   </data>
   <data name="PageTitle" xml:space="preserve">
-    <value>Journal</value>
+    <value>Batches</value>
   </data>
   <data name="PageTitleAdd" xml:space="preserve">
-    <value>Journal - Add</value>
+    <value>Add Batch</value>
   </data>
   <data name="PageTitleDetails" xml:space="preserve">
-    <value>Journal</value>
+    <value>Batch Details</value>
   </data>
 </root>

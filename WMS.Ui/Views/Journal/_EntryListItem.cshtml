@@ -1,10 +1,51 @@
 ﻿@model WMS.Ui.Models.Journal.BatchEntryViewModel
-<ul class="list-group-flush">
+<div class="card flex-grow-1">
+   <div class="card-body">
+
+      <div class="d-flex card-title h5">
+         @Model.ActionDateTime &nbsp;<button class="btn btn-outline-secondary btn-sm" name="delBatchEntryButton" data-id="@Model.Id"><i class="fa fa-trash-o"></i></button>
+      </div>
+
+      <div class="d-flex ml-3">
+         @if (Model.Sugar.HasValue)
+         {<div class="p-2"><strong>Sugar</strong>: @Model.Sugar @Model.SugarUom</div>}      
+         @if (Model.Temp.HasValue)
+         {<div class="p-2"><strong>Temp</strong>: @Model.Temp &deg;@Model.TempUom</div>}
+      </div>
+      <div class="d-flex ml-3">
+         @if (Model.pH.HasValue)
+         {<div class="p-2"><strong>pH</strong>: @Model.pH</div>}
+         @if (Model.Ta.HasValue)
+         {<div class="p-2"><strong>TA</strong>: @Model.Ta g/L</div>}
+         @if (Model.So2.HasValue)
+         {<div class="p-2"><strong>Sulfite</strong>: @Model.So2 mg/L</div>}
+      </div>
+      <div class="d-flex ml-3">
+         @if (Model.Filtered == true)
+         {<div class="p-2"><strong>Racked</strong></div>}
+         @if (Model.Racked == true)
+         {<div class="p-2"><strong>Filtered</strong></div>}
+         @if (Model.Bottled == true)
+         {<div class="p-2"><strong>Bottled</strong></div>}
+      </div>
+
+      @if (!string.IsNullOrWhiteSpace(Model.Additions))
+      {
+         <div class="d-flex ml-3 mb-2">
+            <strong class="pl-2">Additions</strong>:
+            <textarea class="form-control border-0 pl-2 pt-0 bg-transparent" rows="3" disabled>@Model.Additions</textarea>
+         </div>
+      }
+
+      @if (!string.IsNullOrWhiteSpace(Model.Comments))
+      {
+         <div class="d-flex ml-3">
+            <strong class="pl-2">Comments</strong>:
+            <textarea class="form-control border-0 pl-2 pt-0 bg-transparent" rows="3" disabled>@Model.Comments</textarea>
+         </div>
+      }
 
 
-   @foreach (var entry in Model.Additions)
-   {
-      <partial name="_EntryListItem" model="entry" />
-   }
+   </div>
+</div>
 
-</ul>
