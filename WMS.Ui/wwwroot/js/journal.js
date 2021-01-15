@@ -77,6 +77,30 @@ $(document).ready(function () {
       $('#frmEditBatch').submit();
    });
 
+   // update Batch Info
+   $('body').off('click', 'button[name="updateBatchButton"]');
+   $('body').on('click', 'button[name="updateBatchButton"]', function () {
+      var id = $('#updateBatchId').val();
+      updateBatch(id);
+   });
+
+   // update Target Info
+   $('body').off('click', 'button[name="updateTargetButton"]');
+   $('body').on('click', 'button[name="updateTargetButton"]', function () {
+      var id = $('#updateBatchId').val();
+      updateBatchTarget(id);
+   });
+
+   // mark batch complete
+   $('body').off('change', '#Complete');
+   $('body').on('change', '#Complete', function () {
+      var id = $('#updateBatchId').val();
+      var e1 = $('#batchEntryButton');
+      var e2 = $('#divStatusInfo');
+      var e3 = $('#divCompleteStatus');
+      toggleBatchComplete(id, this, e1, e2, e3);
+   });
+
    // quick edit batch
    $('body').off('click', 'button[name="showBatchEntryQuickButton"]');
    $('body').on('click', 'button[name="showBatchEntryQuickButton"]', function () {
@@ -128,6 +152,189 @@ $(document).ready(function () {
 
 });
 
+function updateBatch(id) {
+   const uri = '/api/journal';
+   var jwt = $('#BatchJwt').val();
+
+   var form = $("#batchUpdateForm"); 
+   form.validate();
+
+   if (form.valid()) {
+
+      // validate volume
+      var vol = parseFloat($('#Volume').val());
+      if (!$.isNumeric(vol) || vol < 1 || vol > 999) {
+         vol = null;
+      };
+      var volUom = parseInt($('#VolumeUOM').val());
+      if (!Number.isInteger(volUom)) {
+         volUom = null;
+      };
+
+      // validate variety
+      var variety = parseInt($('#VarietyId').val());
+      if (!$.isNumeric(variety)) { variety = null; };
+
+      // validate yeast
+      var yeast = parseInt($('#YeastId').val());
+      if (!$.isNumeric(yeast)) { yeast = null; };
+
+      // validate Culture
+      var malo = parseInt($('#MaloCultureId').val());
+      if (!$.isNumeric(malo)) { malo = null; };
+
+      // validate vintage
+      var vintage = parseInt($('#Vintage').val());
+      if (!$.isNumeric(vintage) || vintage < 2016 || vintage > 2040) {
+         vintage = null;
+      };
+
+      var batch = {
+         Title: $('#Title').val(),
+         Description: $('#Description').val(),
+         Volume: vol,
+         VolumeUOM: volUom,
+         Vintage: vintage,
+         VarietyId: variety,
+         YeastId: yeast,
+         MaloCultureId: 1
+      };
+
+      $.ajax({
+         url: rootUri + uri + '/batchUpdate/' + id,
+         type: 'PUT',
+         headers: { 'Authorization': 'Bearer ' + jwt },
+         contentType: 'application/json',
+         data: JSON.stringify(batch),
+         success: function (result) {
+            console.log('successful update batch');
+
+            // show complete
+            $('#batchUpdateToast').toast({ delay: 2000 });
+            $('#batchUpdateToast').toast('show');
+            
+         },
+         error: function (xmlHttpRequest, textStatus, errorThrown) {
+            alert('something went wrong');
+            console.log('Exception: ' + errorThrown);
+         }
+
+      });
+   } 
+}
+
+function updateBatchTarget(id) {
+   const uri = '/api/journal';
+   var jwt = $('#BatchJwt').val();
+
+   // TODO 
+   var form = $("#targetUpdateForm");
+   form.validate();
+
+   if (form.valid()) {
+           
+      //// validate temp
+      //var temp = parseFloat($('#batchEntryModal_temp').val());
+      //if (!$.isNumeric(temp) || temp > 90 || temp < 0) {
+      //   temp = null;
+      //};
+      //var tempUom = parseInt($('input[name="optEntryTemp"]:checked').val());
+      //if (!Number.isInteger(tempUom)) {
+      //   tempUom = null;
+      //};
+
+      //// validate sugar
+      //var sugar = parseFloat($('#batchEntryModal_sugar').val());
+      //if (!$.isNumeric(sugar) || sugar > 30 || sugar < .8) {
+      //   sugar = null;
+      //};
+      //var sugarUom = parseInt($('input[name="optEntrySugar"]:checked').val());
+      //if (!Number.isInteger(sugarUom)) {
+      //   sugarUom = null;
+      //};
+
+      //// validate sugar
+      //var sugar = parseFloat($('#batchEntryModal_sugar').val());
+      //if (!$.isNumeric(sugar) || sugar > 30 || sugar < .8) {
+      //   sugar = null;
+      //};
+      //var sugarUom = parseInt($('input[name="optEntrySugar"]:checked').val());
+      //if (!Number.isInteger(sugarUom)) {
+      //   sugarUom = null;
+      //};
+
+      //// validate pH
+      //var ph = parseFloat($('#batchEntryModal_ph').val());
+      //if (!$.isNumeric(ph) || ph > 30 || ph < .8) {
+      //   ph = null;
+      //};
+
+      //// validate TA
+      //var ta = parseFloat($('#batchEntryModal_ta').val());
+      //if (!$.isNumeric(ta) || ta > 30 || ta < .8) {
+      //   ta = null;
+      //};
+               
+
+      //$.ajax({
+      //   url: rootUri + uri + '/batchTarget/' + id,
+      //   type: 'PUT',
+      //   headers: { 'Authorization': 'Bearer ' + jwt },
+      //   contentType: 'application/json',
+      //   data: JSON.stringify(value),
+      //   success: function (result) {
+      //      console.log('successful update batch entry');
+      // close modal window
+      // $('#targetUpdateToast').toast({ delay: 2000 });
+      //$('#targetUpdateToast').toast('show');
+      // $('#targetUpdateToast').on('hidden.bs.toast', function () {
+      //$('#batchEntryModal').modal('hide');
+      // });
+      //   },
+      //   error: function (xmlHttpRequest, textStatus, errorThrown) {
+      //      alert('something went wrong');
+      //      console.log('Exception: ' + errorThrown);
+      //      checkbox.prop('checked', !value);
+      //   }
+
+      //});
+
+   }
+}
+
+function toggleBatchComplete(id, checkbox, entryButton, statusInfo, completeStatus) {
+   const uri = '/api/journal';
+   var jwt = $('#BatchJwt').val();
+   var value = checkbox.checked;
+
+   $.ajax({
+      url: rootUri + uri + '/batchComplete/' + id,
+      type: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + jwt },
+      contentType: 'application/json',
+      data: JSON.stringify(value),
+      success: function (result) {
+         console.log('successful update batch entry');
+         if (value === true) {
+            entryButton.addClass('d-none');
+            statusInfo.addClass('d-none');
+            completeStatus.removeClass('d-none');
+         } else {
+            entryButton.removeClass('d-none');
+            statusInfo.removeClass('d-none');
+            completeStatus.addClass('d-none');
+         }
+      },
+      error: function (xmlHttpRequest, textStatus, errorThrown) {
+         alert('something went wrong');
+         console.log('Exception: ' + errorThrown);
+         checkbox.prop('checked', !value);
+      }
+
+   });
+
+}
+
 function deleteBatchEntry(id, el) {
 
    const uri = '/api/journal';
@@ -159,7 +366,7 @@ function addBatchEntry(id) {
    var aDate = new Date(Date.now());
    if ($('#batchEntryModal_actionDate').val()) {
       // var tmpDate = new Date($('#batchEntryModal_actionDate').val());
-      var tmpDate = new Date($('#batchEntryModal_actionDate').val().replace(/-/g, '\/'));
+      var tmpDate = new Date($('#batchEntryModal_actionDate').val().replace(/-/g, '/'));
 
       // in last 30 days
       var targetDate = new Date();
@@ -243,9 +450,9 @@ function addBatchEntry(id) {
          console.log('successful batch entry created');
 
          // close modal window
-         $('.toast').toast({ delay: 2000 });
-         $('.toast').toast('show');
-         $('.toast').on('hidden.bs.toast', function () {
+         $('#batchEntryToast').toast({ delay: 2000 });
+         $('#batchEntryToast').toast('show');
+         $('#batchEntryToast').on('hidden.bs.toast', function () {
             $('#batchEntryModal').modal('hide');
          });
       },
@@ -266,7 +473,7 @@ function getStatusChart(id) {
    $.ajax({
       url: rootUri + uri + id,
       type: 'GET',
-      headers: { "Authorization": 'Bearer ' + jwt },  
+      headers: { "Authorization": 'Bearer ' + jwt },
       contentType: 'application/json',
       success: function (data) {
          //console.log('successful chart data call');

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
 using WMS.Business.Journal.Dto;
+using WMS.Business.MaloCulture.Dto;
 using WMS.Business.Yeast.Dto;
 
 namespace WMS.Ui.Models.Journal
@@ -123,18 +124,25 @@ namespace WMS.Ui.Models.Journal
          return model;
       }
 
-      public BatchViewModel CreateBatchModel(BatchDto dto, List<BatchEntryDto> entriesDto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
-         List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
+      public BatchViewModel CreateBatchViewModel(BatchDto dto)
+      {
+         return CreateBatchViewModel(dto, null, null, null, null, null, null, null, null);
+      }
+
+      public BatchViewModel CreateBatchViewModel(BatchDto dto, List<BatchEntryDto> entriesDto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList, List<YeastDto> dtoYeastList,
+         List<MaloCultureDto> cultureList, List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
       {
          var varieties = CreateSelectList("Variety", dtoVarietyList, dtoCategoryList);
          var uomVolumeList = CreateSelectList("Unit of Measure", dtoVolumeUOMList);
          var yeastsList = CreateSelectList("Yeast", dtoYeastList);
+         var maloList = CreateSelectList("MLF Culture", cultureList);
 
          var newModel = new BatchViewModel
          {
             Varieties = varieties,
             VolumeUOMs = uomVolumeList,
-            Yeasts = yeastsList
+            Yeasts = yeastsList,
+            MaloCultures = maloList
          };
 
          if (dto == null)
@@ -151,7 +159,9 @@ namespace WMS.Ui.Models.Journal
             newModel.VarietyId = dto.Variety?.Id;
             newModel.Vintage = dto.Vintage;
             newModel.Volume = dto.Volume;
+            newModel.VolumeUOM = dto.VolumeUom?.Id;
             newModel.YeastId = dto.YeastId;
+            newModel.MaloCultureId = dto.MaloCultureId;
             newModel.Target = CreateTargetViewModel(dto.Target, dtoSugarUOMList, dtoTempUOMList);
          }
 
@@ -159,7 +169,7 @@ namespace WMS.Ui.Models.Journal
          {
             foreach (var entry in entriesDto)
             {
-               var e = CreateBatchEntryViewModel(entry);  
+               var e = CreateBatchEntryViewModel(entry);
                newModel.Entries.Add(e);
             }
 
@@ -170,7 +180,7 @@ namespace WMS.Ui.Models.Journal
 
       public BatchEntryViewModel CreateBatchEntryViewModel(BatchEntryDto entry)
       {
-         if (entry == null) 
+         if (entry == null)
          {
             return new BatchEntryViewModel();
          }
@@ -204,7 +214,7 @@ namespace WMS.Ui.Models.Journal
 
             return e;
          }
-         
+
       }
 
       public BatchSummaryViewModel CreatBatchSummaryViewModel(List<BatchEntryDto> entriesDto)
@@ -256,7 +266,6 @@ namespace WMS.Ui.Models.Journal
       {
          var list = new List<SelectListItem>();
          var group = new SelectListGroup { Name = "" };
-         var sortedList = dtoList.OrderBy(c => c.ParentId);
 
          var selectItem = new SelectListItem
          {
@@ -268,25 +277,28 @@ namespace WMS.Ui.Models.Journal
          };
          list.Add(selectItem);
 
-         foreach (var dto in sortedList)
+         if (dtoList != null)
          {
-            selectItem = new SelectListItem
+            var sortedList = dtoList.OrderBy(c => c.ParentId);
+            foreach (var dto in sortedList)
             {
-               Value = dto.Id.ToString(CultureInfo.CurrentCulture),
-               Text = dto.Literal
-            };
-            if (dto.ParentId.HasValue && dtoParentList != null)
-            {
-               var parent = dtoParentList.FirstOrDefault(p => p.Id == dto.ParentId.Value);
-               if (group.Name != parent?.Literal)
-                  group = new SelectListGroup { Name = parent.Literal };
+               selectItem = new SelectListItem
+               {
+                  Value = dto.Id.ToString(CultureInfo.CurrentCulture),
+                  Text = dto.Literal
+               };
+               if (dto.ParentId.HasValue && dtoParentList != null)
+               {
+                  var parent = dtoParentList.FirstOrDefault(p => p.Id == dto.ParentId.Value);
+                  if (group.Name != parent?.Literal)
+                     group = new SelectListGroup { Name = parent.Literal };
 
-               selectItem.Group = group;
+                  selectItem.Group = group;
+               }
+               list.Add(selectItem);
+
             }
-            list.Add(selectItem);
-
          }
-
          return list;
       }
 
@@ -325,7 +337,6 @@ namespace WMS.Ui.Models.Journal
       {
          var list = new List<SelectListItem>();
          var group = new SelectListGroup { Name = "" };
-         var sortedList = dtoList.OrderBy(c => c.Brand.Literal).ThenBy(c => c.Trademark);
 
          var selectItem = new SelectListItem
          {
@@ -337,21 +348,64 @@ namespace WMS.Ui.Models.Journal
          };
          list.Add(selectItem);
 
-         foreach (var dto in sortedList)
+         if (dtoList != null)
          {
-            selectItem = new SelectListItem
+            var sortedList = dtoList.OrderBy(c => c.Brand.Literal).ThenBy(c => c.Trademark);
+            foreach (var dto in sortedList)
             {
-               Value = dto.Id.ToString(CultureInfo.CurrentCulture),
-               Text = dto.Trademark
-            };
-            if (dto.Brand != null)
-            {
-               if (group.Name != dto.Brand.Literal)
-                  group = new SelectListGroup { Name = dto.Brand.Literal };
+               selectItem = new SelectListItem
+               {
+                  Value = dto.Id.ToString(CultureInfo.CurrentCulture),
+                  Text = dto.Trademark
+               };
+               if (dto.Brand != null)
+               {
+                  if (group.Name != dto.Brand.Literal)
+                     group = new SelectListGroup { Name = dto.Brand.Literal };
 
-               selectItem.Group = group;
+                  selectItem.Group = group;
+               }
+               list.Add(selectItem);
             }
-            list.Add(selectItem);
+         }
+         return list;
+      }
+
+
+      public List<SelectListItem> CreateSelectList(string title, List<MaloCultureDto> dtoList)
+      {
+         var list = new List<SelectListItem>();
+         var group = new SelectListGroup { Name = "" };
+
+         var selectItem = new SelectListItem
+         {
+            Value = "",
+            Text = "Select a " + title,
+            Disabled = true,
+            Selected = true,
+            Group = new SelectListGroup { Disabled = true, Name = "" }
+         };
+         list.Add(selectItem);
+
+         if (dtoList != null)
+         {
+            var sortedList = dtoList.OrderBy(c => c.Brand.Literal).ThenBy(c => c.Trademark);
+            foreach (var dto in sortedList)
+            {
+               selectItem = new SelectListItem
+               {
+                  Value = dto.Id.ToString(CultureInfo.CurrentCulture),
+                  Text = dto.Trademark
+               };
+               if (dto.Brand != null)
+               {
+                  if (group.Name != dto.Brand.Literal)
+                     group = new SelectListGroup { Name = dto.Brand.Literal };
+
+                  selectItem.Group = group;
+               }
+               list.Add(selectItem);
+            }
          }
 
          return list;

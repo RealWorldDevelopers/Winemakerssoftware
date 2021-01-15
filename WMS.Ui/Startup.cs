@@ -113,23 +113,26 @@ namespace WMS.Ui
          services.AddTransient<Models.Calculations.IFactory, Models.Calculations.Factory>();
          services.AddTransient<Models.Journal.IFactory, Models.Journal.Factory>();
          services.AddTransient<Models.Admin.IFactory, Models.Admin.Factory>();
-
+         services.AddTransient<Models.MaloCulture.IFactory, Models.MaloCulture.Factory>();
 
          // Query Factories
          services.AddTransient<Business.Journal.Queries.IFactory, Business.Journal.Queries.Factory>();
          services.AddTransient<Business.Recipe.Queries.IFactory, Business.Recipe.Queries.Factory>();
          services.AddTransient<Business.Yeast.Queries.IFactory, Business.Yeast.Queries.Factory>();
          services.AddTransient<Business.Image.Queries.IFactory, Business.Image.Queries.Factory>();
+         services.AddTransient<Business.MaloCulture.Queries.IFactory, Business.MaloCulture.Queries.Factory>();
 
          // Command Factories
          services.AddTransient<Business.Journal.Commands.IFactory, Business.Journal.Commands.Factory>();
          services.AddTransient<Business.Recipe.Commands.IFactory, Business.Recipe.Commands.Factory>();
          services.AddTransient<Business.Yeast.Commands.IFactory, Business.Yeast.Commands.Factory>();
+         services.AddTransient<Business.MaloCulture.Commands.IFactory, Business.MaloCulture.Commands.Factory>();
 
          // DTO Factories
          services.AddTransient<Business.Journal.Dto.IFactory, Business.Journal.Dto.Factory>();
          services.AddTransient<Business.Recipe.Dto.IFactory, Business.Recipe.Dto.Factory>();
          services.AddTransient<Business.Yeast.Dto.IFactory, Business.Yeast.Dto.Factory>();
+         services.AddTransient<Business.MaloCulture.Dto.IFactory, Business.MaloCulture.Dto.Factory>();
 
          // misc services needed
          services.AddAutoMapper(typeof(Startup));

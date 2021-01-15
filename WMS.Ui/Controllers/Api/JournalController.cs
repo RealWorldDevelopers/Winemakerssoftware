@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using WMS.Ui.Models.Journal;
 using WMS.Business.Journal.Dto;
 using System.Globalization;
+using WMS.Business.Common;
 
 namespace WMS.Ui.Controllers.Api
 {
@@ -96,6 +97,7 @@ namespace WMS.Ui.Controllers.Api
             var cmd = _commandsFactory.CreateBatchEntriesCommand();
             var entryDto = await cmd.AddAsync(dto).ConfigureAwait(false);
 
+
             var model = _modelFactory.CreateBatchEntryViewModel(entryDto);
 
             return Ok(model);
@@ -107,6 +109,7 @@ namespace WMS.Ui.Controllers.Api
             throw;
          }
       }
+
 
       // TODO DELETE if not used
       //[HttpGet("batchEntrySummary/{id}")]
@@ -191,6 +194,137 @@ namespace WMS.Ui.Controllers.Api
             throw;
          }
 
+      }
+
+      [HttpPut("batchComplete/{id}")]
+      public async Task<IActionResult> SetBatchEntryCompleteAsync(int id, [FromBody] bool complete)
+      {
+         try
+         {
+            var entriesQuery = _queryFactory.CreateBatchesQuery();
+            var entryDto = await entriesQuery.ExecuteAsync(id).ConfigureAwait(false);
+
+            if (entryDto != null)
+            {
+               entryDto.Complete = complete;
+               var cmd = _commandsFactory.CreateBatchesCommand();
+               await cmd.UpdateAsync(entryDto).ConfigureAwait(false);
+            }
+            return Ok();
+         }
+         catch (Exception)
+         {
+            return StatusCode(500);
+            throw;
+         }
+
+      }
+
+      [HttpPut("batchUpdate/{id}")]
+      public async Task<IActionResult> UpdateBatchAsync(int id, [FromBody] BatchUpdateViewModel batch)
+      {
+         try
+         {
+            if (batch == null)
+               return NoContent();
+
+            var qry = _queryFactory.CreateBatchesQuery();
+            var dto = await qry.ExecuteAsync(id).ConfigureAwait(false);
+
+            if (dto == null)
+               return NotFound();
+
+            dto.Description = batch.Description;
+            dto.Title = batch.Title;
+            dto.Vintage = batch.Vintage;
+            dto.Volume = batch.Volume;
+            dto.YeastId = batch.YeastId;
+            dto.MaloCultureId = batch.MaloCultureId;
+
+            if (batch.VarietyId.HasValue)
+            {
+               if (dto.Variety == null)
+                  dto.Variety = new Code();
+               if (dto.Variety.Id != batch.VarietyId.Value)
+               {
+                  dto.Variety.Id = batch.VarietyId.Value;
+                  dto.RecipeId = null;
+               }
+            }
+
+            if (batch.VolumeUOM.HasValue)
+            {
+               if (dto.VolumeUom == null)
+                  dto.VolumeUom = new UnitOfMeasure();
+               dto.VolumeUom.Id = batch.VolumeUOM.Value;
+            }
+
+            var cmd = _commandsFactory.CreateBatchesCommand();
+            var batchDto = await cmd.UpdateAsync(dto).ConfigureAwait(false);
+
+            var model = _modelFactory.CreateBatchViewModel(batchDto);
+
+            return Ok(model);
+
+         }
+         catch (Exception)
+         {
+            return StatusCode(500);
+            throw;
+         }
+      }
+
+      [HttpPut("batchTarget/{id}")]
+      public async Task<IActionResult> UpdateBatchTargetAsync(int id, [FromBody] TargetViewModel target)
+      {
+         try
+         {
+            if (target == null)
+               return NoContent();
+
+            var qry = _queryFactory.CreateBatchesQuery();
+            var dto = await qry.ExecuteAsync(id).ConfigureAwait(false);
+
+            if (dto == null)
+               return NotFound();
+
+            if (dto.Target == null)
+            {
+               // create new target and link to this batch
+               var newCmd = _commandsFactory.CreateTargetsCommand();
+               dto.Target = await newCmd.AddAsync(new TargetDto()).ConfigureAwait(false);
+               var batchCmd = _commandsFactory.CreateBatchesCommand();
+               dto = await batchCmd.UpdateAsync(dto).ConfigureAwait(false);
+            }
+
+            dto.Target.EndSugar = target.EndingSugar;
+            dto.Target.pH = target.pH;
+            dto.Target.StartSugar = target.StartingSugar;
+            dto.Target.TA = target.TA;
+            dto.Target.Temp = target.FermentationTemp;
+
+            if (target.EndSugarUOM.HasValue)
+               dto.Target.EndSugarUom.Id = target.EndSugarUOM.Value;
+            if (target.StartSugarUOM.HasValue)
+               dto.Target.StartSugarUom.Id = target.StartSugarUOM.Value;
+            if (target.TempUOM.HasValue)
+               dto.Target.TempUom.Id = target.TempUOM.Value;
+
+            // var cmd = _commandsFactory.CreateTargetsCommand();
+            // var targetDto = await cmd.UpdateAsync(dto.Target).ConfigureAwait(false);
+
+            // var model = _modelFactory.CreateBatchViewModel(targetDto);
+
+            // return Ok(model);
+
+            return Ok();
+
+         }
+         catch (Exception)
+         {
+            return StatusCode(500);
+            throw;
+         }
       }
 
    }

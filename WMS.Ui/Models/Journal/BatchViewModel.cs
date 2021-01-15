@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WMS.Ui.Models.Journal
 {
+
    public class BatchViewModel : BaseViewModel
    {
       public BatchViewModel()
@@ -47,11 +48,14 @@ namespace WMS.Ui.Models.Journal
       [Required(ErrorMessage = "Yeast is required")]
       public int? YeastId { get; set; }
 
+      public int? MaloCultureId { get; set; }
+
       public TargetViewModel Target { get; set; }
 
       public IEnumerable<SelectListItem> Varieties { get; set; }
       public IEnumerable<SelectListItem> VolumeUOMs { get; set; }
       public IEnumerable<SelectListItem> Yeasts { get; set; }
+      public IEnumerable<SelectListItem> MaloCultures { get; set; }
 
    }
 }

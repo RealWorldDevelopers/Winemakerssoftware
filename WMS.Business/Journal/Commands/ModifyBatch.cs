@@ -110,13 +110,15 @@ namespace WMS.Business.Journal.Commands
          entity.Complete = dto.Complete;
          entity.RecipeId = dto.RecipeId;
          entity.SubmittedBy = dto.SubmittedBy;
-         entity.TargetId = dto.Target.Id;
+         entity.TargetId = dto.Target?.Id;
          entity.Title = dto.Title;
          entity.Description = dto.Description;
-         entity.VarietyId = dto.Variety.Id;
+         entity.VarietyId = dto.Variety?.Id;
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
-         entity.VolumeUomId = dto.VolumeUom.Id;
+         entity.VolumeUomId = dto.VolumeUom?.Id;
+         entity.YeastId = dto.YeastId;
+         entity.MaloCultureId = dto.MaloCultureId;
 
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);
@@ -153,14 +155,16 @@ namespace WMS.Business.Journal.Commands
          entity.Complete = dto.Complete;
          entity.RecipeId = dto.RecipeId;
          entity.SubmittedBy = dto.SubmittedBy;
-         entity.TargetId = dto.Target.Id;
+         entity.TargetId = dto.Target?.Id;
          entity.Title = dto.Title;
          entity.Description = dto.Description;
-         entity.VarietyId = dto.Variety.Id;
+         entity.VarietyId = dto.Variety?.Id;
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
-         entity.VolumeUomId = dto.VolumeUom.Id;
-
+         entity.VolumeUomId = dto.VolumeUom?.Id;
+         entity.YeastId = dto.YeastId;
+         entity.MaloCultureId = dto.MaloCultureId;
+                
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);
 

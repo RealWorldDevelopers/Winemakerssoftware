@@ -6,73 +6,73 @@ using System.Threading.Tasks;
 using WMS.Business.Common;
 using WMS.Data;
 
-namespace WMS.Business.Yeast.Queries
+namespace WMS.Business.MaloCulture.Queries
 {
-   /// <inheritdoc cref = "IQuery{T}" />
-   public class GetBrands : IQuery<ICode>
+   /// <inheritdoc cref="IQuery{T}"/>
+   public class GetStyles : IQuery<ICode>
    {
       private readonly IMapper _mapper;
       private readonly WMSContext _dbContext;
 
       /// <summary>
-      /// Brands Query Constructor
+      /// Styles Query Constructor
       /// </summary>
       /// <param name="dbContext">Entity Framework Context Instance as <see cref="WMSContext"/></param>
-      /// <param name="mapper">AutoMapper Instance as <see cref="IMapper"/></param>       
-      public GetBrands(WMSContext dbContext, IMapper mapper)
+      /// <param name="mapper">AutoMapper Instance as <see cref="IMapper"/></param>
+      public GetStyles(WMSContext dbContext, IMapper mapper)
       {
          _dbContext = dbContext;
          _mapper = mapper;
       }
 
       /// <summary>
-      /// Query all Brands in SQL DB
+      /// Query all Styles in SQL DB
       /// </summary>
       /// <returns><see cref="List{ICode}"/></returns>
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<ICode> Execute()
       {
-         var brands = _dbContext.YeastBrand.ToList();
-         var list = _mapper.Map<List<ICode>>(brands);
+         var styles = _dbContext.MaloCultureStyle.ToList();
+         var list = _mapper.Map<List<ICode>>(styles);
          return list;
       }
 
       /// <summary>
-      /// Query a Brand in SQL DB by primary key
+      /// Query a Style in SQL DB by primary key
       /// </summary>
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns><see cref="ICode"/></returns>
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public ICode Execute(int id)
       {
-         var brand = _dbContext.YeastBrand.FirstOrDefault(p => p.Id == id);
-         var dto = _mapper.Map<ICode>(brand);
+         var style = _dbContext.MaloCultureStyle.FirstOrDefault(p => p.Id == id);
+         var dto = _mapper.Map<ICode>(style);
          return dto;
       }
 
       /// <summary>
-      /// Asynchronously query all Brands in SQL DB
+      /// Asynchronously query all Styles in SQL DB
       /// </summary>
       /// <returns><see cref="Task{List{ICode}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<ICode>> ExecuteAsync()
       {
-         var brands = await _dbContext.YeastBrand.ToListAsync().ConfigureAwait(false);
-         var list = _mapper.Map<List<ICode>>(brands);
+         var styles = await _dbContext.MaloCultureStyle.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<ICode>>(styles);
          return list;
       }
 
       /// <summary>
-      /// Asynchronously query a Brand in SQL DB by primary key
+      /// Asynchronously query a Style in SQL DB by primary key
       /// </summary>
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns><see cref="Task{ICode}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<ICode> ExecuteAsync(int id)
       {
-         var brand = await _dbContext.YeastBrand
+         var style = await _dbContext.MaloCultureStyle
             .FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
-         var dto = _mapper.Map<ICode>(brand);
+         var dto = _mapper.Map<ICode>(style);
          return dto;
       }
 

@@ -1,47 +1,46 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
-using WMS.Business.Yeast.Dto;
+using WMS.Business.MaloCulture.Dto;
 using WMS.Data;
 
-namespace WMS.Business.Yeast.Queries
+namespace WMS.Business.MaloCulture.Queries
 {
    /// <summary>
-   /// Yeast Query Instance
+   /// MaloCulture Query Instance
    /// </summary>
    /// <inheritdoc cref="IQuery{T}"/>
-   public class GetYeasts : IQuery<Dto.YeastDto>
+   public class GetMaloCultures : IQuery<Dto.MaloCultureDto>
    {
 
       private readonly IMapper _mapper;
       private readonly WMSContext _dbContext;
 
       /// <summary>
-      /// Yeasts Query Constructor
+      /// MaloCulturess Query Constructor
       /// </summary>
       /// <param name="dbContext">Entity Framework Context Instance as <see cref="WMSContext"/></param>
       /// <param name="mapper">AutoMapper Instance as <see cref="IMapper"/></param>
-      public GetYeasts(WMSContext dbContext, IMapper mapper)
+      public GetMaloCultures(WMSContext dbContext, IMapper mapper)
       {
          _dbContext = dbContext;
          _mapper = mapper;
       }
 
       /// <summary>
-      /// Query all Yeasts in SQL DB
+      /// Query all MaloCultures in SQL DB
       /// </summary>
-      /// <returns><see cref="List{YeastDto}"/></returns>
+      /// <returns><see cref="List{MaloCultureDto}"/></returns>
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<YeastDto> Execute()
+      public List<MaloCultureDto> Execute()
       {
-         var yeast = _dbContext.Yeasts.ToList();
-         var list = _mapper.Map<List<YeastDto>>(yeast);
-         var brands = _dbContext.YeastBrand.ToList();
-         var styles = _dbContext.YeastStyle.ToList();
+         var MaloCultures = _dbContext.MaloCultures.ToList();
+         var list = _mapper.Map<List<MaloCultureDto>>(MaloCultures);
+         var brands = _dbContext.MaloCultureBrand.ToList();
+         var styles = _dbContext.MaloCultureStyle.ToList();
 
          foreach (var item in list)
          {
@@ -61,37 +60,37 @@ namespace WMS.Business.Yeast.Queries
       }
 
       /// <summary>
-      /// Query a Yeast in SQL DB by primary key
+      /// Query a MaloCultures in SQL DB by primary key
       /// </summary>
       /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns><see cref="YeastDto"/></returns>
+      /// <returns><see cref="MaloCultureDto"/></returns>
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public YeastDto Execute(int id)
+      public MaloCultureDto Execute(int id)
       {
-         var yeast = _dbContext.Yeasts
+         var MaloCultures = _dbContext.MaloCultures
             .FirstOrDefault(y => y.Id == id);
-         var dto = _mapper.Map<YeastDto>(yeast);
+         var dto = _mapper.Map<MaloCultureDto>(MaloCultures);
          return dto;
       }
 
       /// <summary>
-      /// Asynchronously query all Yeasts in SQL DB
+      /// Asynchronously query all MaloCulturess in SQL DB
       /// </summary>
-      /// <returns><see cref="Task{List{YeastDto}}"/></returns>
+      /// <returns><see cref="Task{List{MaloCultureDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<YeastDto>> ExecuteAsync()
+      public async Task<List<MaloCultureDto>> ExecuteAsync()
       {
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
-         var t1 = Task.Run(async () => await _dbContext.Yeasts.ToListAsync().ConfigureAwait(false));
+         var t1 = Task.Run(async () => await _dbContext.MaloCultures.ToListAsync().ConfigureAwait(false));
          tasks.Add(t1);
-         var list = _mapper.Map<List<YeastDto>>(await t1.ConfigureAwait(false));
+         var list = _mapper.Map<List<MaloCultureDto>>(await t1.ConfigureAwait(false));
 
-         var t2 = Task.Run(async () => await _dbContext.YeastBrand.ToListAsync().ConfigureAwait(false));
+         var t2 = Task.Run(async () => await _dbContext.MaloCultureBrand.ToListAsync().ConfigureAwait(false));
          tasks.Add(t2);
          var brands = await t2.ConfigureAwait(false);
 
-         var t3 = Task.Run(async () => await _dbContext.YeastStyle.ToListAsync().ConfigureAwait(false));
+         var t3 = Task.Run(async () => await _dbContext.MaloCultureStyle.ToListAsync().ConfigureAwait(false));
          tasks.Add(t3);
          var styles = await t3.ConfigureAwait(false);
 
@@ -117,25 +116,25 @@ namespace WMS.Business.Yeast.Queries
       }
 
       /// <summary>
-      /// Asynchronously query a Yeast in SQL DB by primary key
+      /// Asynchronously query a MaloCultures in SQL DB by primary key
       /// </summary>
       /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns><see cref="Task{YeastDto}"/></returns>
+      /// <returns><see cref="Task{MaloCultureDto}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<YeastDto> ExecuteAsync(int id)
+      public async Task<MaloCultureDto> ExecuteAsync(int id)
       {
-         var yeast = await _dbContext.Yeasts
+         var MaloCultures = await _dbContext.MaloCultures
             .FirstOrDefaultAsync(y => y.Id == id).ConfigureAwait(false);
-         var dto = _mapper.Map<YeastDto>(yeast);
+         var dto = _mapper.Map<MaloCultureDto>(MaloCultures);
          return dto;
       }
 
-      public List<YeastDto> ExecuteByFK(int fk)
+      public List<MaloCultureDto> ExecuteByFK(int fk)
       {
          throw new System.NotImplementedException();
       }
 
-      public Task<List<YeastDto>> ExecuteByFKAsync(int fk)
+      public Task<List<MaloCultureDto>> ExecuteByFKAsync(int fk)
       {
          throw new System.NotImplementedException();
       }

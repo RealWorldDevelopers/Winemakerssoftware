@@ -1,6 +1,4 @@
-﻿
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +15,7 @@ namespace WMS.Business.Yeast.Queries
       private readonly WMSContext _dbContext;
 
       /// <summary>
-      /// Yeasts Query Constructor
+      /// Styles Query Constructor
       /// </summary>
       /// <param name="dbContext">Entity Framework Context Instance as <see cref="WMSContext"/></param>
       /// <param name="mapper">AutoMapper Instance as <see cref="IMapper"/></param>
@@ -65,7 +63,7 @@ namespace WMS.Business.Yeast.Queries
       }
 
       /// <summary>
-      /// Asynchronously query a Yeast in SQL DB by primary key
+      /// Asynchronously query a Style in SQL DB by primary key
       /// </summary>
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns><see cref="Task{ICode}"/></returns>

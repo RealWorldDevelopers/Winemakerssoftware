@@ -64,6 +64,11 @@ namespace WMS.Business.Journal.Dto
       public int? YeastId { get; set; }
 
       /// <summary>
+      /// Foreign Key of Related MLF Culture for Batch
+      /// </summary>
+      public int? MaloCultureId { get; set; }
+
+      /// <summary>
       /// Is Batch Completed
       /// </summary>
       public bool? Complete { get; set; }

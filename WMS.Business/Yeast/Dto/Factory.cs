@@ -21,7 +21,7 @@ namespace WMS.Business.Yeast.Dto
         }
 
         /// <inheritdoc cref="IFactory.CreateNewYeast"/>>
-        public YeastDto CreateNewYeast(int id, int totalVotes, Code brand, Code style, string trademark, int? tempMin, int? tempMax, double? alcohol, string note)
+        public YeastDto CreateNewYeast(int id, Code brand, Code style, string trademark, int? tempMin, int? tempMax, double? alcohol, string note)
         {
             var dto = new YeastDto
             {

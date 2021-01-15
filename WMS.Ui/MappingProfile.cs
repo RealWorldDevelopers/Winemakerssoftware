@@ -120,6 +120,14 @@ namespace WMS.Ui
             .ConstructUsing(src => new Business.Common.Code())
             .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Category)).ReverseMap();
 
+         CreateMap<WMS.Data.Entities.MaloCultureBrand, Business.Common.ICode>()
+            .ConstructUsing(src => new Business.Common.Code())
+            .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Brand));
+
+         CreateMap<WMS.Data.Entities.MaloCultureStyle, Business.Common.ICode>()
+            .ConstructUsing(src => new Business.Common.Code())
+            .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Style));
+
          CreateMap<WMS.Data.Entities.YeastBrand, Business.Common.ICode>()
             .ConstructUsing(src => new Business.Common.Code())
             .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Brand));
@@ -145,6 +153,15 @@ namespace WMS.Ui
              .AfterMap((src, dest) => { dest.Brand = src.Brand.HasValue ? new Business.Common.Code { Id = src.Brand.Value } : null; })
              .AfterMap((src, dest) => { dest.Style = src.Style.HasValue ? new Business.Common.Code { Id = src.Style.Value } : null; });
          CreateMap<Business.Yeast.Dto.YeastDto, WMS.Data.Entities.Yeasts>()
+             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Id))
+             .ForMember(dest => dest.Style, opt => opt.MapFrom(src => src.Style.Id));
+
+         CreateMap<WMS.Data.Entities.MaloCultures, Business.MaloCulture.Dto.MaloCultureDto>()
+           .ForMember(dest => dest.Brand, opt => opt.Ignore())
+           .ForMember(dest => dest.Style, opt => opt.Ignore())
+           .AfterMap((src, dest) => { dest.Brand = src.Brand.HasValue ? new Business.Common.Code { Id = src.Brand.Value } : null; })
+           .AfterMap((src, dest) => { dest.Style = src.Style.HasValue ? new Business.Common.Code { Id = src.Style.Value } : null; });
+         CreateMap<Business.MaloCulture.Dto.MaloCultureDto, WMS.Data.Entities.MaloCultures>()
              .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Id))
              .ForMember(dest => dest.Style, opt => opt.MapFrom(src => src.Style.Id));
       }

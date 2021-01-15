@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WMS.Business.Common;
 using WMS.Data;
 
-namespace WMS.Business.Yeast.Queries
+namespace WMS.Business.MaloCulture.Queries
 {
    /// <inheritdoc cref = "IQuery{T}" />
    public class GetBrands : IQuery<ICode>
@@ -32,7 +32,7 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute()"/>
       public List<ICode> Execute()
       {
-         var brands = _dbContext.YeastBrand.ToList();
+         var brands = _dbContext.MaloCultureBrand.ToList();
          var list = _mapper.Map<List<ICode>>(brands);
          return list;
       }
@@ -45,7 +45,7 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
       public ICode Execute(int id)
       {
-         var brand = _dbContext.YeastBrand.FirstOrDefault(p => p.Id == id);
+         var brand = _dbContext.MaloCultureBrand.FirstOrDefault(p => p.Id == id);
          var dto = _mapper.Map<ICode>(brand);
          return dto;
       }
@@ -57,7 +57,7 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
       public async Task<List<ICode>> ExecuteAsync()
       {
-         var brands = await _dbContext.YeastBrand.ToListAsync().ConfigureAwait(false);
+         var brands = await _dbContext.MaloCultureBrand.ToListAsync().ConfigureAwait(false);
          var list = _mapper.Map<List<ICode>>(brands);
          return list;
       }
@@ -70,7 +70,7 @@ namespace WMS.Business.Yeast.Queries
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
       public async Task<ICode> ExecuteAsync(int id)
       {
-         var brand = await _dbContext.YeastBrand
+         var brand = await _dbContext.MaloCultureBrand
             .FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
          var dto = _mapper.Map<ICode>(brand);
          return dto;

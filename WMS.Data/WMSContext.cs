@@ -15,11 +15,14 @@ namespace WMS.Data
             : base(options)
         {
         }
-        
+         
         public virtual DbSet<BatchEntries> BatchEntries { get; set; }
         public virtual DbSet<Batches> Batches { get; set; }
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Images> Images { get; set; }
+        public virtual DbSet<MaloCultureBrand> MaloCultureBrand { get; set; }
+        public virtual DbSet<MaloCultureStyle> MaloCultureStyle { get; set; }
+        public virtual DbSet<MaloCultures> MaloCultures { get; set; }
         public virtual DbSet<PicturesXref> PicturesXref { get; set; }
         public virtual DbSet<Ratings> Ratings { get; set; }
         public virtual DbSet<Recipes> Recipes { get; set; }
@@ -34,7 +37,7 @@ namespace WMS.Data
        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {                    
+        {            
             modelBuilder.Entity<BatchEntries>(entity =>
             {
                 entity.Property(e => e.ActionDateTime).HasColumnType("datetime");
@@ -55,6 +58,11 @@ namespace WMS.Data
                 entity.Property(e => e.SubmittedBy).HasMaxLength(450);
 
                 entity.Property(e => e.Title).HasMaxLength(250);
+
+                entity.HasOne(d => d.MaloCulture)
+                    .WithMany(p => p.Batches)
+                    .HasForeignKey(d => d.MaloCultureId)
+                    .HasConstraintName("FK_Batches_MaloCultures");
 
                 entity.HasOne(d => d.Recipe)
                     .WithMany(p => p.Batches)
@@ -106,6 +114,35 @@ namespace WMS.Data
                 entity.Property(e => e.Name)
                     .HasMaxLength(200)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<MaloCultureBrand>(entity =>
+            {
+                entity.Property(e => e.Brand).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<MaloCultureStyle>(entity =>
+            {
+                entity.Property(e => e.Style).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<MaloCultures>(entity =>
+            {
+                entity.Property(e => e.PH).HasColumnName("pH");
+
+                entity.Property(e => e.So2).HasColumnName("SO2");
+
+                entity.Property(e => e.Trademark).HasMaxLength(100);
+
+                entity.HasOne(d => d.BrandNavigation)
+                    .WithMany(p => p.MaloCultures)
+                    .HasForeignKey(d => d.Brand)
+                    .HasConstraintName("FK_MaloCultures_MaloCultureBrand");
+
+                entity.HasOne(d => d.StyleNavigation)
+                    .WithMany(p => p.MaloCultures)
+                    .HasForeignKey(d => d.Style)
+                    .HasConstraintName("FK_MaloCultures_MaloCultureStyle");
             });
 
             modelBuilder.Entity<PicturesXref>(entity =>

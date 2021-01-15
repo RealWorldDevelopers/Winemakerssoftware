@@ -16,8 +16,10 @@ namespace WMS.Data.Entities
         public int? TargetId { get; set; }
         public int? RecipeId { get; set; }
         public int? YeastId { get; set; }
+        public int? MaloCultureId { get; set; }
         public bool? Complete { get; set; }
 
+        public virtual MaloCultures MaloCulture { get; set; }
         public virtual Recipes Recipe { get; set; }
         public virtual Targets Target { get; set; }
         public virtual Varieties Variety { get; set; }

@@ -11,6 +11,8 @@ using System;
 using WMS.Business.Common;
 using System.Linq;
 using WMS.Business.Journal.Dto;
+using System.Collections.Generic;
+using WMS.Business.MaloCulture.Dto;
 
 namespace WMS.Ui.Controllers
 {
@@ -22,12 +24,13 @@ namespace WMS.Ui.Controllers
       private readonly Models.Journal.IFactory _modelFactory;
       private readonly Business.Recipe.Queries.IFactory _recipeQueryFactory;
       private readonly Business.Yeast.Queries.IFactory _yeastQueryFactory;
+      private readonly Business.MaloCulture.Queries.IFactory _maloCultureQueryFactory;
       private readonly Business.Journal.Queries.IFactory _journalQueryFactory;
       private readonly Business.Journal.Commands.IFactory _journalCommandFactory;
 
       public JournalController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
          Business.Journal.Commands.IFactory journalCommandFactory, Business.Journal.Queries.IFactory journalQueryFactory, Business.Yeast.Queries.IFactory yeastQueryFactory,
-         Business.Recipe.Queries.IFactory recipeQueryFactory, IStringLocalizer<JournalController> localizer, Models.Journal.IFactory modelFactory, TelemetryClient telemetry) :
+         Business.MaloCulture.Queries.IFactory maloCultureQueryFactory, Business.Recipe.Queries.IFactory recipeQueryFactory, IStringLocalizer<JournalController> localizer, Models.Journal.IFactory modelFactory, TelemetryClient telemetry) :
           base(configuration, userManager, roleManager, telemetry)
       {
          _localizer = localizer;
@@ -35,6 +38,7 @@ namespace WMS.Ui.Controllers
          _journalQueryFactory = journalQueryFactory;
          _recipeQueryFactory = recipeQueryFactory;
          _yeastQueryFactory = yeastQueryFactory;
+         _maloCultureQueryFactory = maloCultureQueryFactory;
          _journalCommandFactory = journalCommandFactory;
       }
 
@@ -57,13 +61,13 @@ namespace WMS.Ui.Controllers
              .ThenByDescending(r => r.Vintage)
              .ThenBy(r => r.Variety);
 
-         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         // TODO validate with User (ApplicationUser) too not just Guest  
          //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
          //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
          return View(journalModel);
 
-      }      
+      }
 
 
       /// <summary>
@@ -93,9 +97,9 @@ namespace WMS.Ui.Controllers
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
-         var addBatchModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList, null, uomVolumeList, uomSugarList, uomTempList);
 
-         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         // TODO validate with User (ApplicationUser) too not just Guest  
          //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
          //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
@@ -137,12 +141,12 @@ namespace WMS.Ui.Controllers
             batch.Target = getTargetsQuery.Execute(targetId.Value);
          }
 
-         var addBatchModel = _modelFactory.CreateBatchModel(batch, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchViewModel(batch, null, vList, cList, yList, null, uomVolumeList, uomSugarList, uomTempList);
          addBatchModel.VarietyId = varietyId;
          addBatchModel.RecipeId = recipeId;
          addBatchModel.YeastId = yeastId;
 
-         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         // TODO validate with User (ApplicationUser) too not just Guest  
          //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
          //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
@@ -187,7 +191,7 @@ namespace WMS.Ui.Controllers
          var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          if (submittedBy == null)
          {
-            var addModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList,null, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], false);
             return View(addModel);
          }
@@ -195,7 +199,7 @@ namespace WMS.Ui.Controllers
          // using model validation attributes, if model state says errors do nothing           
          if (!ModelState.IsValid)
          {
-            var addModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList, null, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], true);
             return View(addModel);
          }
@@ -255,11 +259,11 @@ namespace WMS.Ui.Controllers
 
          // tell user good job and clear or go to thank you page           
          ModelState.Clear();
-         var addBatchModel = _modelFactory.CreateBatchModel(null, null, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var addBatchModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList, null, uomVolumeList, uomSugarList, uomTempList);
 
          Success(_localizer["AddSuccess"], true);
 
-         // TODO validate with User (ApplicationUser) too not just Guest  LEFT OFF
+         // TODO validate with User (ApplicationUser) too not just Guest  
          //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
          //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
@@ -293,6 +297,9 @@ namespace WMS.Ui.Controllers
 
          var varietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
          var vList = await varietiesQuery.ExecuteAsync().ConfigureAwait(false);
+         
+         var cultureQuery = _maloCultureQueryFactory.CreateMaloCulturesQuery();
+         var cultureList = await cultureQuery.ExecuteAsync().ConfigureAwait(false);
 
          var getYeastQuery = _yeastQueryFactory.CreateYeastsQuery();
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
@@ -305,7 +312,7 @@ namespace WMS.Ui.Controllers
          var batchEntriesDto = entriesDto.Where(e => e.BatchId == batchDto.Id)
             .OrderByDescending(e => e.ActionDateTime).ThenByDescending(e => e.EntryDateTime).ToList();
 
-         var model = _modelFactory.CreateBatchModel(batchDto, batchEntriesDto, vList, cList, yList, uomVolumeList, uomSugarList, uomTempList);
+         var model = _modelFactory.CreateBatchViewModel(batchDto, batchEntriesDto, vList, cList, yList, cultureList, uomVolumeList, uomSugarList, uomTempList);
 
          // validate with User (ApplicationUser) 
          var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);

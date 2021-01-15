@@ -1,5 +1,4 @@
-﻿
-using WMS.Business.Common;
+﻿using WMS.Business.Common;
 
 namespace WMS.Business.Yeast.Queries
 {
