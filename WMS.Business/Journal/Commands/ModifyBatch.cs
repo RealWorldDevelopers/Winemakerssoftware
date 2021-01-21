@@ -164,7 +164,7 @@ namespace WMS.Business.Journal.Commands
          entity.VolumeUomId = dto.VolumeUom?.Id;
          entity.YeastId = dto.YeastId;
          entity.MaloCultureId = dto.MaloCultureId;
-                
+
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);
 
@@ -192,16 +192,32 @@ namespace WMS.Business.Journal.Commands
       /// <inheritdoc cref="ICommand{T}.Delete(T)"/>
       public void Delete(BatchDto dto)
       {
-         var entity = _dbContext.Batches
-         .FirstOrDefault(c => c.Id == dto.Id);
-
+         var entity = _dbContext.Batches.FirstOrDefault(c => c.Id == dto.Id);
          if (entity != null)
          {
-            // delete category 
-            _dbContext.Batches.Remove(entity);
+            // see if any batch entries related to batch id
+            if (_dbContext.Recipes.Any(r => entity.RecipeId.HasValue && r.Id == entity.RecipeId.Value))
+            {
+               var batchEntryEntities = _dbContext.BatchEntries.Where(b => b.BatchId == entity.Id);
+               if (batchEntryEntities != null)
+                  _dbContext.BatchEntries.RemoveRange(batchEntryEntities);
+            }
 
-            // Save changes in database
+            // see if any recipes related to target id
+            if (entity.TargetId.HasValue)
+            {
+               // if target is not in any batches, delete target entity too
+               if (!_dbContext.Recipes.Any(r => r.TargetId.HasValue && r.TargetId.Value == entity.TargetId))
+               {
+                  var targetEntity = _dbContext.Targets.FirstOrDefault(t => t.Id == entity.TargetId);
+                  _dbContext.Targets.Remove(targetEntity);
+               }
+            }
+
+            // delete batch 
+            _dbContext.Batches.Remove(entity);
             _dbContext.SaveChanges();
+
          }
       }
 
@@ -212,20 +228,33 @@ namespace WMS.Business.Journal.Commands
       /// <inheritdoc cref="ICommand{T}.DeleteAsyn(T)"/>
       public async Task DeleteAsync(BatchDto dto)
       {
-         var entity = await _dbContext.Batches
-         .FirstOrDefaultAsync(c => c.Id == dto.Id)
-         .ConfigureAwait(false);
-
+         var entity = await _dbContext.Batches.FirstOrDefaultAsync(c => c.Id == dto.Id).ConfigureAwait(false);
          if (entity != null)
          {
+            // see if any batch entries related to batch id
+            if (_dbContext.Recipes.Any(r => entity.RecipeId.HasValue && r.Id == entity.RecipeId.Value))
+            {
+               var batchEntryEntities = _dbContext.BatchEntries.Where(b => b.BatchId == entity.Id);
+               if (batchEntryEntities != null)
+                  _dbContext.BatchEntries.RemoveRange(batchEntryEntities);
+            }
+
+            // see if any recipes related to target id
+            if (entity.TargetId.HasValue)
+            {
+               // if target is not in any batches, delete target entity too
+               if (!_dbContext.Recipes.Any(r => r.TargetId.HasValue && r.TargetId.Value == entity.TargetId))
+               {
+                  var targetEntity = _dbContext.Targets.FirstOrDefault(t => t.Id == entity.TargetId);
+                  _dbContext.Targets.Remove(targetEntity);
+               }
+            }
+
             // delete category 
             _dbContext.Batches.Remove(entity);
-
-            // Save changes in database
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
          }
       }
-
 
    }
 }

@@ -4,8 +4,12 @@
    <div class="card-header bg-secondary text-light">
       <h1>@ViewData["Title"]</h1>
    </div>
-   <div class="card-body">
-      <label class="d-none"><input hidden name="Id" id="updateBatchId" value="@Model.Id" />Hidden Label</label>
+   <div class="card-body">     
+
+      <form id="frmDeleteBatch" asp-controller="Journal" asp-action="DeleteBatch" method="POST" enctype="multipart/form-data">
+         <label class="d-none"><input hidden name="Id" id="updateBatchId" value="@Model.Id" />Hidden Label</label>
+      </form>
+
       <form id="batchUpdateForm">
          <div class="card" id="batchDescription">
             <div class="card-header bg-dark text-light">
@@ -123,7 +127,8 @@
                   <input type="checkbox" class="form-check-input" aria-label="Batch Complete" asp-for="Complete"> Completed
                </label>
             </div>
-            <div><a class="text-light" href="#"><i class="fa fa-trash-o"></i></a></div>
+
+            <button class="btn btn-sm btn-dark" name="deleteBatchButton" data-id="@Model.Id"><i class="fa fa-trash-o"></i></button>
          </div>
          <div class="card-body">
             <div id="divCompleteStatus" class="@(Model.Complete == true ? "" : "d-none")">

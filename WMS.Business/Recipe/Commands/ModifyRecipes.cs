@@ -109,6 +109,18 @@ namespace WMS.Business.Recipe.Commands
          var entity = _dbContext.Recipes.FirstOrDefault(r => r.Id == dto.Id);
          if (entity != null)
          {
+            // see if any batches related to recipe id
+            if (_dbContext.Batches.Any(b => b.RecipeId.HasValue && b.RecipeId.Value == entity.Id))
+            {
+               var batchEntities = _dbContext.Batches.Where(b => b.RecipeId == entity.Id);
+               if (batchEntities!=null)
+                  foreach (var e in batchEntities)
+                  {
+                     e.RecipeId = null;
+                     _dbContext.Batches.Update(e);
+                  }              
+            }
+
             // see if any batches related to target id
             if (entity.TargetId.HasValue)
             {
@@ -137,6 +149,18 @@ namespace WMS.Business.Recipe.Commands
          var entity = await _dbContext.Recipes.FirstOrDefaultAsync(r => r.Id == dto.Id).ConfigureAwait(false);
          if (entity != null)
          {
+            // see if any batches related to recipe id
+            if (_dbContext.Batches.Any(b => b.RecipeId.HasValue && b.RecipeId.Value == entity.Id))
+            {
+               var batchEntities = _dbContext.Batches.Where(b => b.RecipeId == entity.Id);
+               if (batchEntities != null)
+                  foreach (var e in batchEntities)
+                  {
+                     e.RecipeId = null;
+                     _dbContext.Batches.Update(e);
+                  }
+            }
+
             // see if any batches related to target id
             if (entity.TargetId.HasValue)
             {

@@ -191,7 +191,7 @@ namespace WMS.Ui.Controllers
          var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
          if (submittedBy == null)
          {
-            var addModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList,null, uomVolumeList, uomSugarList, uomTempList);
+            var addModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList, null, uomVolumeList, uomSugarList, uomTempList);
             Warning(_localizer["AddGeneralError"], false);
             return View(addModel);
          }
@@ -297,7 +297,7 @@ namespace WMS.Ui.Controllers
 
          var varietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
          var vList = await varietiesQuery.ExecuteAsync().ConfigureAwait(false);
-         
+
          var cultureQuery = _maloCultureQueryFactory.CreateMaloCulturesQuery();
          var cultureList = await cultureQuery.ExecuteAsync().ConfigureAwait(false);
 
@@ -321,6 +321,22 @@ namespace WMS.Ui.Controllers
          return View("UpdateBatch", model);
 
       }
+
+      /// <summary>
+      /// Delete a Batch from the database
+      /// </summary>
+      /// <param name="Id"> Id of Batch to delete as <see cref="int"/></param>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> DeleteBatch(int Id)
+      {
+         var cmd = _journalCommandFactory.CreateBatchesCommand();
+         var qry = _journalQueryFactory.CreateBatchesQuery();
+         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);                 
+         await cmd.DeleteAsync(dto).ConfigureAwait(false);
+         return RedirectToAction("Index", "Journal");
+      }     
+      
 
    }
 

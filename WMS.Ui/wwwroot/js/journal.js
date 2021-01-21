@@ -144,6 +144,16 @@ $(document).ready(function () {
       }
    });
 
+   // TODO Delete Batch left off
+   $('body').off('click', 'button[name="deleteBatchButton"]');
+   $('body').on('click', 'button[name="deleteBatchButton"]', function () {
+      if (confirm('Are you sure?')) {
+         var id = $(this).data('id');
+         $('#updateBatchId').val(id);
+         $('#frmDeleteBatch').submit();
+      }
+   });
+
    // load status chart 
    if (window.location.href.lastIndexOf('EditBatch') >= 0) {
       var id = $('#updateBatchId').val();
@@ -156,7 +166,7 @@ function updateBatch(id) {
    const uri = '/api/journal';
    var jwt = $('#BatchJwt').val();
 
-   var form = $("#batchUpdateForm"); 
+   var form = $("#batchUpdateForm");
    form.validate();
 
    if (form.valid()) {
@@ -212,7 +222,7 @@ function updateBatch(id) {
             // show complete
             $('#batchUpdateToast').toast({ delay: 2000 });
             $('#batchUpdateToast').toast('show');
-            
+
          },
          error: function (xmlHttpRequest, textStatus, errorThrown) {
             alert('something went wrong');
@@ -220,84 +230,92 @@ function updateBatch(id) {
          }
 
       });
-   } 
+   }
 }
 
 function updateBatchTarget(id) {
    const uri = '/api/journal';
    var jwt = $('#BatchJwt').val();
 
-   // TODO 
    var form = $("#targetUpdateForm");
    form.validate();
 
    if (form.valid()) {
+
+      // validate sugar
+      var startSugar = parseFloat($('#Target_StartingSugar').val());
+      if (!$.isNumeric(startSugar) || startSugar > 30 || startSugar < .8) {
+         startSugar = null;
+      };
+      var startSugarUom = parseInt($('#Target_StartSugarUOM').val());
+      if (!Number.isInteger(startSugarUom)) {
+         startSugarUom = null;
+      };
+
+      // validate sugar
+      var endSugar = parseFloat($('#Target_EndingSugar').val());
+      if (!$.isNumeric(endSugar) || endSugar > 30 || endSugar < .8) {
+         endSugar = null;
+      };
+      var endSugarUom = parseInt($('#Target_EndSugarUOM').val());
+      if (!Number.isInteger(endSugarUom)) {
+         endSugarUom = null;
+      };
+
+      // validate temp
+      var temp = parseFloat($('#Target_FermentationTemp').val());
+      if (!$.isNumeric(temp) || temp > 90 || temp < 0) {
+         temp = null;
+      };
+      var tempUom = parseInt($('#Target_TempUOM').val());
+      if (!Number.isInteger(tempUom)) {
+         tempUom = null;
+      };
+
+      // validate pH
+      var ph = parseFloat($('#Target_pH').val());
+      if (!$.isNumeric(ph) || ph > 30 || ph < .8) {
+         ph = null;
+      };
+
+      // validate TA
+      var ta = parseFloat($('#Target_TA').val());
+      if (!$.isNumeric(ta) || ta > 30 || ta < .8) {
+         ta = null;
+      };
+
+      var target = {
+         StartingSugar: startSugar,
+         StartSugarUOM: startSugarUom,
+         EndingSugar: endSugar,
+         EndSugarUOM: endSugarUom,
+         TA: ta,
+         pH: ph,
+         FermentationTemp: temp,
+         TempUOM: tempUom
+      };
+
+      $.ajax({
+         url: rootUri + uri + '/batchTarget/' + id,
+         type: 'PUT',
+         headers: { 'Authorization': 'Bearer ' + jwt },
+         contentType: 'application/json',
+         data: JSON.stringify(target),
+         success: function (result) {
+            console.log('successful update batch target');
+
+            // show complete
+            $('#targetUpdateToast').toast({ delay: 2000 });
+            $('#targetUpdateToast').toast('show');
            
-      //// validate temp
-      //var temp = parseFloat($('#batchEntryModal_temp').val());
-      //if (!$.isNumeric(temp) || temp > 90 || temp < 0) {
-      //   temp = null;
-      //};
-      //var tempUom = parseInt($('input[name="optEntryTemp"]:checked').val());
-      //if (!Number.isInteger(tempUom)) {
-      //   tempUom = null;
-      //};
+         },
+         error: function (xmlHttpRequest, textStatus, errorThrown) {
+            alert('something went wrong');
+            console.log('Exception: ' + errorThrown);
+            checkbox.prop('checked', !value);
+         }
 
-      //// validate sugar
-      //var sugar = parseFloat($('#batchEntryModal_sugar').val());
-      //if (!$.isNumeric(sugar) || sugar > 30 || sugar < .8) {
-      //   sugar = null;
-      //};
-      //var sugarUom = parseInt($('input[name="optEntrySugar"]:checked').val());
-      //if (!Number.isInteger(sugarUom)) {
-      //   sugarUom = null;
-      //};
-
-      //// validate sugar
-      //var sugar = parseFloat($('#batchEntryModal_sugar').val());
-      //if (!$.isNumeric(sugar) || sugar > 30 || sugar < .8) {
-      //   sugar = null;
-      //};
-      //var sugarUom = parseInt($('input[name="optEntrySugar"]:checked').val());
-      //if (!Number.isInteger(sugarUom)) {
-      //   sugarUom = null;
-      //};
-
-      //// validate pH
-      //var ph = parseFloat($('#batchEntryModal_ph').val());
-      //if (!$.isNumeric(ph) || ph > 30 || ph < .8) {
-      //   ph = null;
-      //};
-
-      //// validate TA
-      //var ta = parseFloat($('#batchEntryModal_ta').val());
-      //if (!$.isNumeric(ta) || ta > 30 || ta < .8) {
-      //   ta = null;
-      //};
-               
-
-      //$.ajax({
-      //   url: rootUri + uri + '/batchTarget/' + id,
-      //   type: 'PUT',
-      //   headers: { 'Authorization': 'Bearer ' + jwt },
-      //   contentType: 'application/json',
-      //   data: JSON.stringify(value),
-      //   success: function (result) {
-      //      console.log('successful update batch entry');
-      // close modal window
-      // $('#targetUpdateToast').toast({ delay: 2000 });
-      //$('#targetUpdateToast').toast('show');
-      // $('#targetUpdateToast').on('hidden.bs.toast', function () {
-      //$('#batchEntryModal').modal('hide');
-      // });
-      //   },
-      //   error: function (xmlHttpRequest, textStatus, errorThrown) {
-      //      alert('something went wrong');
-      //      console.log('Exception: ' + errorThrown);
-      //      checkbox.prop('checked', !value);
-      //   }
-
-      //});
+      });
 
    }
 }

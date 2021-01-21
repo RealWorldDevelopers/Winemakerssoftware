@@ -11,6 +11,7 @@ namespace WMS.Ui.Models.Journal
    public interface IFactory
    {
       JournalViewModel CreateJournalModel();
+      TargetViewModel CreateTargetViewModel(TargetDto target);
       TargetViewModel CreateTargetViewModel(TargetDto target, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList);
       BatchViewModel CreateBatchViewModel(BatchDto dto, List<BatchEntryDto> entriesDto, List<ICode> dtoVarietyList, List<ICode> dtoCategoryList,
          List<YeastDto> dtoYeastList, List<MaloCultureDto> dtoCultureList, List<IUnitOfMeasure> dtoVolumeUOMList, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList);

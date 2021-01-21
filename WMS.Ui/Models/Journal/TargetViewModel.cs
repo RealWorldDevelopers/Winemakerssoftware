@@ -6,6 +6,7 @@ using WMS.Ui.Models.Validation;
 
 namespace WMS.Ui.Models.Journal
 {
+
    public class TargetViewModel
    {
       public int? Id { get; set; }

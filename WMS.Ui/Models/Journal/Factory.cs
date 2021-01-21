@@ -96,6 +96,11 @@ namespace WMS.Ui.Models.Journal
          return modelList;
       }
 
+      public TargetViewModel CreateTargetViewModel(TargetDto target)
+      {
+         return CreateTargetViewModel(target, null, null);
+      }
+
       public TargetViewModel CreateTargetViewModel(TargetDto target, List<IUnitOfMeasure> dtoSugarUOMList, List<IUnitOfMeasure> dtoTempUOMList)
       {
 

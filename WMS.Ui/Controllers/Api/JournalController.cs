@@ -253,11 +253,7 @@ namespace WMS.Ui.Controllers.Api
             }
 
             if (batch.VolumeUOM.HasValue)
-            {
-               if (dto.VolumeUom == null)
-                  dto.VolumeUom = new UnitOfMeasure();
-               dto.VolumeUom.Id = batch.VolumeUOM.Value;
-            }
+               dto.VolumeUom = new UnitOfMeasure { Id = batch.VolumeUOM.Value };
 
             var cmd = _commandsFactory.CreateBatchesCommand();
             var batchDto = await cmd.UpdateAsync(dto).ConfigureAwait(false);
@@ -275,7 +271,7 @@ namespace WMS.Ui.Controllers.Api
       }
 
       [HttpPut("batchTarget/{id}")]
-      public async Task<IActionResult> UpdateBatchTargetAsync(int id, [FromBody] TargetViewModel target)
+      public async Task<IActionResult> UpdateBatchTargetAsync(int id, [FromBody] TargetUpdateViewModel target)
       {
          try
          {
@@ -304,20 +300,18 @@ namespace WMS.Ui.Controllers.Api
             dto.Target.Temp = target.FermentationTemp;
 
             if (target.EndSugarUOM.HasValue)
-               dto.Target.EndSugarUom.Id = target.EndSugarUOM.Value;
+               dto.Target.EndSugarUom = new UnitOfMeasure { Id = target.EndSugarUOM.Value };
             if (target.StartSugarUOM.HasValue)
-               dto.Target.StartSugarUom.Id = target.StartSugarUOM.Value;
+               dto.Target.StartSugarUom = new UnitOfMeasure { Id = target.StartSugarUOM.Value };
             if (target.TempUOM.HasValue)
-               dto.Target.TempUom.Id = target.TempUOM.Value;
+               dto.Target.TempUom = new UnitOfMeasure { Id = target.TempUOM.Value };
 
-            // var cmd = _commandsFactory.CreateTargetsCommand();
-            // var targetDto = await cmd.UpdateAsync(dto.Target).ConfigureAwait(false);
+            var cmd = _commandsFactory.CreateTargetsCommand();
+            var targetDto = await cmd.UpdateAsync(dto.Target).ConfigureAwait(false);
 
-            // var model = _modelFactory.CreateBatchViewModel(targetDto);
+            var model = _modelFactory.CreateTargetViewModel(targetDto);
 
-            // return Ok(model);
-
-            return Ok();
+            return Ok(model);
 
          }
          catch (Exception)
