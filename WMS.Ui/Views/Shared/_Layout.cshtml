@@ -15,7 +15,14 @@
         <partial name="_AlertsPartial" />
         <div id="bodyContent" class="animate-bottom">
 
-           <environment include="Development">We are in Dev Environment</environment>
+           <environment include="Development">
+              <span>We are in Dev Environment &nbsp; size: &nbsp;</span>
+              <span class="d-inline d-sm-none">xs</span>
+              <span class="d-none d-sm-inline d-md-none">sm</span>
+              <span class="d-none d-md-inline d-lg-none">md</span>
+              <span class="d-none d-lg-inline d-xl-none">lg</span>
+              <span class="d-none d-xl-inline">xl</span>
+           </environment>
 
            @RenderBody()
 

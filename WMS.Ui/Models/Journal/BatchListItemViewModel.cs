@@ -10,10 +10,7 @@ namespace WMS.Ui.Models.Journal
       public string Description { get; set; }
       public int? Vintage { get; set; }
       public string Variety { get; set; }
-
-      public string CurrentStage { get; set; }
-      public string LastStatus { get; set; }
-
+      public BatchSummaryViewModel Summary { get; set; }
       public bool BatchComplete { get; set; }
       public Uri BatchUrl { get; set; }
 

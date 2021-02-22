@@ -85,5 +85,15 @@ namespace WMS.Business.Yeast.Queries
       {
          throw new System.NotImplementedException();
       }
+
+      public List<ICode> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<ICode>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

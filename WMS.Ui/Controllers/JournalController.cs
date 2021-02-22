@@ -11,13 +11,11 @@ using System;
 using WMS.Business.Common;
 using System.Linq;
 using WMS.Business.Journal.Dto;
-using System.Collections.Generic;
-using WMS.Business.MaloCulture.Dto;
 
 namespace WMS.Ui.Controllers
 {
-   // TODO set privileges for controller
-   //[Authorize(Roles = "GeneralUser")]
+   // set privileges for controller
+   [Authorize(Roles = "GeneralUser")]
    public class JournalController : BaseController
    {
       private readonly IStringLocalizer<JournalController> _localizer;
@@ -50,8 +48,22 @@ namespace WMS.Ui.Controllers
          ViewData["Title"] = _localizer["PageTitle"];
          ViewData["PageDesc"] = _localizer["PageDesc"];
 
+         var submittedBy = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+
+         var varietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
+         var vList = await varietiesQuery.ExecuteAsync().ConfigureAwait(false);
+
+         var entriesQuery = _journalQueryFactory.CreateBatchEntriesQuery();
+
          var getBatchesQuery = _journalQueryFactory.CreateBatchesQuery();
-         var batchesDto = await getBatchesQuery.ExecuteAsync().ConfigureAwait(false);
+         var batchesDto = await getBatchesQuery.ExecuteByUserAsync(submittedBy.Id).ConfigureAwait(false);
+         foreach (var b in batchesDto)
+         {
+            var entriesDto = await entriesQuery.ExecuteByFKAsync(b.Id.Value).ConfigureAwait(true);
+            b.Entries.AddRange(entriesDto.OrderByDescending(e => e.ActionDateTime).ThenByDescending(e => e.EntryDateTime));
+            b.Variety.Literal = vList.FirstOrDefault(v => v.Id == b.Variety.Id).Literal;
+         }
+
          var journalModel = _modelFactory.CreateJournalModel();
 
          var batchItemsModel = _modelFactory.BuildBatchListItemModels(batchesDto);
@@ -61,10 +73,9 @@ namespace WMS.Ui.Controllers
              .ThenByDescending(r => r.Vintage)
              .ThenBy(r => r.Variety);
 
-         // TODO validate with User (ApplicationUser) too not just Guest  
-         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
-         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
-         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
+         // validate with User (ApplicationUser)   
+         var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
          return View(journalModel);
 
       }
@@ -99,10 +110,9 @@ namespace WMS.Ui.Controllers
 
          var addBatchModel = _modelFactory.CreateBatchViewModel(null, null, vList, cList, yList, null, uomVolumeList, uomSugarList, uomTempList);
 
-         // TODO validate with User (ApplicationUser) too not just Guest  
-         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
-         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
-         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
+         // validate with User (ApplicationUser) 
+         var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         addBatchModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
 
          return View(addBatchModel);
       }
@@ -146,11 +156,9 @@ namespace WMS.Ui.Controllers
          addBatchModel.RecipeId = recipeId;
          addBatchModel.YeastId = yeastId;
 
-         // TODO validate with User (ApplicationUser) too not just Guest  
-         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
-         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
-         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
-
+         // validate with User (ApplicationUser)
+         var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         addBatchModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
          return View("Add", addBatchModel);
       }
 
@@ -263,10 +271,9 @@ namespace WMS.Ui.Controllers
 
          Success(_localizer["AddSuccess"], true);
 
-         // TODO validate with User (ApplicationUser) too not just Guest  
-         //var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
-         // journalModel.BatchJwt = CreateJwtToken("Guest", 15);
-         //journalModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
+         // validate with User (ApplicationUser)  
+         var appUser = await UserManagerAgent.GetUserAsync(User).ConfigureAwait(false);
+         addBatchModel.BatchJwt = await CreateJwtTokenAsync(appUser, 15).ConfigureAwait(false);
 
          return View(addBatchModel);
 
@@ -278,7 +285,7 @@ namespace WMS.Ui.Controllers
       /// </summary>
       [HttpPost]
       [ValidateAntiForgeryToken]
-      public async Task<IActionResult> EditBatch(int Id)
+      public async Task<IActionResult> EditBatch(int id)
       {
          ViewData["Title"] = _localizer["PageTitleDetails"];
          ViewData["PageDesc"] = _localizer["PageDescDetails"];
@@ -305,12 +312,14 @@ namespace WMS.Ui.Controllers
          var yList = await getYeastQuery.ExecuteAsync().ConfigureAwait(false);
 
          var batchQuery = _journalQueryFactory.CreateBatchesQuery();
-         var batchDto = await batchQuery.ExecuteAsync(Id).ConfigureAwait(false);
+         var batchDto = await batchQuery.ExecuteAsync(id).ConfigureAwait(false);
 
          var entriesQuery = _journalQueryFactory.CreateBatchEntriesQuery();
-         var entriesDto = await entriesQuery.ExecuteAsync().ConfigureAwait(true);
-         var batchEntriesDto = entriesDto.Where(e => e.BatchId == batchDto.Id)
-            .OrderByDescending(e => e.ActionDateTime).ThenByDescending(e => e.EntryDateTime).ToList();
+         var entriesDto = await entriesQuery.ExecuteByFKAsync(id).ConfigureAwait(true);
+
+         var batchEntriesDto = entriesDto
+            .OrderByDescending(e => e.ActionDateTime)
+            .ThenByDescending(e => e.EntryDateTime).ToList();
 
          var model = _modelFactory.CreateBatchViewModel(batchDto, batchEntriesDto, vList, cList, yList, cultureList, uomVolumeList, uomSugarList, uomTempList);
 
@@ -332,11 +341,11 @@ namespace WMS.Ui.Controllers
       {
          var cmd = _journalCommandFactory.CreateBatchesCommand();
          var qry = _journalQueryFactory.CreateBatchesQuery();
-         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);                 
+         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
          await cmd.DeleteAsync(dto).ConfigureAwait(false);
          return RedirectToAction("Index", "Journal");
-      }     
-      
+      }
+
 
    }
 

@@ -349,6 +349,25 @@ namespace WMS.Ui.Controllers
 
       #endregion
 
+      #region Journal
+
+      // TODO
+
+      #endregion
+
+      #region Malolactic 
+
+      public IActionResult AddMalolacticCulture()
+      {
+         // TODO 
+         ViewData["Title"] = "Add a Malolactic Culture";
+
+         var model = _modelFactory.CreateMaloCultureViewModel();
+         return View("UpdateMaloCulture", model);
+      }
+
+      #endregion
+
       #region Yeasts
 
       /// <summary>

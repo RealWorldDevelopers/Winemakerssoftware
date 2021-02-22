@@ -46,29 +46,29 @@
                   </div>                 
                </div>
                <div class="row">
-                  <div class="col-sm-3 pr-0">
+                  <div class="col-sm-3">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="Target.StartingSugar" maxlength="5">
                      <span asp-validation-for="Target.StartingSugar" class="text-danger"></span>
                   </div>
-                  <div class="col-sm-3 pl-0">
+                  <div class="col-sm-3">
                      <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
                      <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
                   </div>
-                  <div class="col-sm-3 pr-0">
+                  <div class="col-sm-3">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
                      <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
                   </div>
-                  <div class="col-sm-3 pl-0">
+                  <div class="col-sm-3">
                      <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
                      <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
                   </div>
                </div>
                <div class="row">
-                  <div class="col-sm-3 pr-0">
+                  <div class="col-sm-3">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="Target.EndingSugar" maxlength="5">
                      <span asp-validation-for="Target.EndingSugar" class="text-danger"></span>
                   </div>
-                  <div class="col-sm-3 pl-0">
+                  <div class="col-sm-3">
                      <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
                      <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
                   </div>

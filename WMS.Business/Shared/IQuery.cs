@@ -27,6 +27,12 @@ namespace WMS.Business.Common
       List<T> ExecuteByFK(int fk);
 
       /// <summary>
+      /// Query a specific record in SQL DB by User ID
+      /// </summary>
+      /// <param name="userId">Foreign Key as <see cref="string"/></param>
+      List<T> ExecuteByUser(string userId);
+
+      /// <summary>
       /// Asynchronously query all Data in SQL DB
       /// </summary>
       Task<List<T>> ExecuteAsync();
@@ -42,5 +48,11 @@ namespace WMS.Business.Common
       /// </summary>
       /// <param name="fk">Foreign Key as <see cref="int"/></param>
       Task<List<T>> ExecuteByFKAsync(int fk);
+
+      /// <summary>
+      /// Asynchronously query a specific record in SQL DB by User ID
+      /// </summary>
+      /// <param name="userId">User Id as <see cref="string"/></param>
+      Task<List<T>> ExecuteByUserAsync(string userId);
    }
 }

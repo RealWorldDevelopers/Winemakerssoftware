@@ -34,6 +34,8 @@ namespace WMS.Ui.Models.Admin
 
       List<VarietyViewModel> CreateVarietyViewModel(List<ICode> varDtoList);
 
+      MaloCultureViewModel CreateMaloCultureViewModel();
+
 
       YeastViewModel CreateYeastViewModel();
 

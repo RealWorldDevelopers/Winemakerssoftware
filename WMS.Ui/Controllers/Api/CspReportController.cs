@@ -17,8 +17,8 @@ namespace WMS.Ui.Controllers.Api
         [HttpPost("~/cspreport")]
         public IActionResult CspViolation([FromBody] CspReportRequest request)
         {
-            // TODO: log request to a datastore somewhere 
-            // TODO add Telemetry
+            // log request to a datastore somewhere 
+            // add Telemetry
             //_logger.LogWarning($"CSP Violation: {request.CspReport.DocumentUri}, {request.CspReport.BlockedUri}");
 
             return Ok();

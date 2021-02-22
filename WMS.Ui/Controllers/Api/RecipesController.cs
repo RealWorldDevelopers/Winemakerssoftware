@@ -61,14 +61,13 @@ namespace WMS.Ui.Controllers.Api
       /// <param name="input">User Selected Rating Value</param>
       /// <returns>HTML Status Code</returns>     
       [HttpPut("rating/{id}")]
-      public async Task<IActionResult> UpdateRatingAsync(int id, [FromBody] JObject input)
+      public async Task<IActionResult> UpdateRatingAsync(int id, [FromBody] string value)
       {
          try
          {
-            // check if valid input
-            dynamic album = input;
-            if (!double.TryParse(album.starValue?.Value, out double newValue))
-               return NoContent();
+            // check if valid input            
+            if (!double.TryParse(value, out double newValue))
+               return BadRequest();
 
             // get record from db
             var getRecipesQuery = _queryFactory.CreateRecipesQuery();

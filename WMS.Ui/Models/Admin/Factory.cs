@@ -288,6 +288,13 @@ namespace WMS.Ui.Models.Admin
       }
 
 
+      public MaloCultureViewModel CreateMaloCultureViewModel()
+      {
+         var model = new MaloCultureViewModel();
+        // model.Brands.AddRange(CreateSelectList("Brand", _brandsDtoList));
+        // model.Styles.AddRange(CreateSelectList("Style", _stylesDtoList));
+         return model;
+      }
 
       public YeastViewModel CreateYeastViewModel()
       {
@@ -622,5 +629,6 @@ namespace WMS.Ui.Models.Admin
          return list;
       }
 
+    
    }
 }

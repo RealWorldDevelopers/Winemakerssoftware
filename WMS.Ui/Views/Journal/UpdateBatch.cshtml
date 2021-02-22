@@ -4,11 +4,13 @@
    <div class="card-header bg-secondary text-light">
       <h1>@ViewData["Title"]</h1>
    </div>
-   <div class="card-body">     
+   <div class="card-body">
 
       <form id="frmDeleteBatch" asp-controller="Journal" asp-action="DeleteBatch" method="POST" enctype="multipart/form-data">
          <label class="d-none"><input hidden name="Id" id="updateBatchId" value="@Model.Id" />Hidden Label</label>
       </form>
+
+      <p class="d-print-none"><a class="printer" href="#"><i class="fa fa-print">&nbsp Printer Friendly Version</i></a></p>
 
       <form id="batchUpdateForm">
          <div class="card" id="batchDescription">
@@ -18,12 +20,14 @@
             <div class="card-body">
                <div class="row">
                   <div class="col-sm-12">
+                     <label class="label" asp-for="Title">Title:</label>
                      <input class="form-control" type="text" aria-label="Title" placeholder="Title of Batch" required asp-for="Title" maxlength="100">
                      <span asp-validation-for="Title" class="text-danger"></span>
                   </div>
                </div>
                <div class="row">
                   <div class="col-sm-12">
+                     <label class="label" asp-for="Title">Description:</label>
                      <input class="form-control" type="text" placeholder="Description (optional)" aria-label="Description of Batch" asp-for="Description" maxlength="100">
                      <span asp-validation-for="Description" class="text-danger"></span>
                   </div>
@@ -36,31 +40,37 @@
             </div>
             <div class="card-body">
                <div class="row">
-                  <div class="col-sm-2 pr-0">
+                  <div class="input-group col-sm-6">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Volume of Batch" placeholder="Volume of Batch" required asp-for="Volume" maxlength="10">
                      <span asp-validation-for="Volume" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="VolumeUOM" asp-items="Model.VolumeUOMs"></select>
+                        <span asp-validation-for="VolumeUOM" class="text-danger"></span>
+                     </div>
                   </div>
-                  <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="VolumeUOM" asp-items="Model.VolumeUOMs"></select>
-                     <span asp-validation-for="VolumeUOM" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-2">
+                  <div class="input-group col-sm-6">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" placeholder="Vintage" aria-label="Vintage of Wine" required asp-for="Vintage" maxlength="4">
                      <span asp-validation-for="Vintage" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-5">
-                     <select class="custom-select" aria-label="Select a Variety of Wine" asp-for="VarietyId" asp-items="Model.Varieties"></select>
-                     <span asp-validation-for="VarietyId" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <select class="custom-select" aria-label="Select a Variety of Wine" asp-for="VarietyId" asp-items="Model.Varieties"></select>
+                        <span asp-validation-for="VarietyId" class="text-danger"></span>
+                     </div>
                   </div>
                </div>
                <div class="row">
-                  <div class="col-sm-6">
+                  <div class="input-group col-sm-6">
                      <select class="custom-select" aria-label="Select a Variety" asp-for="YeastId" asp-items="Model.Yeasts"></select>
                      <span asp-validation-for="YeastId" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <label class="input-group-text" asp-for="YeastId">Yeast</label>
+                     </div>
                   </div>
-                  <div class="col-sm-6">
+                  <div class="input-group col-sm-6">
                      <select class="custom-select" aria-label="Select a MLF Culture" asp-for="MaloCultureId" asp-items="Model.MaloCultures"></select>
                      <span asp-validation-for="MaloCultureId" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <label class="input-group-text" asp-for="MaloCultureId">MLF Culture</label>
+                     </div>
                   </div>
                </div>
             </div>
@@ -68,7 +78,7 @@
       </form>
 
       <div id="batchUpdateToast" class="toast hide"><div class="toast-body">Completed</div></div>
-      <button name="updateBatchButton" class="btn btn-outline-secondary btn-block mt-2 mb-3" title="Update Batch Information">Update Batch</button>
+      <button name="updateBatchButton" class="btn btn-outline-secondary btn-block mt-2 mb-3 d-print-none" title="Update Batch Information">Update Batch</button>
 
       <div class="card" id="batchTargets">
          <div class="card-header bg-dark text-light">
@@ -77,44 +87,59 @@
          <div class="card-body">
             <form id="targetUpdateForm">
                <div class="row">
-                  <div class="col-sm-3 pr-0">
+                  <div class="input-group col-sm-6">
+                     <div class="input-group-prepend">
+                        <span class="input-group-text">Start</span>
+                     </div>
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="Target.StartingSugar" maxlength="5">
                      <span asp-validation-for="Target.StartingSugar" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                        <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
+                     </div>
                   </div>
-                  <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
-                     <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-3 pr-0">
-                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
-                     <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
-                  </div>
-                  <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
-                     <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-sm-3 pr-0">
+
+                  <div class="input-group col-sm-6">
+                     <div class="input-group-prepend">
+                        <span class="input-group-text">End</span>
+                     </div>
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="Target.EndingSugar" maxlength="5">
                      <span asp-validation-for="Target.EndingSugar" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                        <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
+                     </div>
                   </div>
-                  <div class="col-sm-3 pl-0">
-                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
-                     <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
+
+
+               </div>
+               <div class="row">
+                  <div class="input-group col-sm-6">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
+                     <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
+                        <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
+                     </div>
                   </div>
-                  <div class="col-sm-3">
+                  <div class="input-group col-sm-3">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="Target.TA" maxlength="4">
                      <span asp-validation-for="Target.TA" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <label class="input-group-text" asp-for="Target.TA">TA</label>
+                     </div>
                   </div>
-                  <div class="col-sm-3">
+                  <div class="input-group col-sm-3">
                      <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="Target.pH" maxlength="4">
                      <span asp-validation-for="Target.pH" class="text-danger"></span>
+                     <div class="input-group-append">
+                        <label class="input-group-text" asp-for="Target.pH">pH</label>
+                     </div>
                   </div>
                </div>
             </form>
             <div id="targetUpdateToast" class="toast hide"><div class="toast-body">Completed</div></div>
-            <button name="updateTargetButton" class="btn btn-outline-secondary btn-block mt-2" title="Update Target Information" data-id="@Model.Target.Id">Update Targets</button>
+            <button name="updateTargetButton" class="btn btn-outline-secondary btn-block mt-2 d-print-none" title="Update Target Information" data-id="@Model.Target.Id">Update Targets</button>
 
          </div>
       </div>
@@ -186,14 +211,14 @@
                   </div>
                   <div id="summaryTa" class="@(Model.Summary.TaOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
                      <strong>TA: </strong>
-                     <span id="summaryTaOnValue">@Model.Summary.TaOnValue.ToString()</span> on
+                     <span id="summaryTaOnValue">@Model.Summary.TaOnValue.ToString()</span> g/L on
                      <span id="summaryTaOnDate">
                         @(Model.Summary.TaOnDate.HasValue == true ? Model.Summary.TaOnDate.Value.ToShortDateString() : "")
                      </span>
                   </div>
                   <div id="summarySo2" class="@(Model.Summary.So2OnDate.HasValue == true ? "p-2" : "p-2 d-none")">
                      <strong>SO2: </strong>
-                     <span id="summarySo2OnValue">@Model.Summary.So2OnValue.ToString()</span> on
+                     <span id="summarySo2OnValue">@Model.Summary.So2OnValue.ToString()</span> mg/L on
                      <span id="summarySo2OnDate">
                         @(Model.Summary.So2OnDate.HasValue == true ? Model.Summary.So2OnDate.Value.ToShortDateString() : "")
                      </span>
@@ -213,13 +238,13 @@
          </div>
       </div>
 
-      <div class="card">
+      <div class="card print-break-before">
          <div class="card-header bg-dark text-light">
             <i>Batch Journal Entries</i>
          </div>
          <div class="card-body">
             <div id="batchEntryButton" class="@(Model.Complete == true ? "d-none" : "")">
-               <button class="btn btn-outline-secondary btn-block" title="Add a New Entry" name="showBatchEntryButton" data-id="@Model.Id">Add New Entry</button>
+               <button class="btn btn-outline-secondary btn-block d-print-none" title="Add a New Entry" name="showBatchEntryButton" data-id="@Model.Id">Add New Entry</button>
             </div>
             <div id="batchEntries">
                @foreach (var entry in Model.Entries)

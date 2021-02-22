@@ -91,5 +91,15 @@ namespace WMS.Business.Yeast.Queries
       {
          throw new System.NotImplementedException();
       }
+
+      public List<YeastPairDto> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<YeastPairDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

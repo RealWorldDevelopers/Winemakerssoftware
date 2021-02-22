@@ -95,6 +95,34 @@ namespace WMS.Business.Journal.Queries
          }
          return dto;
       }
+            
+   
+      /// <summary>
+      /// Query a specific Batch in SQL DB by primary key
+      /// </summary>
+      /// <param name="userId"></param>
+      /// <returns></returns>
+      public List<BatchDto> ExecuteByUser(string userId)
+      {
+         var batches = _dbContext.Batches
+            .Where(r => r.SubmittedBy == userId).ToList();
+         var dtoList = _mapper.Map<List<BatchDto>>(batches);
+         return dtoList;
+      }
+
+      /// <summary>
+      /// Asynchronously query a specific Batch in SQL DB by primary key
+      /// </summary>
+      /// <param name="userId"></param>
+      /// <returns></returns>
+      public async Task<List<BatchDto>> ExecuteByUserAsync(string userId)
+      {
+         var batches = await _dbContext.Batches
+            .Where(r => r.SubmittedBy == userId).ToListAsync()
+            .ConfigureAwait(false);
+         var dtoList = _mapper.Map<List<BatchDto>>(batches);         
+         return dtoList;
+      }
 
       public List<BatchDto> ExecuteByFK(int fk)
       {
@@ -105,6 +133,8 @@ namespace WMS.Business.Journal.Queries
       {
          throw new NotImplementedException();
       }
+
+
    }
 
 }

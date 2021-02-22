@@ -202,6 +202,15 @@ namespace WMS.Business.Journal.Queries
          return list;
       }
 
+      public List<BatchEntryDto> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<BatchEntryDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 
 }

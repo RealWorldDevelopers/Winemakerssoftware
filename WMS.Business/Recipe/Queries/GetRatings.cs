@@ -92,5 +92,15 @@ namespace WMS.Business.Recipe.Queries
       {
          throw new System.NotImplementedException();
       }
+
+      public List<RatingDto> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<RatingDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

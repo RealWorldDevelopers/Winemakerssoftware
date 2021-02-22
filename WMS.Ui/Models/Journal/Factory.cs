@@ -46,8 +46,7 @@ namespace WMS.Ui.Models.Journal
                Vintage = batchDto.Vintage,
                Variety = batchDto.Variety != null ? batchDto.Variety.Literal : string.Empty,
                Description = batchDto.Description,
-               CurrentStage = "CurrentStage",
-               LastStatus = "01-01-2020: last SG and Temp or last so2",
+               Summary = CreatBatchSummaryViewModel(batchDto.Entries),
                BatchUrl = batchUri
             };
             return model;

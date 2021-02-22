@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using WMS.Business.Common;
 
 namespace WMS.Business.Journal.Dto
@@ -8,6 +9,11 @@ namespace WMS.Business.Journal.Dto
    /// </summary>
    public class BatchDto
    {
+      public BatchDto()
+      {
+         Entries = new List<BatchEntryDto>();
+      }
+
       /// <summary>
       /// Primary Key
       /// </summary>
@@ -72,7 +78,8 @@ namespace WMS.Business.Journal.Dto
       /// Is Batch Completed
       /// </summary>
       public bool? Complete { get; set; }
-         
+
+      public List<BatchEntryDto> Entries { get; }
 
    }
 }

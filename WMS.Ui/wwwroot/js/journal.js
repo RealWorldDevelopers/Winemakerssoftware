@@ -54,7 +54,6 @@ $(document).ready(function () {
 
    });
 
-
    // all inputs paste events numeric only
    $('body').off('paste', '#batchTargets :input');
    $('body').on('paste', '#batchTargets :input', function () {
@@ -67,6 +66,37 @@ $(document).ready(function () {
             }, 2500);
          }
       }, 5);
+   });
+
+   //search bar functions
+   $('body').off('keypress', '#batchSearch');
+   $('body').on('keypress', '#batchSearch', function (e) {
+      return IsAlphaNumeric(e);
+   });
+
+   $('body').off('keyup', '#batchSearch');
+   $('body').on('keyup', '#batchSearch', function (e) {
+      filterBatches(e);
+   });
+
+   $('body').off('paste', '#batchSearch');
+   $('body').on('paste', '#batchSearch', function (e) {
+      var element = this;
+      setTimeout(function () {
+         var text = $(element).val();
+         $(element).val(text.replace(/[^ a-zA-Z0-9]/g, ''));
+      }, 100);
+   });
+
+   // show hide complete cards
+   $('body').off('change', '#ShowComplete');
+   $('body').on('change', '#ShowComplete', function () {
+      var ck = this.checked;
+      if (ck) {
+         $(".multi-collapse").collapse('show');
+      } else {
+         $(".multi-collapse").collapse('hide');
+      }
    });
 
    // detailed batch edit
@@ -144,7 +174,7 @@ $(document).ready(function () {
       }
    });
 
-   // TODO Delete Batch left off
+   // Delete Batch 
    $('body').off('click', 'button[name="deleteBatchButton"]');
    $('body').on('click', 'button[name="deleteBatchButton"]', function () {
       if (confirm('Are you sure?')) {
@@ -160,7 +190,54 @@ $(document).ready(function () {
       getStatusChart(id);
    }
 
+   // resize graph on print
+   //window.addEventListener("beforeprint", function (event) {
+   //   for (var id in Chart.instances) {
+   //      Chart.instances[id].resize()
+   //      this.alert('resized');
+   //   }
+   //});
+
+  
+
 });
+
+function filterBatches() {
+
+   var input, filter, ul, li, li2, a, i;
+   input = document.getElementById('batchSearch');
+   filter = input.value.toUpperCase();
+
+   var partial = '';
+   var list = filter.split(' ');
+
+   for (i = 0; i < list.length; i++) {
+      if (list[i] !== '') {
+         var pre = partial;
+         var word = '(?=.*\\b'.concat(list[i], '\\w*\\b)');
+         partial = pre.concat(word);
+      }
+   };
+
+   var pattern = partial.concat('.*');
+   var regEx = new RegExp(pattern, 'i');
+
+   cardsContainer = document.getElementById('batchesContainer');
+   cards = cardsContainer.getElementsByClassName('card');
+   for (i = 0; i < cards.length; i++) {
+
+      var cls = cards[i].classList;
+      if (cls.contains('d-none')) {
+         cls.remove('d-none')
+      }
+
+      var testData = cards[i].textContent;
+      testData = testData.replace(/(\W)/gm, ' x ');
+      if (!regEx.test(testData)) {
+         cls.add('d-none');
+      }
+   };
+}
 
 function updateBatch(id) {
    const uri = '/api/journal';
@@ -195,7 +272,7 @@ function updateBatch(id) {
 
       // validate vintage
       var vintage = parseInt($('#Vintage').val());
-      if (!$.isNumeric(vintage) || vintage < 2016 || vintage > 2040) {
+      if (!$.isNumeric(vintage) || vintage < 2015 || vintage > 2040) {
          vintage = null;
       };
 
@@ -207,7 +284,7 @@ function updateBatch(id) {
          Vintage: vintage,
          VarietyId: variety,
          YeastId: yeast,
-         MaloCultureId: 1
+         MaloCultureId: malo
       };
 
       $.ajax({
@@ -307,7 +384,7 @@ function updateBatchTarget(id) {
             // show complete
             $('#targetUpdateToast').toast({ delay: 2000 });
             $('#targetUpdateToast').toast('show');
-           
+
          },
          error: function (xmlHttpRequest, textStatus, errorThrown) {
             alert('something went wrong');
@@ -383,12 +460,11 @@ function addBatchEntry(id) {
    // validate date
    var aDate = new Date(Date.now());
    if ($('#batchEntryModal_actionDate').val()) {
-      // var tmpDate = new Date($('#batchEntryModal_actionDate').val());
       var tmpDate = new Date($('#batchEntryModal_actionDate').val().replace(/-/g, '/'));
 
       // in last 30 days
       var targetDate = new Date();
-      targetDate.setDate(aDate.getDate() - 30);
+      targetDate.setFullYear(targetDate.getFullYear() - 7);
       if (tmpDate < Date.now() && tmpDate > targetDate) {
          aDate = tmpDate;
       }
@@ -467,6 +543,9 @@ function addBatchEntry(id) {
 
          console.log('successful batch entry created');
 
+         // clear text
+         clearAddEntry();
+
          // close modal window
          $('#batchEntryToast').toast({ delay: 2000 });
          $('#batchEntryToast').toast('show');
@@ -484,6 +563,7 @@ function addBatchEntry(id) {
 }
 
 function getStatusChart(id) {
+
 
    const uri = '/api/journal/batchChart/';
    var jwt = $('#BatchJwt').val();
@@ -583,6 +663,11 @@ function showAddEntry(id) {
    //alert(id);
    $('#batchEntryModal_id').val(id);
    $('#batchEntryModal').modal();
+}
+
+function clearAddEntry() {
+   $('#batchEntryModal input[type="text"]').val('');
+   $('#batchEntryModal textarea').val('');
 }
 
 function addToChart(batchEntry) {

@@ -3,12 +3,12 @@
    <div class="card-body">
 
       <div class="d-flex card-title h5">
-         @Model.ActionDateTime &nbsp;<button class="btn btn-outline-secondary btn-sm" name="delBatchEntryButton" data-id="@Model.Id"><i class="fa fa-trash-o"></i></button>
+         @Model.ActionDateTime &nbsp;<button class="btn btn-outline-secondary btn-sm d-print-none" name="delBatchEntryButton" data-id="@Model.Id"><i class="fa fa-trash-o"></i></button>
       </div>
 
       <div class="d-flex ml-3">
          @if (Model.Sugar.HasValue)
-         {<div class="p-2"><strong>Sugar</strong>: @Model.Sugar @Model.SugarUom</div>}      
+         {<div class="p-2"><strong>Sugar</strong>: @(@Model.SugarUom == "SG" ? Model.Sugar.Value.ToString("0.000") : Model.Sugar.ToString()) @Model.SugarUom</div>}
          @if (Model.Temp.HasValue)
          {<div class="p-2"><strong>Temp</strong>: @Model.Temp &deg;@Model.TempUom</div>}
       </div>
@@ -32,16 +32,16 @@
       @if (!string.IsNullOrWhiteSpace(Model.Additions))
       {
          <div class="d-flex ml-3 mb-2">
-            <strong class="pl-2">Additions</strong>:
-            <textarea class="form-control border-0 pl-2 pt-0 bg-transparent" rows="3" disabled>@Model.Additions</textarea>
+            <strong class="pl-2">Additions</strong>:&nbsp;
+            <pre>@Model.Additions</pre>
          </div>
       }
 
       @if (!string.IsNullOrWhiteSpace(Model.Comments))
       {
          <div class="d-flex ml-3">
-            <strong class="pl-2">Comments</strong>:
-            <textarea class="form-control border-0 pl-2 pt-0 bg-transparent" rows="3" disabled>@Model.Comments</textarea>
+            <strong class="pl-2">Comments</strong>:&nbsp;
+            <pre>@Model.Comments</pre>
          </div>
       }
 

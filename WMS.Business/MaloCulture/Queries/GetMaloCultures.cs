@@ -138,5 +138,15 @@ namespace WMS.Business.MaloCulture.Queries
       {
          throw new System.NotImplementedException();
       }
+
+      public List<MaloCultureDto> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<MaloCultureDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

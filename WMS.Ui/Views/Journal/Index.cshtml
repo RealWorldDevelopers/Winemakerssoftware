@@ -7,35 +7,27 @@
    </div>
    <div class="card-body">
 
-      Show Screens Shots if not logged in <br /><br />
-      must look good mobile <br /><br />
-
-
+      work on print css for recipe and batch <br /><br />
 
       <div>
          <label class="d-none d-md-block">
             <input class="form-control" inputmode="search" type="search" placeholder="Search for ..." id="batchSearch" />
-
          </label>
       </div>
-
-      <br /><br />
-
-      sort and/or filter for active
-
-      <br /><br />
-
-      <a href="/journal/add" class="btn btn-outline-secondary btn-block" title="Add a New Batch">Add New Batch</a>
-
-      <br /><br />
-
-      <div class="card-columns">
+      <div>
+         <a href="/journal/add" class="btn btn-outline-secondary btn-block" title="Add a New Batch">Add New Batch</a>
+      </div>
+      <div class="form-check m-2">
+         <label class="form-check-label">
+            <input id="ShowComplete" type="checkbox" class="form-check-input" value="">Show Completed Batches
+         </label>
+      </div>
+      <div id="batchesContainer" class="card-columns">
          @foreach (var batch in Model.Batches)
          {
             <partial name="_BatchListItem" model="batch" />
          }
       </div>
-
    </div>
 </div>
 

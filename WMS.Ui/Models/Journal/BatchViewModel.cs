@@ -37,7 +37,7 @@ namespace WMS.Ui.Models.Journal
       public int? VolumeUOM { get; set; }
 
       [Required(ErrorMessage = "Vintage is required")]
-      [Range(2016, 2040, ErrorMessage = "Enter a Valid Year for Vintage")]
+      [Range(2015, 2040, ErrorMessage = "Enter a Valid Year for Vintage")]
       public int? Vintage { get; set; }
 
       public int? RecipeId { get; set; }

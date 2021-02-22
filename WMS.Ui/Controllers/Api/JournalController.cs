@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -110,30 +109,7 @@ namespace WMS.Ui.Controllers.Api
          }
       }
 
-
-      // TODO DELETE if not used
-      //[HttpGet("batchEntrySummary/{id}")]
-      //public async Task<IActionResult> GetBatchEntrySummaryAsync(int id)
-      //{
-      //   try
-      //   {
-      //      var entriesQuery = _queryFactory.CreateBatchEntriesQuery();
-      //      var entriesDto = await entriesQuery.ExecuteAsync().ConfigureAwait(false);
-      //      var batchEntriesDto = entriesDto.Where(e => e.BatchId == id)
-      //         .OrderByDescending(e => e.ActionDateTime).ThenByDescending(e => e.EntryDateTime).ToList();
-
-      //      var model = _modelFactory.CreatBatchSummaryViewModel(batchEntriesDto);
-
-      //      return Ok(model);
-
-      //   }
-      //   catch (Exception)
-      //   {
-      //      return StatusCode(500);
-      //      throw;
-      //   }
-      //}
-
+           
       [HttpGet("batchChart/{id}")]
       public async Task<IActionResult> GetBatchEntryChartDataAsync(int id)
       {

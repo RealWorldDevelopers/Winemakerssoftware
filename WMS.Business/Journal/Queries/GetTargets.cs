@@ -82,5 +82,15 @@ namespace WMS.Business.Journal.Queries
       {
          throw new NotImplementedException();
       }
+
+      public List<TargetDto> ExecuteByUser(string userId)
+      {
+         throw new NotImplementedException();
+      }
+
+      public Task<List<TargetDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new NotImplementedException();
+      }
    }
 }

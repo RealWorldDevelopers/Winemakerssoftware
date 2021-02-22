@@ -7,7 +7,7 @@ const spCaches = {
 };
 
 var OFFLINEFILE = 'fallBack.html';
-const staticMaxAge = 60 * 60 * 24 * 30; // seconds x minutes x hours x days = age // this is one month
+const staticMaxAge = 60;// * 60 * 24 * 30; // seconds x minutes x hours x days = age // this is one month
 const dynamicTimeoutSeconds = 4;
 const dynamicMaxEntries = 50;
 

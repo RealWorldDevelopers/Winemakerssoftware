@@ -92,5 +92,15 @@ namespace WMS.Business.Image.Queries
       {
          throw new System.NotImplementedException();
       }
+
+      public List<ImageDto> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<ImageDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

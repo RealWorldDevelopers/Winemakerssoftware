@@ -241,5 +241,15 @@ namespace WMS.Business.Recipe.Queries
       {
          throw new System.NotImplementedException();
       }
+
+      public List<RecipeDto> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public Task<List<RecipeDto>> ExecuteByUserAsync(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
    }
 }

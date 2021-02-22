@@ -35,6 +35,17 @@ var cssAlert_Success = 'alert alert-success';
 var cssAlert_Info = 'alert alert-info';
 var cssAlert_Warning = 'alert alert-warning';
 
+var specialKeys = new Array();
+specialKeys.push(8); //Backspace
+specialKeys.push(9); //Tab
+specialKeys.push(46); //Delete
+specialKeys.push(36); //Home
+specialKeys.push(35); //End
+specialKeys.push(37); //Left
+specialKeys.push(39); //Right
+specialKeys.push(32); //(Space)
+
+
 $(document).ready(function () {
 
    $(window).bind('beforeunload', function () {
