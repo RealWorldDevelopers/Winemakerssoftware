@@ -186,18 +186,23 @@ namespace WMS.Ui.Controllers
          Business.Journal.Dto.TargetDto target = null;
 
          if (model.Target.HasTargetData())
+         {
             target = new Business.Journal.Dto.TargetDto
             {
                EndSugar = model.Target.EndingSugar,
-               EndSugarUom = uomSugarList.FirstOrDefault(u => u.Id == model.Target.EndSugarUOM.Value),
                pH = model.Target.pH,
                StartSugar = model.Target.StartingSugar,
-               StartSugarUom = uomSugarList.FirstOrDefault(u => u.Id == model.Target.StartSugarUOM.Value),
                TA = model.Target.TA,
                Temp = model.Target.FermentationTemp,
-               TempUom = uomTempList.FirstOrDefault(u => u.Id == model.Target.TempUOM.Value)
             };
 
+            if (model.Target.StartSugarUOM.HasValue)
+               target.StartSugarUom = uomSugarList.FirstOrDefault(u => u.Id == model.Target.StartSugarUOM.Value);
+            if (model.Target.EndSugarUOM.HasValue)
+               target.EndSugarUom = uomSugarList.FirstOrDefault(u => u.Id == model.Target.EndSugarUOM.Value);         
+            if (model.Target.TempUOM.HasValue)
+               target.TempUom = uomTempList.FirstOrDefault(u => u.Id == model.Target.TempUOM.Value);
+         }
          // convert add model to recipe dto
          var recipeDto = new Business.Recipe.Dto.RecipeDto
          {

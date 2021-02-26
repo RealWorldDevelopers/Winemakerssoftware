@@ -22,6 +22,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 using WMS.Business.Journal.Dto;
+using WMS.Business.MaloCulture.Dto;
 
 namespace WMS.Ui.Controllers
 {
@@ -35,6 +36,8 @@ namespace WMS.Ui.Controllers
       private readonly Business.Recipe.Commands.IFactory _recipeCommandFactory;
       private readonly Business.Yeast.Queries.IFactory _yeastQueryFactory;
       private readonly Business.Yeast.Commands.IFactory _yeastCommandFactory;
+      private readonly Business.MaloCulture.Queries.IFactory _maloQueryFactory;
+      private readonly Business.MaloCulture.Commands.IFactory _maloCommandFactory;
       private readonly Business.Journal.Queries.IFactory _journalQueryFactory;
       private readonly Business.Journal.Commands.IFactory _journalCommandFactory;
 
@@ -42,7 +45,8 @@ namespace WMS.Ui.Controllers
 
       public AdminController(IConfiguration configuration, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
           Business.Recipe.Queries.IFactory recipeQueryFactory, Business.Recipe.Commands.IFactory recipeCommandFactory, Business.Yeast.Queries.IFactory yeastQueryFactory,
-          Business.Journal.Commands.IFactory journalCommandFactory, Business.Journal.Queries.IFactory journalQueryFactory, Business.Yeast.Commands.IFactory yeastCommandFactory, IMapper mapper, Models.Admin.IFactory modelFactory,
+          Business.Journal.Commands.IFactory journalCommandFactory, Business.Journal.Queries.IFactory journalQueryFactory, Business.Yeast.Commands.IFactory yeastCommandFactory,
+          Business.MaloCulture.Commands.IFactory maloCommandFactory, Business.MaloCulture.Queries.IFactory maloQueryFactory, IMapper mapper, Models.Admin.IFactory modelFactory,
           IOptions<AppSettings> appSettings, IStringLocalizer<AdminController> localizer, TelemetryClient telemetry) : base(configuration, userManager, roleManager, telemetry)
       {
          _localizer = localizer;
@@ -55,6 +59,8 @@ namespace WMS.Ui.Controllers
          _yeastCommandFactory = yeastCommandFactory;
          _journalQueryFactory = journalQueryFactory;
          _journalCommandFactory = journalCommandFactory;
+         _maloQueryFactory = maloQueryFactory;
+         _maloCommandFactory = maloCommandFactory;
       }
 
       public async Task<IActionResult> Index(string id)
@@ -67,6 +73,7 @@ namespace WMS.Ui.Controllers
          var getCategoriesQuery = _recipeQueryFactory.CreateCategoriesQuery();
          var getVarietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
          var getRecipesQuery = _recipeQueryFactory.CreateRecipesQuery();
+         var getMaloCulturesQuery = _maloQueryFactory.CreateMaloCulturesQuery();
 
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
@@ -90,6 +97,10 @@ namespace WMS.Ui.Controllers
          var t5 = Task.Run(async () => await getRecipesQuery.ExecuteAsync().ConfigureAwait(false));
          tasks.Add(t5);
          var rList = await t5.ConfigureAwait(false);
+
+         var t6 = Task.Run(async () => await getMaloCulturesQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(t6);
+         var mList = await t6.ConfigureAwait(false);
 
          Task.WaitAll(tasks.ToArray());
 
@@ -139,6 +150,10 @@ namespace WMS.Ui.Controllers
          // gather yeast data   
          model.YeastsViewModel.Yeasts.Clear();
          model.YeastsViewModel.Yeasts.AddRange(_modelFactory.CreateYeastViewModel(yList));
+
+         // gather malolactic data   
+         model.MaloCulturesViewModel.Cultures.Clear();
+         model.MaloCulturesViewModel.Cultures.AddRange(_modelFactory.CreateMaloCultureViewModel(mList));
 
          // gather recipe data   
          model.RecipesViewModel.Recipes.Clear();
@@ -192,7 +207,7 @@ namespace WMS.Ui.Controllers
          var dto = await qry.ExecuteAsync(model.Id).ConfigureAwait(false);
          dto.Title = model.Title;
          dto.Variety.Id = model.Variety.Id;
-         dto.Yeast.Id = model.Yeast.Id;
+         dto.Yeast.Id = model.Yeast.Id ?? 0;
          dto.Description = model.Description;
          dto.Enabled = model.Enabled;
          dto.Hits = model.Hits;
@@ -357,14 +372,86 @@ namespace WMS.Ui.Controllers
 
       #region Malolactic 
 
+      /// <summary>
+      /// Main entry page to enter a Malolactic Culture
+      /// </summary>
+      /// <returns></returns>
       public IActionResult AddMalolacticCulture()
       {
-         // TODO 
          ViewData["Title"] = "Add a Malolactic Culture";
-
          var model = _modelFactory.CreateMaloCultureViewModel();
          return View("UpdateMaloCulture", model);
       }
+
+      /// <summary>
+      /// Main entry page to edit a Malolactic Culture
+      /// </summary>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> EditMalolacticCulture(int Id)
+      {
+         ViewData["Title"] = "Edit a Malolactic Culture";
+
+         var qry = _maloQueryFactory.CreateMaloCulturesQuery();
+         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+         var model = _modelFactory.CreateMaloCultureViewModel(dto);
+         return View("UpdateMaloCulture", model);
+      }
+
+
+      /// <summary>
+      /// Update or Add a new Malolactic Culture in the database
+      /// </summary>
+      /// <param name="model"></param>
+      /// <returns></returns>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> UpdateMalolacticCulture(MaloCultureViewModel model)
+      {
+         if (model == null)
+            throw new ArgumentNullException(nameof(model));
+
+         var dto = new MaloCultureDto
+         {
+            Alcohol = model.Alcohol,
+            Note = model.Note,
+            pH = model.pH,
+            So2 = model.SO2,
+            TempMax = model.TempMax,
+            TempMin = model.TempMin,
+            Trademark = model.Trademark
+         };
+         if (model.Id.HasValue)
+            dto.Id = model.Id.Value;
+         if (model.Style != null)
+            dto.Style = new Code { Id = model.Style.Id };
+         if (model.Brand != null)
+            dto.Brand = new Code { Id = model.Brand.Id };
+
+         var cmd = _maloCommandFactory.CreateMaloCulturesCommand();
+         if (dto.Id == 0)
+            await cmd.AddAsync(dto).ConfigureAwait(false);
+         else
+            await cmd.UpdateAsync(dto).ConfigureAwait(false);
+
+         return RedirectToAction("Index", "Admin", new { id = "malo" });
+      }
+
+      /// <summary>
+      /// Delete a Malolactic Culture from the database
+      /// </summary>
+      /// <param name="Id"> Id of Culture to delete as <see cref="int"/></param>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> DeleteMalolacticCulture(int Id)
+      {
+         var cmd = _maloCommandFactory.CreateMaloCulturesCommand();
+         var qry = _maloQueryFactory.CreateMaloCulturesQuery();
+         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+         await cmd.DeleteAsync(dto).ConfigureAwait(false);
+         return RedirectToAction("Index", "Admin", new { id = "malo" });
+      }
+
 
       #endregion
 
@@ -404,7 +491,24 @@ namespace WMS.Ui.Controllers
       [ValidateAntiForgeryToken]
       public async Task<IActionResult> UpdateYeast(YeastViewModel model)
       {
-         var dto = _mapper.Map<YeastDto>(model);
+         if (model == null)
+            throw new ArgumentNullException(nameof(model));
+
+         var dto = new YeastDto
+         {
+            Alcohol = model.Alcohol,
+            Note = model.Note,          
+            TempMax = model.TempMax,
+            TempMin = model.TempMin,
+            Trademark = model.Trademark
+         };
+         if (model.Id.HasValue)
+            dto.Id = model.Id.Value;
+         if (model.Style != null)
+            dto.Style = new Code { Id = model.Style.Id };
+         if (model.Brand != null)
+            dto.Brand = new Code { Id = model.Brand.Id };
+
          var cmd = _yeastCommandFactory.CreateYeastsCommand();
          if (dto.Id == 0)
             await cmd.AddAsync(dto).ConfigureAwait(false);

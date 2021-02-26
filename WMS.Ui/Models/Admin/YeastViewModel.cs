@@ -12,7 +12,7 @@ namespace WMS.Ui.Models.Admin
             Brands = new List<SelectListItem>();
             Styles = new List<SelectListItem>();
         }
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public YeastBrandViewModel Brand { get; set; }
         public YeastStyleViewModel Style { get; set; }
         public string Trademark { get; set; }

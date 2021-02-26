@@ -198,7 +198,7 @@ $(document).ready(function () {
    //   }
    //});
 
-  
+
 
 });
 
@@ -887,10 +887,10 @@ function buildDisplayEntry(entry) {
          const cardAdditions = document.createElement('div');
          cardAdditions.className = 'd-flex ml-3';
          cardAdditions.innerHTML = '<strong class="pl-2">Additions</strong>: ';
-         const cardAdditionText = document.createElement('textarea');
-         cardAdditionText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
-         cardAdditionText.setAttribute('rows', 3);
-         cardAdditionText.setAttribute('disabled', '');
+         const cardAdditionText = document.createElement('pre');
+         // TODO delete cardAdditionText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
+         //cardAdditionText.setAttribute('rows', 3);
+         //cardAdditionText.setAttribute('disabled', '');
          cardAdditionText.innerHTML = entry.additions;
          cardAdditions.appendChild(cardAdditionText);
          cardBody.appendChild(cardAdditions);
@@ -901,10 +901,10 @@ function buildDisplayEntry(entry) {
          const cardComments = document.createElement('div');
          cardComments.className = 'd-flex ml-3';
          cardComments.innerHTML = '<strong class="pl-2">Comments</strong>: ';
-         const cardCommentText = document.createElement('textarea');
-         cardCommentText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
-         cardCommentText.setAttribute('rows', 3);
-         cardCommentText.setAttribute('disabled', '');
+         const cardCommentText = document.createElement('pre');
+         // TODO delete cardCommentText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
+         // cardCommentText.setAttribute('rows', 3);
+         // cardCommentText.setAttribute('disabled', '');
          cardCommentText.innerHTML = entry.comments;
          cardComments.appendChild(cardCommentText);
          cardBody.appendChild(cardComments);

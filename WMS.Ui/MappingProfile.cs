@@ -111,6 +111,8 @@ namespace WMS.Ui
          CreateMap<WMS.Data.Entities.Ratings, Business.Recipe.Dto.RatingDto>().ReverseMap();
          CreateMap<Business.Yeast.Dto.YeastPairDto, WMS.Data.Entities.YeastPair>().ReverseMap();
 
+         CreateMap<Business.MaloCulture.Dto.MaloCultureDto, WMS.Data.Entities.MaloCultures>().ReverseMap();
+
          CreateMap<WMS.Data.Entities.Varieties, Business.Common.ICode>()
             .ConstructUsing(src => new Business.Common.Code())
             .ForMember(dest => dest.Literal, opt => opt.MapFrom(src => src.Variety))

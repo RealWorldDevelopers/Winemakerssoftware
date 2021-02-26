@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WMS.Business.Recipe.Dto;
 using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
+using WMS.Business.MaloCulture.Dto;
 
 namespace WMS.Ui.Models.Admin
 {
@@ -11,48 +12,41 @@ namespace WMS.Ui.Models.Admin
       AdminViewModel CreateAdminModel(string startingTab = null);
 
       RecipeViewModel CreateRecipeViewModel();
-
       RecipeViewModel CreateRecipeViewModel(RecipeDto recipeDto);
-
       List<RecipeViewModel> CreateRecipeViewModel(List<RecipeDto> recipeDtoList);
 
 
       ImageViewModel CreateImageViewModel(ImageFileDto imageDto);
-
       List<ImageViewModel> CreateImageViewModel(List<ImageFileDto> imageDtoList);
 
 
       CategoryViewModel CreateCategoryViewModel(ICode categoryDto);
-
       List<CategoryViewModel> CreateCategoryViewModel(List<ICode> catDtoList);
 
-
-
       VarietyViewModel CreateVarietyViewModel();
-
       VarietyViewModel CreateVarietyViewModel(ICode varietyDto, ICode parentDto);
-
       List<VarietyViewModel> CreateVarietyViewModel(List<ICode> varDtoList);
 
+
+
       MaloCultureViewModel CreateMaloCultureViewModel();
+      MaloCultureViewModel CreateMaloCultureViewModel(MaloCultureDto maloCultureDto);
+      List<MaloCultureViewModel> CreateMaloCultureViewModel(List<MaloCultureDto> maloDtoList);
+      MaloStyleViewModel CreateMaloStyleViewModel(ICode styleDto);
+      List<MaloStyleViewModel> CreateMaloStyleViewModel(List<ICode> styleDtoList);
+      MaloBrandViewModel CreateMaloBrandViewModel(ICode brandDto);
+      List<MaloBrandViewModel> CreateMaloBrandViewModel(List<ICode> brandDtoList);
+
 
 
       YeastViewModel CreateYeastViewModel();
-
       YeastViewModel CreateYeastViewModel(YeastDto yeastDto);
-
       List<YeastViewModel> CreateYeastViewModel(List<YeastDto> yeastDtoList);
-
-      YeastBrandViewModel CreateYeastBrandViewModel(ICode brandDto);
-
-      List<YeastBrandViewModel> CreateYeastBrandViewModel(List<ICode> brandDtoList);
-
+      YeastBrandViewModel CreateYeastBrandViewModel(ICode brandDto);   
+      List<YeastBrandViewModel> CreateYeastBrandViewModel(List<ICode> brandDtoList);      
       YeastStyleViewModel CreateYeastStyleViewModel(ICode styleDto);
-
-      List<YeastStyleViewModel> CreateYeastStyleViewModel(List<ICode> styleDtoList);
-
+      List<YeastStyleViewModel> CreateYeastStyleViewModel(List<ICode> styleDtoList);  
       YeastPairingViewModel CreateYeastPairingViewModel(YeastPairDto pairingDto);
-
       List<YeastPairingViewModel> CreateYeastPairingViewModel(List<YeastPairDto> pairingDtoList);
 
 

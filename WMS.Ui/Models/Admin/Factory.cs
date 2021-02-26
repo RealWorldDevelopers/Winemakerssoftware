@@ -7,6 +7,7 @@ using System.Linq;
 using WMS.Business.Recipe.Dto;
 using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
+using WMS.Business.MaloCulture.Dto;
 
 namespace WMS.Ui.Models.Admin
 {
@@ -14,22 +15,27 @@ namespace WMS.Ui.Models.Admin
    {
       private readonly Business.Recipe.Queries.IFactory _recipeQueryFactory;
       private readonly Business.Yeast.Queries.IFactory _yeastQueryFactory;
+      private readonly Business.MaloCulture.Queries.IFactory _maloQueryFactory;
       private readonly Business.Journal.Queries.IFactory _journalQueryFactory;
 
       private readonly IQuery<ICode> _getCategoriesQuery;
       private readonly IQuery<ICode> _getVarietiesQuery;
       private readonly IQuery<YeastDto> _getYeastsQuery;
       private readonly IQuery<YeastPairDto> _getYeastPairsQuery;
-      private readonly IQuery<ICode> _getBrandsQuery;
-      private readonly IQuery<ICode> _getStylesQuery;
+      private readonly IQuery<ICode> _getYeastBrandsQuery;
+      private readonly IQuery<ICode> _getYeastStylesQuery;
+      private readonly IQuery<ICode> _getMaloBrandsQuery;
+      private readonly IQuery<ICode> _getMaloStylesQuery;
 
       private readonly IQuery<IUnitOfMeasure> _getSugarUOMQuery;
       private readonly IQuery<IUnitOfMeasure> _getTempUOMQuery;
 
       private readonly List<ICode> _categoriesDtoList;
       private readonly List<ICode> _varietiesDtoList;
-      private readonly List<ICode> _brandsDtoList;
-      private readonly List<ICode> _stylesDtoList;
+      private readonly List<ICode> _yeastBrandsDtoList;
+      private readonly List<ICode> _yeastStylesDtoList;
+      private readonly List<ICode> _maloBrandsDtoList;
+      private readonly List<ICode> _maloStylesDtoList;
       private readonly List<YeastDto> _yeastsDtoList;
       private readonly List<YeastPairDto> _yeastPairingsDtoList;
 
@@ -37,19 +43,21 @@ namespace WMS.Ui.Models.Admin
       private readonly List<IUnitOfMeasure> _getTempUomList;
 
       public Factory(Business.Recipe.Queries.IFactory recipeQueryFactory, Business.Yeast.Queries.IFactory yeastQueryFactory,
-         Business.Journal.Queries.IFactory journalQueryFactory)
+         Business.MaloCulture.Queries.IFactory maloQueryFactory, Business.Journal.Queries.IFactory journalQueryFactory)
       {
          _recipeQueryFactory = recipeQueryFactory ?? throw new ArgumentNullException(nameof(recipeQueryFactory));
          _yeastQueryFactory = yeastQueryFactory ?? throw new ArgumentNullException(nameof(yeastQueryFactory));
          _journalQueryFactory = journalQueryFactory ?? throw new ArgumentNullException(nameof(journalQueryFactory));
+         _maloQueryFactory = maloQueryFactory ?? throw new ArgumentNullException(nameof(maloQueryFactory));
 
          _getCategoriesQuery = _recipeQueryFactory.CreateCategoriesQuery();
          _getVarietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
          _getYeastsQuery = _yeastQueryFactory.CreateYeastsQuery();
          _getYeastPairsQuery = _yeastQueryFactory.CreateYeastPairQuery();
-         _getBrandsQuery = _yeastQueryFactory.CreateBrandsQuery();
-         _getStylesQuery = _yeastQueryFactory.CreateStylesQuery();
-
+         _getYeastBrandsQuery = _yeastQueryFactory.CreateBrandsQuery();
+         _getYeastStylesQuery = _yeastQueryFactory.CreateStylesQuery();
+         _getMaloBrandsQuery = _maloQueryFactory.CreateBrandsQuery();
+         _getMaloStylesQuery = _maloQueryFactory.CreateStylesQuery();
          _getSugarUOMQuery = _journalQueryFactory.CreateBatchSugarUOMQuery();
          _getTempUOMQuery = _journalQueryFactory.CreateBatchTempUOMQuery();
 
@@ -57,8 +65,11 @@ namespace WMS.Ui.Models.Admin
          _varietiesDtoList = _getVarietiesQuery.Execute();
          _yeastsDtoList = _getYeastsQuery.Execute();
          _yeastPairingsDtoList = _getYeastPairsQuery.Execute();
-         _brandsDtoList = _getBrandsQuery.Execute();
-         _stylesDtoList = _getStylesQuery.Execute();
+         _yeastBrandsDtoList = _getYeastBrandsQuery.Execute();
+         _yeastStylesDtoList = _getMaloStylesQuery.Execute();
+
+         _maloBrandsDtoList = _getMaloBrandsQuery.Execute();
+         _maloStylesDtoList = _getYeastStylesQuery.Execute();
 
          _getSugarUomList = _getSugarUOMQuery.Execute();
          _getTempUomList = _getTempUOMQuery.Execute();
@@ -74,6 +85,7 @@ namespace WMS.Ui.Models.Admin
          model.CategoriesViewModel = new CategoriesViewModel();
          model.VarietiesViewModel = new VarietiesViewModel();
          model.YeastsViewModel = new YeastsViewModel();
+         model.MaloCulturesViewModel = new MaloCulturesViewModel();
          model.RecipesViewModel = new RecipesViewModel();
 
          return model;
@@ -247,8 +259,6 @@ namespace WMS.Ui.Models.Admin
          return models;
       }
 
-
-
       public VarietyViewModel CreateVarietyViewModel()
       {
          var model = new VarietyViewModel();
@@ -288,19 +298,112 @@ namespace WMS.Ui.Models.Admin
       }
 
 
+
+
       public MaloCultureViewModel CreateMaloCultureViewModel()
       {
          var model = new MaloCultureViewModel();
-        // model.Brands.AddRange(CreateSelectList("Brand", _brandsDtoList));
-        // model.Styles.AddRange(CreateSelectList("Style", _stylesDtoList));
+         model.Brands.AddRange(CreateSelectList("Brand", _maloBrandsDtoList));
+         model.Styles.AddRange(CreateSelectList("Style", _maloStylesDtoList));
          return model;
       }
+
+      public MaloCultureViewModel CreateMaloCultureViewModel(MaloCultureDto maloCultureDto)
+      {
+         if (maloCultureDto == null)
+            throw new ArgumentNullException(nameof(maloCultureDto));
+
+         var model = new MaloCultureViewModel
+         {
+            Id = maloCultureDto.Id,
+            Brand = CreateMaloBrandViewModel(maloCultureDto.Brand),
+            Style = CreateMaloStyleViewModel(maloCultureDto.Style),
+            Trademark = maloCultureDto.Trademark,
+            TempMax = maloCultureDto.TempMax,
+            TempMin = maloCultureDto.TempMin,
+            Alcohol = maloCultureDto.Alcohol,
+            pH=maloCultureDto.pH,
+            SO2=maloCultureDto.So2,
+            Note = maloCultureDto.Note
+         };
+         model.Brands.AddRange(CreateSelectList("Brand", _maloBrandsDtoList));
+         model.Styles.AddRange(CreateSelectList("Style", _maloStylesDtoList));
+
+         return model;
+      }
+
+      public List<MaloCultureViewModel> CreateMaloCultureViewModel(List<MaloCultureDto> maloDtoList)
+      {
+         var models = new List<MaloCultureViewModel>();
+         foreach (var dto in maloDtoList.OrderBy(m => m.Brand.Literal).ThenBy(m => m.Trademark))
+         {
+            models.Add(CreateMaloCultureViewModel(dto));
+         }
+         return models;
+      }
+
+      public MaloBrandViewModel CreateMaloBrandViewModel(ICode brandDto)
+      {
+         if (brandDto == null)
+            throw new ArgumentNullException(nameof(brandDto));
+
+         var model = new MaloBrandViewModel
+         {
+            Description = brandDto.Description,
+            Enabled = brandDto.Enabled,
+            Id = brandDto.Id,
+            Literal = brandDto.Literal
+         };
+         return model;
+      }
+
+      public List<MaloBrandViewModel> CreateMaloBrandViewModel(List<ICode> brandDtoList)
+      {
+         var models = new List<MaloBrandViewModel>();
+         if (brandDtoList != null)
+         {
+            foreach (var brand in brandDtoList)
+            {
+               models.Add(CreateMaloBrandViewModel(brand));
+            }
+         }
+         return models;
+      }
+
+      public MaloStyleViewModel CreateMaloStyleViewModel(ICode styleDto)
+      {
+         if (styleDto == null)
+            throw new ArgumentNullException(nameof(styleDto));
+
+         var model = new MaloStyleViewModel
+         {
+            Description = styleDto.Description,
+            Enabled = styleDto.Enabled,
+            Id = styleDto.Id,
+            Literal = styleDto.Literal
+         };
+         return model;
+      }
+
+      public List<MaloStyleViewModel> CreateMaloStyleViewModel(List<ICode> styleDtoList)
+      {
+         var models = new List<MaloStyleViewModel>();
+         if (styleDtoList != null)
+         {
+            foreach (var style in styleDtoList)
+            {
+               models.Add(CreateMaloStyleViewModel(style));
+            }
+         }
+         return models;
+      }
+
 
       public YeastViewModel CreateYeastViewModel()
       {
          var model = new YeastViewModel();
-         model.Brands.AddRange(CreateSelectList("Brand", _brandsDtoList));
-         model.Styles.AddRange(CreateSelectList("Style", _stylesDtoList));
+         model.Brands.AddRange(CreateSelectList("Brand", _yeastBrandsDtoList));
+         model.Styles.AddRange(CreateSelectList("Style", _yeastStylesDtoList));
          return model;
       }
 
@@ -320,8 +423,8 @@ namespace WMS.Ui.Models.Admin
             Alcohol = yeastDto.Alcohol,
             Note = yeastDto.Note
          };
-         model.Brands.AddRange(CreateSelectList("Brand", _brandsDtoList));
-         model.Styles.AddRange(CreateSelectList("Style", _stylesDtoList));
+         model.Brands.AddRange(CreateSelectList("Brand", _yeastBrandsDtoList));
+         model.Styles.AddRange(CreateSelectList("Style", _yeastStylesDtoList));
 
          var dto = new YeastPairDto { Yeast = yeastDto.Id };
          model.Pairing = CreateYeastPairingViewModel(dto);
@@ -629,6 +732,6 @@ namespace WMS.Ui.Models.Admin
          return list;
       }
 
-    
+
    }
 }
