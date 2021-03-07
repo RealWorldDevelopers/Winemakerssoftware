@@ -888,9 +888,6 @@ function buildDisplayEntry(entry) {
          cardAdditions.className = 'd-flex ml-3';
          cardAdditions.innerHTML = '<strong class="pl-2">Additions</strong>: ';
          const cardAdditionText = document.createElement('pre');
-         // TODO delete cardAdditionText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
-         //cardAdditionText.setAttribute('rows', 3);
-         //cardAdditionText.setAttribute('disabled', '');
          cardAdditionText.innerHTML = entry.additions;
          cardAdditions.appendChild(cardAdditionText);
          cardBody.appendChild(cardAdditions);
@@ -902,9 +899,6 @@ function buildDisplayEntry(entry) {
          cardComments.className = 'd-flex ml-3';
          cardComments.innerHTML = '<strong class="pl-2">Comments</strong>: ';
          const cardCommentText = document.createElement('pre');
-         // TODO delete cardCommentText.className = 'form-control border-0 pl-2 pt-0 bg-transparent';
-         // cardCommentText.setAttribute('rows', 3);
-         // cardCommentText.setAttribute('disabled', '');
          cardCommentText.innerHTML = entry.comments;
          cardComments.appendChild(cardCommentText);
          cardBody.appendChild(cardComments);

@@ -164,7 +164,7 @@ namespace WMS.Ui.Models.Journal
             newModel.Vintage = dto.Vintage;
             newModel.Volume = dto.Volume;
             newModel.VolumeUOM = dto.VolumeUom?.Id;
-            newModel.YeastId = dto.YeastId;
+            newModel.YeastId = dto.Yeast?.Id;
             newModel.MaloCultureId = dto.MaloCultureId;
             newModel.Target = CreateTargetViewModel(dto.Target, dtoSugarUOMList, dtoTempUOMList);
          }

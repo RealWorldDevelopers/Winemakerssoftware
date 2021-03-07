@@ -14,6 +14,9 @@
             <a id="recipes" class="nav-link active" data-toggle="tab" href="#recipesTab">Recipes</a>
          </li>
          <li class="nav-item">
+            <a id="journals" class="nav-link" data-toggle="tab" href="#journalsTab">Journals</a>
+         </li>
+         <li class="nav-item">
             <a id="yeasts" class="nav-link" data-toggle="tab" href="#yeastsTab">Yeasts</a>
          </li>
          <li class="nav-item">
@@ -40,6 +43,10 @@
 
       <div id="recipesTab" class="container tab-pane active">
          <partial name="_EditRecipes" model="Model.RecipesViewModel" />
+      </div>
+
+      <div id="journalsTab" class="container tab-pane">
+         <partial name="_EditJournals" model="Model.JournalsViewModel" />
       </div>
 
       <div id="yeastsTab" class="container tab-pane fade">

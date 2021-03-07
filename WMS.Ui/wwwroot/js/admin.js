@@ -15,12 +15,28 @@
       $('#frmEditRecipe').submit();
    });
 
+   $('body').off('click', 'button[name="editJournalButton"]');
+   $('body').on('click', 'button[name="editJournalButton"]', function () {
+      var id = $(this).data('id');
+      $('#editJournalId').val(id);
+      $('#frmEditJournal').submit();
+   });
+
    $('body').off('click', 'button[name="deleteRecipeButton"]');
    $('body').on('click', 'button[name="deleteRecipeButton"]', function () {
       if (confirm('Are you sure?')) {
          var id = $(this).data('id');
          $('#deleteRecipeId').val(id);
          $('#frmDeleteRecipe').submit();
+      }
+   });
+
+   $('body').off('click', 'button[name="deleteJournalButton"]');
+   $('body').on('click', 'button[name="deleteJournalButton"]', function () {
+      if (confirm('Are you sure?')) {
+         var id = $(this).data('id');
+         $('#deleteJournalId').val(id);
+         $('#frmDeleteJournal').submit();
       }
    });
 
@@ -224,8 +240,38 @@
       }, 100);
    });
 
+   //search journals bar functions
+   $('body').off('keypress', '#journalsSearch');
+   $('body').on('keypress', '#journalsSearch', function (e) {
+      return IsAlphaNumeric(e);
+   });
 
-   // alert('admin page opened');
+   $('body').off('keyup', '#journalsSearch');
+   $('body').on('keyup', '#journalsSearch', function (e) {
+      filterJournals(e);
+   });
+
+   $('body').off('paste', '#journalsSearch');
+   $('body').on('paste', '#journalsSearch', function (e) {
+      var element = this;
+      setTimeout(function () {
+         var text = $(element).val();
+         $(element).val(text.replace(/[^ a-zA-Z0-9]/g, ''));
+      }, 100);
+   });
+
+   // delete batch entry click
+   $('body').off('click', 'button[name="delBatchEntryButton"]');
+   $('body').on('click', 'button[name="delBatchEntryButton"]', function () {
+      if (confirm('Are you sure?')) {
+         var id = $(this).data('id');
+         $('#deleteBatchEntryId').val(id);
+         $('#frmDeleteBatchEntry').submit();
+      }
+   });
+
+   
+
 });
 
 function filterUsers() {
@@ -302,7 +348,42 @@ function filterRecipe() {
    };
 }
 
+function filterJournals() {
 
+   var input, filter, ul, li, li2, a, i;
+   input = document.getElementById('journalsSearch');
+   filter = input.value.toUpperCase();
+
+   var partial = '';
+   var list = filter.split(' ');
+
+   for (i = 0; i < list.length; i++) {
+      if (list[i] != '') {
+         var pre = partial;
+         var word = '(?=.*\\b'.concat(list[i], '\\w*\\b)');
+         partial = pre.concat(word);
+      }
+   };
+
+   var pattern = partial.concat('.*');
+   var regEx = new RegExp(pattern, 'i');
+
+   ul = document.getElementById('ulJournal');
+   li = ul.getElementsByTagName('li');
+   for (i = 1; i < li.length; i++) {
+
+      var cls = li[i].classList;
+      if (cls.contains('d-none')) {
+         cls.remove('d-none')
+      }
+
+      var testData = li[i].textContent;
+      testData = testData.replace(/(\W)/gm, ' x ');
+      if (!regEx.test(testData)) {
+         cls.add('d-none');
+      }
+   };
+}
 
 
 

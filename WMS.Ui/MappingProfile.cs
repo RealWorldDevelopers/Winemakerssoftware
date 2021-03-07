@@ -72,17 +72,21 @@ namespace WMS.Ui
          CreateMap<WMS.Data.Entities.Batches, Business.Journal.Dto.BatchDto>()
             .ForMember(dest => dest.VolumeUom, opt => opt.Ignore())
             .ForMember(dest => dest.Variety, opt => opt.Ignore())
+            .ForMember(dest => dest.Yeast, opt => opt.Ignore())
             .ForMember(dest => dest.Target, opt => opt.Ignore())
             .AfterMap((src, dest) => { dest.VolumeUom = src.VolumeUomId.HasValue ? new Business.Common.UnitOfMeasure { Id = src.VolumeUomId.Value } : null; })
             .AfterMap((src, dest) => { dest.Variety = src.VarietyId.HasValue ? new Business.Common.Code { Id = src.VarietyId.Value } : null; })
+            .AfterMap((src, dest) => { dest.Yeast = src.YeastId.HasValue ? new Business.Yeast.Dto.YeastDto { Id = src.YeastId.Value } : null; })
             .AfterMap((src, dest) => { dest.Target = src.TargetId.HasValue ? new Business.Journal.Dto.TargetDto { Id = src.TargetId.Value } : null; });
 
          CreateMap<Business.Journal.Dto.BatchDto, WMS.Data.Entities.Batches>()
             .ForMember(dest => dest.VolumeUom, opt => opt.Ignore())
             .ForMember(dest => dest.Variety, opt => opt.Ignore())
+            .ForMember(dest => dest.Yeast, opt => opt.Ignore())
             .ForMember(dest => dest.Target, opt => opt.Ignore())
             .ForMember(dest => dest.VolumeUomId, opt => opt.MapFrom(src => src.VolumeUom.Id))
             .ForMember(dest => dest.VarietyId, opt => opt.MapFrom(src => src.Variety.Id))
+            .ForMember(dest => dest.YeastId, opt => opt.MapFrom(src => src.Yeast.Id))
             .ForMember(dest => dest.TargetId, opt => opt.MapFrom(src => src.Target.Id));
 
          CreateMap<WMS.Data.Entities.Targets, Business.Journal.Dto.TargetDto>()

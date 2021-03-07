@@ -74,37 +74,42 @@ namespace WMS.Ui.Controllers
          var getVarietiesQuery = _recipeQueryFactory.CreateVarietiesQuery();
          var getRecipesQuery = _recipeQueryFactory.CreateRecipesQuery();
          var getMaloCulturesQuery = _maloQueryFactory.CreateMaloCulturesQuery();
+         var getJournalsQuery = _journalQueryFactory.CreateBatchesQuery();
 
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
 
-         var t1 = Task.Run(async () => await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false));
-         tasks.Add(t1);
-         var cList = await t1.ConfigureAwait(false);
+         var categoryTask = Task.Run(async () => await getCategoriesQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(categoryTask);
+         var cList = await categoryTask.ConfigureAwait(false);
 
-         var t2 = Task.Run(async () => await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false));
-         tasks.Add(t2);
-         var vList = await t2.ConfigureAwait(false);
+         var varietyTask = Task.Run(async () => await getVarietiesQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(varietyTask);
+         var vList = await varietyTask.ConfigureAwait(false);
 
-         var t3 = Task.Run(async () => await getYeastQuery.ExecuteAsync().ConfigureAwait(false));
-         tasks.Add(t3);
-         var yList = await t3.ConfigureAwait(false);
+         var yeastTask = Task.Run(async () => await getYeastQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(yeastTask);
+         var yList = await yeastTask.ConfigureAwait(false);
 
-         var t4 = Task.Run(async () => await getYeastPairs.ExecuteAsync().ConfigureAwait(false));
-         tasks.Add(t4);
-         var ypList = await t4.ConfigureAwait(false);
+         var pairsTask = Task.Run(async () => await getYeastPairs.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(pairsTask);
+         var ypList = await pairsTask.ConfigureAwait(false);
 
-         var t5 = Task.Run(async () => await getRecipesQuery.ExecuteAsync().ConfigureAwait(false));
-         tasks.Add(t5);
-         var rList = await t5.ConfigureAwait(false);
+         var recipeTask = Task.Run(async () => await getRecipesQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(recipeTask);
+         var rList = await recipeTask.ConfigureAwait(false);
 
-         var t6 = Task.Run(async () => await getMaloCulturesQuery.ExecuteAsync().ConfigureAwait(false));
-         tasks.Add(t6);
-         var mList = await t6.ConfigureAwait(false);
+         var maloTask = Task.Run(async () => await getMaloCulturesQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(maloTask);
+         var mList = await maloTask.ConfigureAwait(false);
+
+         var journalTask = Task.Run(async () => await getJournalsQuery.ExecuteAsync().ConfigureAwait(false));
+         tasks.Add(journalTask);
+         var jList = await journalTask.ConfigureAwait(false);
 
          Task.WaitAll(tasks.ToArray());
 
-
+         // build model
          var model = _modelFactory.CreateAdminModel(id);
 
          // make sure admin security role exist
@@ -158,6 +163,10 @@ namespace WMS.Ui.Controllers
          // gather recipe data   
          model.RecipesViewModel.Recipes.Clear();
          model.RecipesViewModel.Recipes.AddRange(_modelFactory.CreateRecipeViewModel(rList));
+
+         // gather journal data   
+         model.JournalsViewModel.Journals.Clear();
+         model.JournalsViewModel.Journals.AddRange(_modelFactory.CreateJournalViewModel(jList, userVms));
 
          return View(model);
 
@@ -366,7 +375,173 @@ namespace WMS.Ui.Controllers
 
       #region Journal
 
-      // TODO
+      /// <summary>
+      /// Main entry page to edit a Journal
+      /// </summary>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> EditJournal(int id)
+      {
+         ViewData["Title"] = "Edit a Batch";
+
+         var qry = _journalQueryFactory.CreateBatchesQuery();
+         var dto = await qry.ExecuteAsync(id).ConfigureAwait(false);
+
+         var entriesQuery = _journalQueryFactory.CreateBatchEntriesQuery();
+         var entriesDto = await entriesQuery.ExecuteByFKAsync(id).ConfigureAwait(true);
+
+         var batchEntriesDto = entriesDto
+            .OrderByDescending(e => e.ActionDateTime)
+            .ThenByDescending(e => e.EntryDateTime).ToList();
+
+         dto.Entries.AddRange(batchEntriesDto);
+
+         var user = await UserManagerAgent.FindByIdAsync(dto.SubmittedBy).ConfigureAwait(false);
+         var userVms = _mapper.Map<UserViewModel>(user);
+         var model = _modelFactory.CreateJournalViewModel(dto, userVms);
+
+         return View("UpdateJournal", model);
+      }
+
+      /// <summary>
+      /// Update or Add a new Batch in the database
+      /// </summary>
+      /// <param name="model">Batch as <see cref="JournalViewModel"/></param>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> UpdateJournal(JournalViewModel model)
+      {
+         if (model == null)
+            throw new ArgumentNullException(nameof(model));
+
+         var qry = _journalQueryFactory.CreateBatchesQuery();
+         var dto = await qry.ExecuteAsync(model.Id.Value).ConfigureAwait(false);
+
+         dto.Title = model.Title;
+         //   dto.Variety.Id = model.Variety.Id;
+         dto.Description = model.Description;
+         dto.RecipeId = model.RecipeId;
+         dto.Volume = model.Volume;
+         dto.Vintage = model.Vintage;
+         dto.MaloCultureId = model.MaloCultureId;
+         dto.Complete = model.Complete;
+
+         if (model.VolumeUOM.HasValue)
+         {
+            if (dto.VolumeUom != null)
+               dto.VolumeUom.Id = model.VolumeUOM.Value;
+            else
+               dto.VolumeUom = new UnitOfMeasure { Id = model.VolumeUOM.Value };
+         }
+
+         if (model.Yeast?.Id != null)
+         {
+            if (dto.Yeast != null)
+               dto.Yeast.Id = model.Yeast.Id.Value;
+            else
+               dto.Yeast = new YeastDto { Id = model.Yeast.Id.Value };
+         }
+
+         if (model.Variety?.Id != null)
+         {
+            if (dto.Variety != null)
+               dto.Variety.Id = model.Variety.Id;
+            else
+               dto.Variety = new Code { Id = model.Variety.Id };
+         }
+
+         if (model.Target.HasTargetData())
+         {
+            var tCmd = _journalCommandFactory.CreateTargetsCommand();
+
+            if (dto.Target?.Id.HasValue == true)
+            {
+               // update target               
+               var tQry = _journalQueryFactory.CreateTargetsQuery();
+               var t = await tQry.ExecuteAsync(dto.Target.Id.Value).ConfigureAwait(false);
+               t.EndSugar = model.Target.EndingSugar;
+               t.pH = model.Target.pH;
+               t.StartSugar = model.Target.StartingSugar;
+               t.TA = model.Target.TA;
+               t.Temp = model.Target.FermentationTemp;
+
+               if (model.Target.StartSugarUOM != null)
+                  t.StartSugarUom = new UnitOfMeasure() { Id = model.Target.StartSugarUOM.Value };
+
+               if (model.Target.TempUOM != null)
+                  t.TempUom = new UnitOfMeasure() { Id = model.Target.TempUOM.Value };
+
+               if (model.Target.EndSugarUOM != null)
+                  t.EndSugarUom = new UnitOfMeasure() { Id = model.Target.EndSugarUOM.Value };
+
+               var result = await tCmd.UpdateAsync(t).ConfigureAwait(false);
+               dto.Target = result;
+            }
+            else
+            {
+               // add target
+               var t = new TargetDto
+               {
+                  EndSugar = model.Target.EndingSugar,
+                  pH = model.Target.pH,
+                  StartSugar = model.Target.StartingSugar,
+                  TA = model.Target.TA,
+                  Temp = model.Target.FermentationTemp,
+                  StartSugarUom = new UnitOfMeasure(),
+                  TempUom = new UnitOfMeasure(),
+                  EndSugarUom = new UnitOfMeasure()
+               };
+
+               if (model.Target.StartSugarUOM != null)
+                  t.StartSugarUom.Id = model.Target.StartSugarUOM.Value;
+
+               if (model.Target.TempUOM != null)
+                  t.TempUom.Id = model.Target.TempUOM.Value;
+
+               if (model.Target.EndSugarUOM != null)
+                  t.EndSugarUom.Id = model.Target.EndSugarUOM.Value;
+
+               var result = await tCmd.AddAsync(t).ConfigureAwait(false);
+               dto.Target = result;
+            }
+         }
+
+         var cmd = _journalCommandFactory.CreateBatchesCommand();
+         await cmd.UpdateAsync(dto).ConfigureAwait(false);
+
+         return RedirectToAction("Index", "Admin", new { id = "journals" });
+      }
+
+      /// <summary>
+      /// Delete a Batch from the database
+      /// </summary>
+      /// <param name="Id"> Id of Batch to delete as <see cref="int"/></param>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> DeleteJournal(int Id)
+      {
+         var cmd = _journalCommandFactory.CreateBatchesCommand();
+         var qry = _journalQueryFactory.CreateBatchesQuery();
+         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+         await cmd.DeleteAsync(dto).ConfigureAwait(false);
+
+         return RedirectToAction("Index", "Admin", new { id = "journals" });
+      }
+
+      /// <summary>
+      /// Delete a Batch Entry from the database
+      /// </summary>
+      /// <param name="Id"> Id of Entry to delete as <see cref="int"/></param>
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public async Task<IActionResult> DeleteBatchEntry(int id)
+      {
+         var cmd = _journalCommandFactory.CreateBatchEntriesCommand();
+         var qry = _journalQueryFactory.CreateBatchEntriesQuery();
+         var dto = await qry.ExecuteAsync(id).ConfigureAwait(false);
+         await cmd.DeleteAsync(dto).ConfigureAwait(false);
+         return RedirectToAction("Index", "Admin", new { id = "journals" });
+      }
 
       #endregion
 
@@ -497,7 +672,7 @@ namespace WMS.Ui.Controllers
          var dto = new YeastDto
          {
             Alcohol = model.Alcohol,
-            Note = model.Note,          
+            Note = model.Note,
             TempMax = model.TempMax,
             TempMin = model.TempMin,
             Trademark = model.Trademark
@@ -605,11 +780,11 @@ namespace WMS.Ui.Controllers
       /// <param name="Id"> Id of Pairing to delete as <see cref="int"/></param>
       [HttpPost]
       [ValidateAntiForgeryToken]
-      public async Task<IActionResult> DeletePairing(int Id)
+      public async Task<IActionResult> DeletePairing(int id)
       {
          var cmd = _yeastCommandFactory.CreateYeastPairCommand();
          var qry = _yeastQueryFactory.CreateYeastPairQuery();
-         var dto = await qry.ExecuteAsync(Id).ConfigureAwait(false);
+         var dto = await qry.ExecuteAsync(id).ConfigureAwait(false);
          await cmd.DeleteAsync(dto).ConfigureAwait(false);
          return RedirectToAction("Index", "Admin", new { id = "yeasts" });
       }

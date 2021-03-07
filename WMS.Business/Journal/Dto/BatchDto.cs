@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using WMS.Business.Common;
+using WMS.Business.Yeast.Dto;
 
 namespace WMS.Business.Journal.Dto
 {
@@ -67,7 +68,7 @@ namespace WMS.Business.Journal.Dto
       /// <summary>
       /// Foreign Key of Related Yeast for Batch
       /// </summary>
-      public int? YeastId { get; set; }
+      public YeastDto Yeast { get; set; }
 
       /// <summary>
       /// Foreign Key of Related MLF Culture for Batch

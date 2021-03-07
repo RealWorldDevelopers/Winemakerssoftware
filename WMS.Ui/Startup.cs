@@ -46,27 +46,23 @@ namespace WMS.Ui
             options.UseSqlServer(Configuration.GetConnectionString("RecipeDatabase"),
                sqlServerOptionsAction: sqlOptions =>
                {
-                sqlOptions.EnableRetryOnFailure(
-                   maxRetryCount: 10,
-                   maxRetryDelay: TimeSpan.FromSeconds(30),
-                   errorNumbersToAdd: null);
-             });
+                  sqlOptions.EnableRetryOnFailure(
+                     maxRetryCount: 10,
+                     maxRetryDelay: TimeSpan.FromSeconds(30),
+                     errorNumbersToAdd: null);
+               });
          });
 
-
-         //services.AddDbContext<ApplicationDbContext>(options =>
-         //    options.UseSqlServer(Configuration.GetConnectionString("RecipeDatabase")));
-         // UI Security
          services.AddDbContext<ApplicationDbContext>(options =>
          {
             options.UseSqlServer(Configuration.GetConnectionString("RecipeDatabase"),
                sqlServerOptionsAction: sqlOptions =>
                {
-                sqlOptions.EnableRetryOnFailure(
-                   maxRetryCount: 10,
-                   maxRetryDelay: TimeSpan.FromSeconds(30),
-                   errorNumbersToAdd: null);
-             });
+                  sqlOptions.EnableRetryOnFailure(
+                     maxRetryCount: 10,
+                     maxRetryDelay: TimeSpan.FromSeconds(30),
+                     errorNumbersToAdd: null);
+               });
          });
 
          var lockoutOptions = new LockoutOptions()
@@ -202,8 +198,8 @@ namespace WMS.Ui
             builder.Frame_Ancestors
                    .AllowNone();
 
-               // builder.ReportUri = "api/CspReport/report";
-            });
+            // builder.ReportUri = "api/CspReport/report";
+         });
 
          var supportedCultures = new[]
          {

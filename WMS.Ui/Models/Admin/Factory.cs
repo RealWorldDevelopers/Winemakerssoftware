@@ -8,6 +8,7 @@ using WMS.Business.Recipe.Dto;
 using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
 using WMS.Business.MaloCulture.Dto;
+using WMS.Business.Journal.Dto;
 
 namespace WMS.Ui.Models.Admin
 {
@@ -24,16 +25,21 @@ namespace WMS.Ui.Models.Admin
       private readonly IQuery<YeastPairDto> _getYeastPairsQuery;
       private readonly IQuery<ICode> _getYeastBrandsQuery;
       private readonly IQuery<ICode> _getYeastStylesQuery;
+
+      private readonly IQuery<MaloCultureDto> _getMaloQuery;
       private readonly IQuery<ICode> _getMaloBrandsQuery;
       private readonly IQuery<ICode> _getMaloStylesQuery;
 
       private readonly IQuery<IUnitOfMeasure> _getSugarUOMQuery;
       private readonly IQuery<IUnitOfMeasure> _getTempUOMQuery;
+      private readonly IQuery<IUnitOfMeasure> _getVolumeUOMQuery;
 
       private readonly List<ICode> _categoriesDtoList;
       private readonly List<ICode> _varietiesDtoList;
       private readonly List<ICode> _yeastBrandsDtoList;
       private readonly List<ICode> _yeastStylesDtoList;
+
+      private readonly List<MaloCultureDto> _maloDtoList;
       private readonly List<ICode> _maloBrandsDtoList;
       private readonly List<ICode> _maloStylesDtoList;
       private readonly List<YeastDto> _yeastsDtoList;
@@ -41,6 +47,7 @@ namespace WMS.Ui.Models.Admin
 
       private readonly List<IUnitOfMeasure> _getSugarUomList;
       private readonly List<IUnitOfMeasure> _getTempUomList;
+      private readonly List<IUnitOfMeasure> _getVolumeUomList;
 
       public Factory(Business.Recipe.Queries.IFactory recipeQueryFactory, Business.Yeast.Queries.IFactory yeastQueryFactory,
          Business.MaloCulture.Queries.IFactory maloQueryFactory, Business.Journal.Queries.IFactory journalQueryFactory)
@@ -56,10 +63,12 @@ namespace WMS.Ui.Models.Admin
          _getYeastPairsQuery = _yeastQueryFactory.CreateYeastPairQuery();
          _getYeastBrandsQuery = _yeastQueryFactory.CreateBrandsQuery();
          _getYeastStylesQuery = _yeastQueryFactory.CreateStylesQuery();
+         _getMaloQuery = _maloQueryFactory.CreateMaloCulturesQuery();
          _getMaloBrandsQuery = _maloQueryFactory.CreateBrandsQuery();
          _getMaloStylesQuery = _maloQueryFactory.CreateStylesQuery();
          _getSugarUOMQuery = _journalQueryFactory.CreateBatchSugarUOMQuery();
          _getTempUOMQuery = _journalQueryFactory.CreateBatchTempUOMQuery();
+         _getVolumeUOMQuery = _journalQueryFactory.CreateBatchVolumeUOMQuery();
 
          _categoriesDtoList = _getCategoriesQuery.Execute();
          _varietiesDtoList = _getVarietiesQuery.Execute();
@@ -68,11 +77,13 @@ namespace WMS.Ui.Models.Admin
          _yeastBrandsDtoList = _getYeastBrandsQuery.Execute();
          _yeastStylesDtoList = _getMaloStylesQuery.Execute();
 
+         _maloDtoList = _getMaloQuery.Execute();
          _maloBrandsDtoList = _getMaloBrandsQuery.Execute();
          _maloStylesDtoList = _getYeastStylesQuery.Execute();
 
          _getSugarUomList = _getSugarUOMQuery.Execute();
          _getTempUomList = _getTempUOMQuery.Execute();
+         _getVolumeUomList = _getVolumeUOMQuery.Execute();
       }
 
       public AdminViewModel CreateAdminModel(string startingTab = null)
@@ -87,6 +98,7 @@ namespace WMS.Ui.Models.Admin
          model.YeastsViewModel = new YeastsViewModel();
          model.MaloCulturesViewModel = new MaloCulturesViewModel();
          model.RecipesViewModel = new RecipesViewModel();
+         model.JournalsViewModel = new JournalsViewModel();
 
          return model;
       }
@@ -170,6 +182,134 @@ namespace WMS.Ui.Models.Admin
             models.Add(CreateRecipeViewModel(recipe));
          }
          return models;
+      }
+
+
+      public JournalViewModel CreateJournalViewModel()
+      {
+         var model = new JournalViewModel
+         {
+            Target = new TargetViewModel()
+         };
+         model.Varieties.Clear();
+         model.Varieties.AddRange(CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, null));
+         model.Yeasts.Clear();
+         model.Yeasts.AddRange(CreateSelectList("Yeast", _yeastsDtoList));
+         return model;
+      }
+
+      public JournalViewModel CreateJournalViewModel(BatchDto batchDto, UserViewModel user)
+      {
+         if (batchDto == null)
+            throw new ArgumentNullException(nameof(batchDto));
+
+         var target = new TargetViewModel();
+         if (batchDto.Target != null)
+            target = new TargetViewModel
+            {
+               Id = batchDto.Target.Id,
+               EndingSugar = batchDto.Target.EndSugar,
+               EndSugarUOM = batchDto.Target.EndSugarUom?.Id,
+               FermentationTemp = batchDto.Target.Temp,
+               TempUOM = batchDto.Target.TempUom?.Id,
+               pH = batchDto.Target.pH,
+               StartingSugar = batchDto.Target.StartSugar,
+               StartSugarUOM = batchDto.Target.StartSugarUom?.Id,
+               TA = batchDto.Target.TA
+            };
+
+         target.SugarUOMs = CreateSelectList("UOM", _getSugarUomList);
+         target.TempUOMs = CreateSelectList("UOM", _getTempUomList);
+
+         var model = new JournalViewModel
+         {
+            Id = batchDto.Id,
+            Complete = batchDto.Complete ?? false,
+            Description = batchDto.Description,
+            MaloCultureId = batchDto.MaloCultureId,
+            RecipeId = batchDto.RecipeId,
+            Title = batchDto.Title,
+            Target = target,
+            Variety = CreateVarietyViewModel(batchDto.Variety, null),
+            Vintage = batchDto.Vintage,
+            Volume = batchDto.Volume,
+            VolumeUOM = batchDto.VolumeUom.Id,
+            Yeast = batchDto.Yeast != null ? CreateYeastViewModel(batchDto.Yeast) : CreateYeastViewModel(),
+            SubmittedBy = user?.UserName
+         };
+
+
+         model.Entries.Clear();
+         foreach (var entry in batchDto.Entries)
+         {
+            var e = CreateBatchEntryViewModel(entry);
+            model.Entries.Add(e);
+         }
+
+
+         model.MaloCultures.Clear();
+         model.MaloCultures.AddRange(CreateSelectList("Culture", _maloDtoList)); // MaloCultures = null;
+
+         model.Varieties.Clear();
+         model.Varieties.AddRange(CreateSelectList("Variety", _varietiesDtoList, _categoriesDtoList, null));
+         model.Yeasts.Clear();
+         model.Yeasts.AddRange(CreateSelectList("Yeast", _yeastsDtoList));
+
+         model.VolumeUOMs.Clear();
+            model.VolumeUOMs.AddRange(CreateSelectList("UOM", _getVolumeUomList)); 
+
+         return model;
+      }
+
+      public List<JournalViewModel> CreateJournalViewModel(List<BatchDto> batchDtoList, List<UserViewModel> users)
+      {
+         var models = new List<JournalViewModel>();
+         foreach (var batch in batchDtoList.OrderBy(r => r.SubmittedBy)
+            .ThenByDescending(r => r.Vintage)
+            .ThenByDescending(r => r.Description))
+         {
+            models.Add(CreateJournalViewModel(batch, users.FirstOrDefault(u => u.Id == batch.SubmittedBy)));
+         }
+         return models;
+      }
+
+      public JournalEntryViewModel CreateBatchEntryViewModel(BatchEntryDto entry)
+      {
+         if (entry == null)
+         {
+            return new JournalEntryViewModel();
+         }
+         else
+         {
+            var e = new JournalEntryViewModel
+            {
+               Id = entry.Id,
+               BatchId = entry.BatchId,
+               Additions = entry.Additions,
+               Bottled = entry.Bottled,
+               Comments = entry.Comments,
+               EntryDateTime = entry.EntryDateTime,
+               Filtered = entry.Filtered,
+               pH = entry.pH,
+               Racked = entry.Racked,
+               So2 = entry.So2,
+               Sugar = entry.Sugar,
+               SugarUomId = entry.SugarUom?.Id,
+               SugarUom = entry.SugarUom?.Abbreviation,
+               Ta = entry.Ta,
+               Temp = entry.Temp,
+               TempUomId = entry.TempUom?.Id,
+               TempUom = entry.TempUom?.Abbreviation
+            };
+
+            if (entry.ActionDateTime.HasValue)
+               e.ActionDateTime = entry.ActionDateTime.Value.ToLocalTime();
+            else
+               e.ActionDateTime = entry.EntryDateTime.Value.ToLocalTime();
+
+            return e;
+         }
+
       }
 
 
@@ -322,8 +462,8 @@ namespace WMS.Ui.Models.Admin
             TempMax = maloCultureDto.TempMax,
             TempMin = maloCultureDto.TempMin,
             Alcohol = maloCultureDto.Alcohol,
-            pH=maloCultureDto.pH,
-            SO2=maloCultureDto.So2,
+            pH = maloCultureDto.pH,
+            SO2 = maloCultureDto.So2,
             Note = maloCultureDto.Note
          };
          model.Brands.AddRange(CreateSelectList("Brand", _maloBrandsDtoList));
@@ -697,6 +837,42 @@ namespace WMS.Ui.Models.Admin
       }
 
       public List<SelectListItem> CreateSelectList(string title, List<YeastDto> dtoList)
+      {
+         var list = new List<SelectListItem>();
+         var group = new SelectListGroup { Name = "" };
+         var sortedList = dtoList.OrderBy(c => c.Brand.Literal).ThenBy(c => c.Trademark);
+
+         var selectItem = new SelectListItem
+         {
+            Value = "",
+            Text = "Select a " + title,
+            Disabled = true,
+            Selected = true,
+            Group = new SelectListGroup { Disabled = true, Name = "" }
+         };
+         list.Add(selectItem);
+
+         foreach (var dto in sortedList)
+         {
+            selectItem = new SelectListItem
+            {
+               Value = dto.Id.ToString(CultureInfo.CurrentCulture),
+               Text = dto.Trademark
+            };
+            if (dto.Brand != null)
+            {
+               if (group.Name != dto.Brand.Literal)
+                  group = new SelectListGroup { Name = dto.Brand.Literal };
+
+               selectItem.Group = group;
+            }
+            list.Add(selectItem);
+         }
+
+         return list;
+      }
+
+      public List<SelectListItem> CreateSelectList(string title, List<MaloCultureDto> dtoList)
       {
          var list = new List<SelectListItem>();
          var group = new SelectListGroup { Name = "" };

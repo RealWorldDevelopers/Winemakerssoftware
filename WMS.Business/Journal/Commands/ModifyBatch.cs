@@ -117,7 +117,7 @@ namespace WMS.Business.Journal.Commands
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
          entity.VolumeUomId = dto.VolumeUom?.Id;
-         entity.YeastId = dto.YeastId;
+         entity.YeastId = dto.Yeast.Id;
          entity.MaloCultureId = dto.MaloCultureId;
 
          // Update entity in DbSet
@@ -162,8 +162,8 @@ namespace WMS.Business.Journal.Commands
          entity.Vintage = dto.Vintage;
          entity.Volume = dto.Volume;
          entity.VolumeUomId = dto.VolumeUom?.Id;
-         entity.YeastId = dto.YeastId;
-         entity.MaloCultureId = dto.MaloCultureId;
+         entity.YeastId = dto.Yeast?.Id;
+         entity.MaloCultureId = dto.MaloCultureId; 
 
          // Update entity in DbSet
          _dbContext.Batches.Update(entity);

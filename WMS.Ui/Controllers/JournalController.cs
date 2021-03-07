@@ -254,13 +254,12 @@ namespace WMS.Ui.Controllers
             Complete = false,
             SubmittedBy = submittedBy?.Id,
             Title = model.Title,
-            YeastId = model.YeastId,
-            RecipeId = model.RecipeId
+            Yeast = yList.FirstOrDefault(y => y.Id == model.YeastId.Value),
+            RecipeId = model.RecipeId,
+            Target = targetDto,
+            VolumeUom = new UnitOfMeasure { Id = model.VolumeUOM.Value },
+            Variety = new Code { Id = model.VarietyId.Value }
          };
-
-         batchDto.Target = targetDto;
-         batchDto.VolumeUom = new UnitOfMeasure { Id = model.VolumeUOM.Value };
-         batchDto.Variety = new Code { Id = model.VarietyId.Value };
 
          var updateBatchCommand = _journalCommandFactory.CreateBatchesCommand();
          await updateBatchCommand.AddAsync(batchDto).ConfigureAwait(false);

@@ -7,6 +7,8 @@ using WMS.Ui.Models.Journal;
 using WMS.Business.Journal.Dto;
 using System.Globalization;
 using WMS.Business.Common;
+using System.Linq;
+using WMS.Business.Yeast.Dto;
 
 namespace WMS.Ui.Controllers.Api
 {
@@ -109,7 +111,7 @@ namespace WMS.Ui.Controllers.Api
          }
       }
 
-           
+
       [HttpGet("batchChart/{id}")]
       public async Task<IActionResult> GetBatchEntryChartDataAsync(int id)
       {
@@ -118,13 +120,14 @@ namespace WMS.Ui.Controllers.Api
             // get record from db
             var getBatchEntriesQuery = _queryFactory.CreateBatchEntriesQuery();
             var entries = await getBatchEntriesQuery.ExecuteByFKAsync(id).ConfigureAwait(false);
+            var sortedEntries = entries.OrderBy(e => e.ActionDateTime);
 
             var chartData = new BatchEntryChartDataViewModel();
 
             // handle if entries is null
             if (entries != null)
             {
-               foreach (var entry in entries)
+               foreach (var entry in sortedEntries)
                {
                   if (entry.Temp.HasValue && entry.Sugar.HasValue)
                   {
@@ -135,7 +138,7 @@ namespace WMS.Ui.Controllers.Api
                      chartData.Times.Add(tDate.ToShortDateString());
 
                      // make sure is in F
-                     if (entry.TempUom.Abbreviation == "C")
+                     if (entry.TempUom?.Abbreviation == "C")
                      {
                         var f = RWD.Toolbox.Conversion.Temperature.ConvertCelsiusToFahrenheit(entry.Temp.Value);
                         chartData.Temp.Add(f.Value);
@@ -146,7 +149,7 @@ namespace WMS.Ui.Controllers.Api
                      }
 
                      // make sure is in SG
-                     if (entry.SugarUom.Abbreviation.ToUpper(CultureInfo.CurrentCulture) != "SG")
+                     if (entry.SugarUom?.Abbreviation.ToUpper(CultureInfo.CurrentCulture) != "SG")
                      {
                         var brix = entry.Sugar.Value;
                         var sg = (brix / (258.6 - ((brix / 258.2) * 227.1))) + 1;
@@ -214,8 +217,16 @@ namespace WMS.Ui.Controllers.Api
             dto.Title = batch.Title;
             dto.Vintage = batch.Vintage;
             dto.Volume = batch.Volume;
-            dto.YeastId = batch.YeastId;
             dto.MaloCultureId = batch.MaloCultureId;
+
+            if (batch.YeastId.HasValue)
+            {
+               if (dto.Yeast == null)
+                  dto.Yeast = new YeastDto { Id = batch.YeastId.Value };
+               else
+                  dto.Yeast.Id = batch.YeastId.Value;
+            }
+
 
             if (batch.VarietyId.HasValue)
             {

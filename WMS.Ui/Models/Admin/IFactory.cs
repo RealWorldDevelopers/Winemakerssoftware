@@ -4,6 +4,7 @@ using WMS.Business.Recipe.Dto;
 using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
 using WMS.Business.MaloCulture.Dto;
+using WMS.Business.Journal.Dto;
 
 namespace WMS.Ui.Models.Admin
 {
@@ -15,6 +16,10 @@ namespace WMS.Ui.Models.Admin
       RecipeViewModel CreateRecipeViewModel(RecipeDto recipeDto);
       List<RecipeViewModel> CreateRecipeViewModel(List<RecipeDto> recipeDtoList);
 
+      JournalViewModel CreateJournalViewModel();
+      JournalViewModel CreateJournalViewModel(BatchDto batchDto, UserViewModel user);
+      List<JournalViewModel> CreateJournalViewModel(List<BatchDto> batchDtoList, List<UserViewModel> users);
+      JournalEntryViewModel CreateBatchEntryViewModel(BatchEntryDto entry);
 
       ImageViewModel CreateImageViewModel(ImageFileDto imageDto);
       List<ImageViewModel> CreateImageViewModel(List<ImageFileDto> imageDtoList);
@@ -42,14 +47,14 @@ namespace WMS.Ui.Models.Admin
       YeastViewModel CreateYeastViewModel();
       YeastViewModel CreateYeastViewModel(YeastDto yeastDto);
       List<YeastViewModel> CreateYeastViewModel(List<YeastDto> yeastDtoList);
-      YeastBrandViewModel CreateYeastBrandViewModel(ICode brandDto);   
-      List<YeastBrandViewModel> CreateYeastBrandViewModel(List<ICode> brandDtoList);      
+      YeastBrandViewModel CreateYeastBrandViewModel(ICode brandDto);
+      List<YeastBrandViewModel> CreateYeastBrandViewModel(List<ICode> brandDtoList);
       YeastStyleViewModel CreateYeastStyleViewModel(ICode styleDto);
-      List<YeastStyleViewModel> CreateYeastStyleViewModel(List<ICode> styleDtoList);  
+      List<YeastStyleViewModel> CreateYeastStyleViewModel(List<ICode> styleDtoList);
       YeastPairingViewModel CreateYeastPairingViewModel(YeastPairDto pairingDto);
       List<YeastPairingViewModel> CreateYeastPairingViewModel(List<YeastPairDto> pairingDtoList);
 
-
+      List<SelectListItem> CreateSelectList(string title, List<MaloCultureDto> dtoList);
       List<SelectListItem> CreateSelectList(string title, List<ICode> dtoList);
       List<SelectListItem> CreateSelectList(string title, List<YeastDto> dtoList);
       List<SelectListItem> CreateSelectList(string title, List<IUnitOfMeasure> dtoList);

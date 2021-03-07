@@ -10,6 +10,7 @@
       public YeastsViewModel YeastsViewModel { get; set; }
       public MaloCulturesViewModel MaloCulturesViewModel { get; set; }
       public RecipesViewModel RecipesViewModel { get; set; }
+      public JournalsViewModel JournalsViewModel { get; set; }
    }
 
 }
