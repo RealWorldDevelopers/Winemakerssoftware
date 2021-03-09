@@ -12,11 +12,9 @@
             <li id="navHome" class="@(Url.ActionContext.RouteData.Values["controller"].ToString() == "Home" ? "nav-item active" : "nav-item")">
                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
             </li>
-            <environment include="Development">
-               <li id="navJournal" class="@(Url.ActionContext.RouteData.Values["controller"].ToString() == "Journal" ? "nav-item active" : "nav-item")">
-                  <a class="nav-link text-light" asp-area="" asp-controller="Journal" asp-action="Index">Journal</a>
-               </li>
-            </environment>
+            <li id="navJournal" class="@(Url.ActionContext.RouteData.Values["controller"].ToString() == "Journal" ? "nav-item active" : "nav-item")">
+               <a class="nav-link text-light" asp-area="" asp-controller="Journal" asp-action="Index">Journal</a>
+            </li>
             <li id="navRecipes" class="@(Url.ActionContext.RouteData.Values["controller"].ToString() == "Recipes" ? "nav-item active" : "nav-item")">
                <a class="nav-link text-light" asp-area="" asp-controller="Recipes" asp-action="Index">Recipes</a>
             </li>
