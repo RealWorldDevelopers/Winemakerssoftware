@@ -29,7 +29,7 @@
       },
       {
          "provider": "cdnjs",
-         "library": "jquery@3.4.1",
+         "library": "jquery@3.5.1",
          "destination": "wwwroot/lib/jquery/"
       },
       {

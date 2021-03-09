@@ -284,7 +284,7 @@ function filterUsers() {
    var list = filter.split(' ');
 
    for (i = 0; i < list.length; i++) {
-      if (list[i] != '') {
+      if (list[i] !== '') {
          var pre = partial;
          var word = '(?=.*\\b'.concat(list[i], '\\w*\\b)');
          partial = pre.concat(word);
@@ -321,7 +321,7 @@ function filterRecipe() {
    var list = filter.split(' ');
 
    for (i = 0; i < list.length; i++) {
-      if (list[i] != '') {
+      if (list[i] !== '') {
          var pre = partial;
          var word = '(?=.*\\b'.concat(list[i], '\\w*\\b)');
          partial = pre.concat(word);
@@ -358,7 +358,7 @@ function filterJournals() {
    var list = filter.split(' ');
 
    for (i = 0; i < list.length; i++) {
-      if (list[i] != '') {
+      if (list[i] !== '') {
          var pre = partial;
          var word = '(?=.*\\b'.concat(list[i], '\\w*\\b)');
          partial = pre.concat(word);

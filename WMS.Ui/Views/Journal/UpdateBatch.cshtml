@@ -21,14 +21,14 @@
                <div class="row">
                   <div class="col-sm-12">
                      <label class="label" asp-for="Title">Title:</label>
-                     <input class="form-control" type="text" aria-label="Title" placeholder="Title of Batch" required asp-for="Title" maxlength="100">
+                     <input class="form-control" type="text" placeholder="Title of Batch" required asp-for="Title" maxlength="100">
                      <span asp-validation-for="Title" class="text-danger"></span>
                   </div>
                </div>
                <div class="row">
                   <div class="col-sm-12">
-                     <label class="label" asp-for="Title">Description:</label>
-                     <input class="form-control" type="text" placeholder="Description (optional)" aria-label="Description of Batch" asp-for="Description" maxlength="100">
+                     <label class="label" asp-for="Description">Description:</label>
+                     <input class="form-control" type="text" placeholder="Description (optional)" asp-for="Description" maxlength="100">
                      <span asp-validation-for="Description" class="text-danger"></span>
                   </div>
                </div>
@@ -153,7 +153,7 @@
                </label>
             </div>
 
-            <button class="btn btn-sm btn-dark" name="deleteBatchButton" data-id="@Model.Id"><i class="fa fa-trash-o"></i></button>
+            <button class="btn btn-sm btn-dark" name="deleteBatchButton" aria-label="Delete Batch" data-id="@Model.Id"><i class="fa fa-trash-o"></i></button>
          </div>
          <div class="card-body">
             <div id="divCompleteStatus" class="@(Model.Complete == true ? "" : "d-none")">

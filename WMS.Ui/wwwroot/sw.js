@@ -2,12 +2,12 @@
 importScripts('/lib/sw-toolbox/sw-toolbox.js');
 
 const spCaches = {
-   'static': 'wms-static-v3',
-   'dynamic': 'wms-dynamic-v3'
+   'static': 'wms-static-v4',
+   'dynamic': 'wms-dynamic-v4'
 };
 
 var OFFLINEFILE = 'fallBack.html';
-const staticMaxAge = 60;// * 60 * 24 * 30; // seconds x minutes x hours x days = age // this is one month
+const staticMaxAge = 60 * 60 * 24 * 30; // seconds x minutes x hours x days = age // this is one month
 const dynamicTimeoutSeconds = 4;
 const dynamicMaxEntries = 50;
 
@@ -127,6 +127,21 @@ toolbox.router.get(/^https:\/\/.+\/Recipes(\/Recipe\/\d+)?$/i, function (request
 }
 );
 
+toolbox.router.get(/^https:\/\/.+\/Journal/i, function (request, values, options) {
+   return toolbox.networkFirst(request, values, options)
+      .catch(function (err) {
+         console.log(err);
+         return caches.match(OFFLINEFILE);
+      });
+}, {
+   networkTimeoutSeconds: dynamicTimeoutSeconds,
+   cache: {
+      name: spCaches.dynamic,
+      maxEntries: dynamicMaxEntries
+   }
+}
+);
+
 toolbox.router.get(/^https:\/\/.+\/YeastPicker$/i, function (request, values, options) {
    return toolbox.networkFirst(request, values, options)
       .catch(function (err) {
@@ -186,7 +201,5 @@ toolbox.router.get(/^https:\/\/.+\/About$/i, function (request, values, options)
    }
 }
 );
-
-// TODO add journal when complete
 
 toolbox.router.default = toolbox.networkOnly
