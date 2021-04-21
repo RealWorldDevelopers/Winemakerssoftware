@@ -197,6 +197,7 @@ namespace WMS.Ui.Models.Journal
                Additions = entry.Additions,
                Bottled = entry.Bottled,
                Comments = entry.Comments,
+               ActionDateTime = entry.ActionDateTime ?? entry.EntryDateTime,
                EntryDateTime = entry.EntryDateTime,
                Filtered = entry.Filtered,
                pH = entry.pH,
@@ -209,12 +210,7 @@ namespace WMS.Ui.Models.Journal
                Temp = entry.Temp,
                TempUomId = entry.TempUom?.Id,
                TempUom = entry.TempUom?.Abbreviation
-            };
-
-            if (entry.ActionDateTime.HasValue)
-               e.ActionDateTime = entry.ActionDateTime.Value.ToLocalTime();
-            else
-               e.ActionDateTime = entry.EntryDateTime.Value.ToLocalTime();
+            };                       
 
             return e;
          }
@@ -228,10 +224,10 @@ namespace WMS.Ui.Models.Journal
          var model = new BatchSummaryViewModel();
 
          var tmpEntry = sortedEntries.FirstOrDefault(e => e.Bottled.HasValue && e.Bottled.Value == true);
-         model.BottledOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.BottledOnDate = tmpEntry?.ActionDateTime;
 
          tmpEntry = sortedEntries.FirstOrDefault(e => e.Racked.HasValue && e.Racked.Value == true);
-         model.RackedOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();
+         model.RackedOnDate = tmpEntry?.ActionDateTime;
 
          tmpEntry = sortedEntries.FirstOrDefault(e => e.Filtered.HasValue && e.Filtered.Value == true);
          model.FilteredOnDate = tmpEntry?.ActionDateTime?.ToLocalTime();

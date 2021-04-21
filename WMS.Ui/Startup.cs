@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,7 +81,7 @@ namespace WMS.Ui
               .AddDefaultTokenProviders();
 
          services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-             .AddCookie()
+             //.AddCookie()
              .AddJwtBearer(jwtBearerOptions =>
              {
                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
@@ -216,7 +217,13 @@ namespace WMS.Ui
          });
 
 
-         app.UseStaticFiles();
+         //app.UseStaticFiles();
+         var provider = new FileExtensionContentTypeProvider();
+         provider.Mappings[".webmanifest"] = "application/manifest+json";
+         app.UseStaticFiles(new StaticFileOptions()
+         {
+            ContentTypeProvider = provider
+         });
 
          app.UseHttpsRedirection();
          app.UseRouting();

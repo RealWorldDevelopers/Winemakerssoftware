@@ -45,7 +45,7 @@
       font-size: 1.75rem !important;
    }
 
-   input,select {
+   input, select {
       font-size: 1.5rem !important;
    }
 
@@ -55,17 +55,19 @@
    }
 
    .print-break-before {
-      page-break-before:always;
+      page-break-before: always;
    }
 }
 
-@page {
-   margin-top: 4cm !important;
-   margin-bottom: 4cm !important;
-}
+@supports (display: grid) {
+   @page {
+      margin-top: 4cm !important;
+      margin-bottom: 4cm !important;
+   }
 
-@page :first {
-   margin-top: 0 !important;
+   @page :first {
+      margin-top: 0 !important;
+   }
 }
 
 body {
@@ -108,6 +110,9 @@ ol, ul, dl {
    white-space: pre-wrap;
 }
 
+span.keeptogether {
+   white-space: nowrap;
+}
 
 #caption, #yeastModal_title {
    display: block;
@@ -379,3 +384,13 @@ ol, ul, dl {
       -webkit-transition-delay: 0.3s;
       transition-delay: 0.3s;
    }
+
+/*iOS fix for <input type='Date'>*/
+#batchEntryModal_actionDate {
+   min-width: 180px;
+}
+
+#batchEntryModal_temp,
+#batchEntryModal_sugar {
+   max-width: 180px;
+}

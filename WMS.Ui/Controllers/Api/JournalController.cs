@@ -72,7 +72,7 @@ namespace WMS.Ui.Controllers.Api
                Additions = batchEntry.Additions,
                Bottled = batchEntry.Bottled,
                Comments = batchEntry.Comments,
-               EntryDateTime = DateTime.UtcNow,
+               EntryDateTime = DateTime.Now,
                ActionDateTime = batchEntry.ActionDateTime,
                Filtered = batchEntry.Filtered,
                pH = batchEntry.pH,

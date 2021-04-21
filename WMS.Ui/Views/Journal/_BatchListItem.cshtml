@@ -32,14 +32,18 @@
                </div>
                <div class="d-flex flex-row">
                   <div class="@(Model.Summary.SugarOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
-                     <strong>Sugar</strong>:&nbsp;
-                     @(@Model.Summary.SugarOnUom == "SG" ? Model.Summary.SugarOnValue.Value.ToString("0.000") : Model.Summary.SugarOnValue.ToString())
-                     @Model.Summary.SugarOnUom<br />
+                     <strong>Sugar</strong>:
+                     <span class="keeptogether">
+                        @(@Model.Summary.SugarOnUom == "SG" ? Model.Summary.SugarOnValue.Value.ToString("0.000") : Model.Summary.SugarOnValue.ToString())
+                        @Model.Summary.SugarOnUom
+                     </span><br />
                      @(Model.Summary.SugarOnDate.HasValue == true ? Model.Summary.SugarOnDate.Value.ToShortDateString() : "")
                   </div>
                   <div class="@(Model.Summary.TempOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
-                     <strong>Temp</strong>:&nbsp;
-                     @Model.Summary.TempOnValue &deg;@Model.Summary.TempOnUom <br />
+                     <strong>Temp</strong>:
+                     <span class="keeptogether">
+                        @Model.Summary.TempOnValue &deg;@Model.Summary.TempOnUom
+                     </span><br />
                      @(Model.Summary.TempOnDate.HasValue == true ? Model.Summary.TempOnDate.Value.ToShortDateString() : "")
                   </div>
                </div>

@@ -256,7 +256,7 @@ namespace WMS.Ui.Models.Admin
          model.Yeasts.AddRange(CreateSelectList("Yeast", _yeastsDtoList));
 
          model.VolumeUOMs.Clear();
-            model.VolumeUOMs.AddRange(CreateSelectList("UOM", _getVolumeUomList)); 
+         model.VolumeUOMs.AddRange(CreateSelectList("UOM", _getVolumeUomList));
 
          return model;
       }
@@ -288,6 +288,7 @@ namespace WMS.Ui.Models.Admin
                Additions = entry.Additions,
                Bottled = entry.Bottled,
                Comments = entry.Comments,
+               ActionDateTime = entry.ActionDateTime ?? entry.EntryDateTime,
                EntryDateTime = entry.EntryDateTime,
                Filtered = entry.Filtered,
                pH = entry.pH,
@@ -302,11 +303,7 @@ namespace WMS.Ui.Models.Admin
                TempUom = entry.TempUom?.Abbreviation
             };
 
-            if (entry.ActionDateTime.HasValue)
-               e.ActionDateTime = entry.ActionDateTime.Value.ToLocalTime();
-            else
-               e.ActionDateTime = entry.EntryDateTime.Value.ToLocalTime();
-
+                        
             return e;
          }
 

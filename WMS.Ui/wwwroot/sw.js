@@ -1,5 +1,4 @@
-﻿
-importScripts('/lib/sw-toolbox/sw-toolbox.js');
+﻿importScripts('/lib/sw-toolbox/sw-toolbox.js');
 
 const spCaches = {
    'static': 'wms-static-v4',
