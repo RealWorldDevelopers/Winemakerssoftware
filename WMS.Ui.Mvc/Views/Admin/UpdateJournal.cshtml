@@ -1,0 +1,159 @@
+﻿@model WMS.Ui.Mvc.Models.Admin.JournalViewModel
+
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>@ViewData["Title"]</h1>
+   </div>
+   <div class="card-body">
+      <form asp-controller="Admin" asp-action="UpdateJournal" method="POST" enctype="multipart/form-data">
+         <div asp-validation-summary="ModelOnly"></div>
+         <div class="row">
+            <div class="col-sm-11"></div>
+            <div class="col-sm-1">
+               <a asp-area="" asp-controller="Admin" asp-route-id="journals" asp-action="Index">Back</a>
+            </div>
+         </div>
+         <label class="d-none"><input hidden asp-for="Id" />Hidden Label</label>
+
+         <div class="row">
+            <div class="col-sm-6">
+               <label class="col-form-label" asp-for="SubmittedBy"><strong>Submitted By:</strong></label>
+               <input class="form-control" type="text" readonly asp-for="SubmittedBy">
+               <span asp-validation-for="SubmittedBy" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="MaloCultureId"><strong>Malolactic Culture:</strong></label>
+               <select class="custom-select" aria-label="Select a MLF Culture" asp-for="MaloCultureId" asp-items="Model.MaloCultures"></select>
+               <span asp-validation-for="MaloCultureId" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2">
+               <div class="form-check-inline">
+                  <label class="form-check-label" asp-for="Complete">
+                     <input type="checkbox" class="form-check-input" aria-label="Batch Complete" asp-for="Complete"> Completed
+                  </label>
+               </div>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-12">
+               <label class="col-form-label" asp-for="Title"><strong>Title:</strong></label>
+               <input class="form-control" type="text" placeholder="Journal Title" required asp-for="Title" maxlength="100">
+               <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-12">
+               <label class="col-form-label" asp-for="Description"><strong>Description:</strong></label>
+               <input class="form-control" type="text" placeholder="Short Description" required asp-for="Description" maxlength="100">
+               <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+         </div>
+
+
+         <div class="row">
+            <div class="col-sm-3">
+               <label class="col-form-label" asp-for="Volume"><strong>Volume:</strong></label>
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Volume of Batch" placeholder="Volume of Batch" required asp-for="Volume" maxlength="10">
+               <span asp-validation-for="Volume" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+               <label class="col-form-label" asp-for="VolumeUOM"><strong>Volume Unit of Measure:</strong></label>
+               <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="VolumeUOM" asp-items="Model.VolumeUOMs"></select>
+               <span asp-validation-for="VolumeUOM" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2">
+               <label class="col-form-label" asp-for="Vintage"><strong>Vintage:</strong></label>
+               <input class="form-control" type="text" placeholder="Vintage" required asp-for="Vintage" maxlength="4">
+               <span asp-validation-for="Vintage" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+               <label class="col-form-label" asp-for="Variety.Id"><strong>Variety:</strong></label>
+               <select class="custom-select" asp-for="Variety.Id" asp-items="Model.Varieties"></select>
+               <span asp-validation-for="Variety.Id" class="text-danger"></span>
+            </div>
+         </div>
+
+
+         <div class="row">
+            <div class="col-sm-12">
+               <label class="col-form-label" asp-for="Yeast.Id"><strong>Yeast:</strong></label>
+               <select class="custom-select" asp-for="Yeast.Id" asp-items="Model.Yeasts"></select>
+               <span asp-validation-for="Yeast.Id" class="text-danger"></span>
+            </div>
+         </div>
+
+         <label class="d-none"><input hidden asp-for="Target.Id" />Hidden Label</label>
+         <div class="row">
+            <div class="col-sm-3 pr-0">
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="Target.StartingSugar" maxlength="5">
+               <span asp-validation-for="Target.StartingSugar" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3 pl-0">
+               <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+               <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3 pr-0">
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
+               <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3 pl-0">
+               <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
+               <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3 pr-0">
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="Target.EndingSugar" maxlength="5">
+               <span asp-validation-for="Target.EndingSugar" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3 pl-0">
+               <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+               <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="Target.TA" maxlength="4">
+               <span asp-validation-for="Target.TA" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+               <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="Target.pH" maxlength="4">
+               <span asp-validation-for="Target.pH" class="text-danger"></span>
+            </div>
+         </div>
+
+         <div class="row m-2">
+            <div class="col-sm-9"></div>
+            <div class="col-sm-3">
+               <button class="btn btn-primary" type="reset">Cancel</button>
+               <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+         </div>
+
+
+      </form>
+
+      @foreach (var entry in Model.Entries)
+      {
+         <partial name="_BatchEntryListItem" model="entry" />
+      }
+
+
+   </div>
+
+   <form id="frmDeleteBatchEntry" asp-controller="Admin" asp-action="DeleteBatchEntry" method="POST" enctype="multipart/form-data">
+      <label class="d-none"><input hidden name="id" id="deleteBatchEntryId" />Hidden Label</label>
+   </form>
+
+   @*<div class="card-footer"></div>*@
+
+</div>
+
+
+@section Scripts{
+   <environment include="Development">
+      <script src="~/js/admin.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/admin.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

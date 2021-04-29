@@ -1,0 +1,31 @@
+﻿
+@model WMS.Ui.Mvc.Models.Admin.YeastViewModel
+
+<div class="row">
+    <div class="col-sm-2">@Model.Brand.Literal</div>
+    <div class="col-sm-2">@Model.Trademark</div>
+    <div class="col-sm-4">
+        @for (int i = 0; i < Model.Pairings.Count; i++)
+        {
+            @if (string.IsNullOrWhiteSpace(Model.Pairings[i].Variety.Literal))
+            {
+                @Model.Pairings[i].Category.Literal
+            }
+            else
+            {
+                @Model.Pairings[i].Variety.Literal
+            }
+            @if (i < Model.Pairings.Count - 1)
+            {
+                <span>|</span>
+            }
+        }
+    </div>
+    <div class="col-sm-4 text-right">
+        <button class="btn btn-primary" name="editYeastButton" data-id="@Model.Id">Edit</button>
+        @if (Model.Pairings.Count == 0)
+        {
+            <button class="btn btn-primary" name="deleteYeastButton" data-id="@Model.Id">DELETE</button>
+        }
+    </div>
+</div>

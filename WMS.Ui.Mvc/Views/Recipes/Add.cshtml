@@ -1,0 +1,158 @@
+﻿
+@model WMS.Ui.Mvc.Models.Recipes.AddRecipeViewModel
+
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>Submit a New Recipe: </h1>
+   </div>
+   <div class="card-body">
+      <form asp-controller="Recipes" asp-action="Add" method="POST" enctype="multipart/form-data">
+
+         <div class="card" id="classification">
+            <div class="card-header bg-dark text-light">
+               <i>Enter your Title, Description and Variety:</i>
+            </div>
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <input class="form-control" type="text" placeholder="Recipe Title" aria-label="Recipe Title" required asp-for="Title" maxlength="100">
+                     <span asp-validation-for="Title" class="text-danger"></span>
+                  </div>
+                  <!-- category/variety selector -->
+                  <div class="col-sm-6">
+                     <select class="custom-select" aria-label="Select a Variety" asp-for="VarietyId" asp-items="Model.Varieties"></select>
+                     <span asp-validation-for="VarietyId" class="text-danger"></span>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-12">
+                     <input class="form-control" type="text" aria-label="Short Description" placeholder="Short Description" required asp-for="Description" maxlength="100">
+                     <span asp-validation-for="Description" class="text-danger"></span>
+                  </div>
+               </div>
+            </div>
+
+         </div>
+
+         <div class="card" id="details">
+            <div class="card-header bg-dark text-light">
+               <i>Enter your Target Values, Ingredients and Instructions (HTML is not allowed):</i>
+            </div>
+            <div class="card-body">               
+               <div class="row">
+                  <div class="col-sm-6">
+                     <select class="custom-select" aria-label="Select a Variety" asp-for="YeastId" asp-items="Model.Yeasts"></select>
+                     <span asp-validation-for="YeastId" class="text-danger"></span>
+                  </div>                 
+               </div>
+               <div class="row">
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Sugar Level" placeholder="Start Sugar" asp-for="Target.StartingSugar" maxlength="5">
+                     <span asp-validation-for="Target.StartingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.StartSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                     <span asp-validation-for="Target.StartSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Fermentation Temp" placeholder="Temperature" asp-for="Target.FermentationTemp" maxlength="4">
+                     <span asp-validation-for="Target.FermentationTemp" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.TempUOM" asp-items="Model.Target.TempUOMs"></select>
+                     <span asp-validation-for="Target.TempUOM" class="text-danger"></span>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Ending Sugar Level" placeholder="Sugar End" asp-for="Target.EndingSugar" maxlength="5">
+                     <span asp-validation-for="Target.EndingSugar" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <select class="custom-select" aria-label="Unit of Measure for Batch" asp-for="Target.EndSugarUOM" asp-items="Model.Target.SugarUOMs"></select>
+                     <span asp-validation-for="Target.EndSugarUOM" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting Total Acid" placeholder="Total Acid" asp-for="Target.TA" maxlength="4">
+                     <span asp-validation-for="Target.TA" class="text-danger"></span>
+                  </div>
+                  <div class="col-sm-3">
+                     <input class="form-control" inputmode="decimal" pattern="[0-9]*" type="text" aria-label="Starting pH" placeholder="pH" asp-for="Target.pH" maxlength="4">
+                     <span asp-validation-for="Target.pH" class="text-danger"></span>
+                  </div>
+               </div>
+
+               <div class="row mt-2">
+                  <div class="col-sm-6">   
+                     <textarea class="form-control" rows="5" asp-for="Ingredients" aria-label="Ingredients"
+                               placeholder="Leave Blank for Default&#10;&#10;Ingredients for 6 US Gallons: (example)&#10;1/2 tsp KMeta&#10;1/2 lb Sugar"></textarea>
+                     <span asp-validation-for="Ingredients" class="text-danger"></span>
+
+                  </div>
+                  <div class="col-sm-6">
+                     <textarea class="form-control" rows="5" asp-for="Instructions" aria-label="Instructions"
+                               placeholder="Leave Blank for Default&#10;&#10;Instructions: (example)&#10;Step No 1 - Primary Fermentation&#10;In a Food Grade plastic fermenter..."></textarea>
+                     <span asp-validation-for="Instructions" class="text-danger"></span>
+                  </div>
+               </div>
+
+            </div>
+         </div>
+
+         <div class="card" id="pictures">
+            <div class="card-header bg-dark text-light">
+               <i>Upload Recipe Pictures (Max 4, optional):<br />Allowed Image Extensions: .jpg | .gif | .bmp | .jpeg | .png ONLY<br />Max File Size per Image: 500 KB</i>
+            </div>
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-3">
+                     <label class="custom-file-label text-truncate" for="file1">Choose file to upload</label>
+                     <input class="custom-file-input" type="file" name="Images" id="file1" accept="image/*">
+                  </div>
+                  <div class="col-sm-3">
+                     <label class="custom-file-label text-truncate" for="file2">Choose file to upload</label>
+                     <input class="custom-file-input" type="file" name="Images" id="file2" accept="image/*">
+                  </div>
+                  <div class="col-sm-3">
+                     <label class="custom-file-label text-truncate" for="file3">Choose file to upload</label>
+                     <input class="custom-file-input" type="file" name="recipePic[]" id="file3" accept="image/*">
+                  </div>
+                  <div class="col-sm-3">
+                     <label class="custom-file-label text-truncate" for="file4">Choose file to upload</label>
+                     <input class="custom-file-input" type="file" name="recipePic[]" id="file4" accept="image/*">
+                  </div>
+                  <span asp-validation-for="Images" class="text-danger"></span>
+               </div>
+            </div>
+         </div>
+
+         <div class="card" id="action">
+            <div class="card-body">
+               <div class="row">
+                  <div class="col-sm-2">
+                     <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-paper-plane"></i>Submit Recipe
+                     </button>
+                  </div>
+                  <div class="col-sm-10">
+                     <button class="btn btn-primary" type="reset">
+                        <i class="fa fa-refresh"></i> Reset
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+      </form>
+   </div>
+   <div class="card-footer"></div>
+</div>
+
+@section Scripts{
+   <environment include="Development">
+      <script src="~/js/recipe.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/recipe.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

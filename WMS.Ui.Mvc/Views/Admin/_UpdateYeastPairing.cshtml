@@ -1,0 +1,40 @@
+﻿
+@model WMS.Ui.Mvc.Models.Admin.YeastPairingViewModel
+
+<form asp-controller="Admin" asp-action="UpdateYeastPairing" method="POST" enctype="multipart/form-data">
+    <div>
+        <label class="d-none"><input hidden asp-for="Yeast.Id" />Hidden Label</label>
+        <label class="d-none"><input hidden asp-for="Id" value="@Model.Id" />Hidden Label</label>
+        <div class="row">
+            <div class="col-sm-12">
+                <label class="col-form-label" asp-for="Variety.Id"><strong>Variety:</strong></label>
+                <select class="custom-select" asp-for="Variety.Id" asp-items="Model.Varieties"></select>
+                <span asp-validation-for="Variety.Id" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <span class="col-form-label"><strong>Notes:</strong></span>
+                <textarea class="form-control" type="text" rows="5" maxlength="500" placeholder="Notes" aria-label="Pairing Note" asp-for="Note"></textarea>
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-9"></div>
+            <div class="col-sm-3">
+                @if (Model.Id > 0)
+                {
+
+                    <button class="btn btn-primary" type="submit">Update New Pairing</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary" type="submit">Add New Pairing</button>
+                }
+
+            </div>
+        </div>
+    </div>
+</form>
+

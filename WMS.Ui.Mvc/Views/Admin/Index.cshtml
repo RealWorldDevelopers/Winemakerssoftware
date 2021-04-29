@@ -1,0 +1,92 @@
+﻿
+@model WMS.Ui.Mvc.Models.Admin.AdminViewModel
+
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>@ViewData["Title"]</h1>
+   </div>
+   <div class="card-body">
+      <label class="d-none"><input hidden asp-for="TabToShow" />Hidden Label</label>
+
+      <!-- Navigation tabs -->
+      <ul class="nav nav-tabs nav-justified">
+         <li class="nav-item">
+            <a id="recipes" class="nav-link active" data-toggle="tab" href="#recipesTab">Recipes</a>
+         </li>
+         <li class="nav-item">
+            <a id="journals" class="nav-link" data-toggle="tab" href="#journalsTab">Journals</a>
+         </li>
+         <li class="nav-item">
+            <a id="yeasts" class="nav-link" data-toggle="tab" href="#yeastsTab">Yeasts</a>
+         </li>
+         <li class="nav-item">
+            <a id="varieties" class="nav-link" data-toggle="tab" href="#varietiesTab">Varieties</a>
+         </li>
+         <li class="nav-item">
+            <a id="categories" class="nav-link" data-toggle="tab" href="#categoriesTab">Categories</a>
+         </li>
+         <li class="nav-item">
+            <a id="malo" class="nav-link" data-toggle="tab" href="#maloTab">Malolactic Cultures</a>
+         </li>
+         <li class="nav-item">
+            <a id="users" class="nav-link" data-toggle="tab" href="#usersTab">Users</a>
+         </li>
+         <li class="nav-item">
+            <a id="roles" class="nav-link" data-toggle="tab" href="#rolesTab">Roles</a>
+         </li>
+      </ul>
+
+      @*this is before all tabs*@
+
+      <!-- Tab panes -->
+   <div class="tab-content">
+
+      <div id="recipesTab" class="container tab-pane active">
+         <partial name="_EditRecipes" model="Model.RecipesViewModel" />
+      </div>
+
+      <div id="journalsTab" class="container tab-pane">
+         <partial name="_EditJournals" model="Model.JournalsViewModel" />
+      </div>
+
+      <div id="yeastsTab" class="container tab-pane fade">
+         <partial name="_EditYeasts" model="Model.YeastsViewModel" />
+      </div>
+
+      <div id="varietiesTab" class="container tab-pane fade">
+         <partial name="_EditVarieties" model="Model.VarietiesViewModel" />
+      </div>
+
+      <div id="categoriesTab" class="container tab-pane fade">
+         <partial name="_EditCategories" model="Model.CategoriesViewModel" />
+      </div>
+
+      <div id="maloTab" class="container tab-pane fade">
+         <partial name="_EditMalo" model="Model.MaloCulturesViewModel" />
+      </div>
+
+      <div id="usersTab" class="container tab-pane fade">
+         <partial name="_EditUsers" model="Model.UsersViewModel" />
+      </div>
+
+      <div id="rolesTab" class="container tab-pane fade">
+         <partial name="_EditRoles" model="Model.RolesViewModel" />
+      </div>
+
+      <br />
+
+      @*this is after all tabs*@
+
+   </div>
+   </div>
+   <div class="card-footer"></div>
+</div>
+
+@section Scripts{
+   <environment include="Development">
+      <script src="~/js/admin.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/admin.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

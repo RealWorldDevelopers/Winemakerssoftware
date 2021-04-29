@@ -1,0 +1,31 @@
+﻿
+@model WMS.Ui.Mvc.Models.Admin.YeastsViewModel
+
+<ul class="list-group-flush">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-2"><strong>Brand</strong></div>
+            <div class="col-sm-2"><strong>Trademark</strong></div>
+            <div class="col-sm-4"><strong>Pairings</strong></div>
+            <div class="col-sm-2 text-right">
+                <a asp-area="" asp-controller="Admin" asp-action="AddYeast"><strong>Add</strong></a>
+            </div>
+        </div>
+    </li>
+
+    @foreach (var yeast in Model.Yeasts)
+    {
+        <li class="list-group-item">
+            <partial name="_YeastListItem" model="yeast" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmEditYeast" asp-controller="Admin" asp-action="EditYeast" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="editYeastId" />Hidden Label</label>
+</form>
+
+<form id="frmDeleteYeast" asp-controller="Admin" asp-action="DeleteYeast" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="deleteYeastId" />Hidden Label</label>
+</form>

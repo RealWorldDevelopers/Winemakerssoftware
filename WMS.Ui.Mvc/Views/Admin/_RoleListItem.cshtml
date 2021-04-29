@@ -1,0 +1,13 @@
+﻿
+@model WMS.Ui.Mvc.Models.Admin.RoleViewModel;
+
+<div class="row">
+    <div class="col-sm-2">@Model.Name</div>
+    <div class="col-sm-4">@Model.Description</div>
+    <div class="col-sm-6 text-right">
+        @if (!Model.Name.ToLower().Contains("admin"))
+        {
+            <button class="btn btn-primary" name="deleteRoleButton" data-name="@Model.Name">DELETE</button>
+        }
+    </div>
+</div>

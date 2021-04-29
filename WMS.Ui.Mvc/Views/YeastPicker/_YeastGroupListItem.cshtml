@@ -1,0 +1,12 @@
+﻿@model WMS.Ui.Mvc.Models.Yeasts.YeastGroupListItemViewModel
+
+<div class="card-header bg-dark text-light"><h2>@Model.GroupName</h2></div>
+<div class="card-body card-text text-left">
+    <ul class="list-group-flush">
+        @foreach (var yeastItem in Model.Yeasts)
+        {
+            <partial name="_YeastListItem" model="yeastItem" />
+        }
+    </ul>
+</div>
+

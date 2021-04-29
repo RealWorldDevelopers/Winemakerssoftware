@@ -1,0 +1,31 @@
+﻿@model WMS.Ui.Mvc.Models.Recipes.RecipeListItemViewModel
+<a asp-action="Recipe" asp-route-id="@Model.Id">
+    <div class="row">
+        <div class="col-sm-3">
+            <img class="rounded-circle" src="@Model.PicPath" alt="">
+        </div>
+
+        <div class="col-sm-5 text-body">
+            <h2>@Model.Title</h2>
+            <strong>Category: @Model.Category</strong><br>
+            <strong>Variety: @Model.Variety</strong><br>
+            <content>@Model.Description</content>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="rating text-right">
+                <input type="radio" id="@(Model.Id + "_star5")" value="5" @Model.Rating.Check5 disabled /><label class="full" for="@(Model.Id + "_star5")" title="Awesome - 5 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star4half")" value="4 and a half" @Model.Rating.Check45 disabled /><label class="half" for="@(Model.Id + "_star4half")" title="Really good - 4.5 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star4")" value="4" @Model.Rating.Check4 disabled /><label class="full" for="@(Model.Id + "_star4")" title="Pretty good - 4 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star3half")" value="3 and a half" @Model.Rating.Check35 disabled /><label class="half" for="@(Model.Id + "_star3half")" title="It's OK - 3.5 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star3")" value="3" @Model.Rating.Check3 disabled /><label class="full" for="@(Model.Id  + "_star3")" title="Meh - 3 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star2half")" value="2 and a half" @Model.Rating.Check25 disabled /><label class="half" for="@(Model.Id + "_star2half")" title="Not Very fond of it - 2.5 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star2")" value="2" @Model.Rating.Check2 disabled /><label class="full" for="@(Model.Id + "_star2")" title="Not Good - 2 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star1half")" value="1 and a half" @Model.Rating.Check15 disabled /><label class="half" for="@(Model.Id + "_star1half")" title="Kinda bad - 1.5 stars"></label>
+                <input type="radio" id="@(Model.Id + "_star1")" value="1" @Model.Rating.Check1 disabled /><label class="full" for="@(Model.Id + "_star1")" title="Awful - 1 star"></label>
+                <input type="radio" id="@(Model.Id + "_starhalf")" value="half" @Model.Rating.Check disabled /><label class="half" for="@(Model.Id + "_starhalf")" title="Sucks big time - 0.5 stars"></label>
+            </div>
+        </div>
+
+    </div>
+</a>
