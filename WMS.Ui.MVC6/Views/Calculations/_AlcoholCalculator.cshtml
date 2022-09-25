@@ -1,0 +1,84 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Calculations.AlcoholViewModel
+<div id="abvpop"></div>
+<div name="calcSugar" class="card">
+   <div class="card-header bg-dark text-light"><h2>Calculate Alcohol (ABV)</h2></div>
+   <div class="card-body">
+      <div class="d-flex">
+         <a href="#abvpop" title="Beginning Sugar" data-toggle="popover" data-trigger="click" data-placement="bottom"
+            data-content="Beginning Sugar is Specific Gravity before the Yeast was pitched.">&#42;Beginning Sugar
+         </a>
+      </div>
+      <div class="d-flex">
+         <a href="#abvpop" title="Ending Sugar" data-toggle="popover" data-trigger="click" data-placement="bottom"
+            data-content="Ending Sugar is Specific Gravity at Stabilization (End of Fermentation before back sweetening).">
+            &#42;&#42;Ending Sugar
+         </a>
+      </div>
+
+      <form id="frmAlcoholABV">
+
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Brix or Specific Gravity</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AlcoholCalculator_UseBrix" type="radio" class="form-check-input" name="optUomAlcohol" value="brix">Brix
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AlcoholCalculator_UseSG" type="radio" class="form-check-input" name="optUomAlcohol" checked value="sg">Specific Gravity
+                  </label>
+               </div>
+            </div>
+         </fieldset>
+
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="SugarStart"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="SugarStart" required maxlength="5" />
+               <span asp-validation-for="SugarStart" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomABV">SG</div>
+            </div>
+         </div>
+
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="SugarEnd"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="SugarEnd" required maxlength="5" />
+               <span asp-validation-for="SugarEnd" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomABV">SG</div>
+            </div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="Abv"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" type="text" asp-for="Abv" readonly />
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomWeight">&#37;</div>
+            </div>
+         </div>
+
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnCalcAlcohol" class="btn btn-primary" type="button">Calculate</button>
+         </div>
+
+      </form>
+
+   </div>
+</div>

@@ -1,0 +1,37 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.JournalsViewModel
+
+<br />
+<div>
+    <input class="form-control" inputmode="search" type="search" aria-label="Search" placeholder="Search ..." id="journalsSearch" />
+</div>
+
+<br />
+
+<ul class="list-group-flush" id="ulJournal">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-2"><strong>Submitted By</strong></div>
+            <div class="col-sm-2"><strong>Variety</strong></div>
+            <div class="col-sm-4"><strong>Title</strong></div>
+            <div class="col-sm-2"><strong>Alerts</strong></div>
+            <div class="col-sm-2"></div>
+        </div>
+    </li>
+
+    @foreach (var journal in Model.Journals)
+    {
+        <li class="list-group-item">
+            <partial name="_JournalListItem" model="journal" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmEditJournal" asp-controller="Admin" asp-action="EditJournal" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="editJournalId" />Hidden Label</label>
+</form>
+
+<form id="frmDeleteJournal" asp-controller="Admin" asp-action="DeleteJournal" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="deleteJournalId" />Hidden Label</label>
+</form>

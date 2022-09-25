@@ -38,3 +38,6 @@ namespace WMS.Ui.Mvc
 
    }
 }
+
+// https://docs.microsoft.com/en-us/aspnet/core/security/key-vault-configuration?view=aspnetcore-6.0
+

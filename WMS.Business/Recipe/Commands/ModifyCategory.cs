@@ -4,12 +4,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
-using WMS.Data;
-using WMS.Data.Entities;
+using WMS.Data.SQL;
+using WMS.Data.SQL.Entities;
 
 namespace WMS.Business.Recipe.Commands
 {
-    public class ModifyCategory : ICommand<ICode>
+    public class ModifyCategory : ICommand<ICodeDto>
     {
         private readonly IMapper _mapper;
         private readonly WMSContext _dbContext;
@@ -26,42 +26,19 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Add an <see cref="ICode"/> to Database
+        /// Add an <see cref="ICodeDto"/> to Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="ICode"/></param>
-        /// <returns><see cref="ICode"/></returns>
-        /// <inheritdoc cref="ICommand{T}.Add(ICode)"/>
-        public ICode Add(ICode dto)
-        {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
-            var entity = _mapper.Map<Categories>(dto);
-
-            // add new recipe
-            _dbContext.Categories.Add(entity);
-
-            // Save changes in database
-            _dbContext.SaveChanges();
-
-            dto.Id = entity.Id;
-            return dto;
-        }
-
-        /// <summary>
-        /// Add an <see cref="ICode"/> to Database
-        /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="ICode"/></param>
+        /// <param name="dto">Data Transfer Object as <see cref="ICodeDto"/></param>
         /// <returns><see cref="Task{ICode}"/></returns>
-        /// <inheritdoc cref="ICommand{T}.AddAsync(ICode)"/>
-        public async Task<ICode> AddAsync(ICode dto)
+        /// <inheritdoc cref="ICommand{T}.AddAsync(ICodeDto)"/>
+        public async Task<ICodeDto> Add(ICodeDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
-            var entity = _mapper.Map<Categories>(dto);
+            var entity = _mapper.Map<Category>(dto);
 
-            // add new recipe
+            // add new category
             await _dbContext.Categories.AddAsync(entity).ConfigureAwait(false);
 
             // Save changes in database
@@ -72,37 +49,12 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Update a <see cref="ICode"/> in the Database
+        /// Update a <see cref="ICodeDto"/> in the Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="ICode"/></param>
-        /// <returns><see cref="ICode"/></returns>
-        /// <inheritdoc cref="ICommand{T}.Update(T)"/>
-        public ICode Update(ICode dto)
-        {
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-
-            var entity =  _dbContext.Categories.First(r => r.Id == dto.Id);
-            entity.Description = dto.Description;
-            entity.Enabled = dto.Enabled;
-            entity.Category = dto.Literal;
-
-            // Update entity in DbSet
-            _dbContext.Categories.Update(entity);
-
-            // Save changes in database
-            _dbContext.SaveChanges();
-
-            return dto;
-        }
-
-        /// <summary>
-        /// Update a <see cref="ICode"/> in the Database
-        /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="ICode"/></param>
-        /// <returns><see cref="ICode"/></returns>
+        /// <param name="dto">Data Transfer Object as <see cref="ICodeDto"/></param>
+        /// <returns><see cref="ICodeDto"/></returns>
         /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
-        public async Task<ICode> UpdateAsync(ICode dto)
+        public async Task<ICodeDto> Update(ICodeDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -110,7 +62,7 @@ namespace WMS.Business.Recipe.Commands
             var entity = await _dbContext.Categories.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
             entity.Description = dto.Description;
             entity.Enabled = dto.Enabled;
-            entity.Category = dto.Literal;
+            entity.Category1 = dto.Literal;
 
             // Update entity in DbSet
             _dbContext.Categories.Update(entity);
@@ -122,34 +74,14 @@ namespace WMS.Business.Recipe.Commands
         }
 
         /// <summary>
-        /// Delete a <see cref="ICode"/> in the Database
+        /// Delete a <see cref="ICodeDto"/> in the Database
         /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="ICode"/></param>
-        /// <inheritdoc cref="ICommand{T}.Delete(T)"/>
-        public void Delete(ICode dto)
-        {
-            var entity = _dbContext.Categories
-            .FirstOrDefault(c => c.Id == dto.Id);
-
-            if (entity != null)
-            {
-                // delete category 
-                _dbContext.Categories.Remove(entity);
-
-                // Save changes in database
-                _dbContext.SaveChanges();
-            }
-        }
-
-        /// <summary>
-        /// Delete a <see cref="ICode"/> in the Database
-        /// </summary>
-        /// <param name="dto">Data Transfer Object as <see cref="ICode"/></param>
+        /// <param name="id">Primary Key as <see cref="int"/></param>
         /// <inheritdoc cref="ICommand{T}.DeleteAsyn(T)"/>
-        public async Task DeleteAsync(ICode dto)
+        public async Task Delete(int id)
         {
             var entity = await _dbContext.Categories
-            .FirstOrDefaultAsync(c => c.Id == dto.Id)
+            .FirstOrDefaultAsync(c => c.Id == id)
             .ConfigureAwait(false);
 
             if (entity != null)

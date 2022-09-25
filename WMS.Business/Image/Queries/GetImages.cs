@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
 using WMS.Business.Image.Dto;
-using WMS.Data;
+using WMS.Data.SQL;
 
 namespace WMS.Business.Image.Queries
 {
@@ -14,7 +14,7 @@ namespace WMS.Business.Image.Queries
    /// Dto.Image Query Instance
    /// </summary>
    /// <inheritdoc cref="IQuery{T}"/>
-   public class GetImages : IQuery<Dto.ImageDto>
+   public class GetImages : IQuery<ImageDto>
    {
       private readonly IMapper _mapper;
       private readonly WMSContext _dbContext;
@@ -29,39 +29,14 @@ namespace WMS.Business.Image.Queries
          _dbContext = dbContext;
          _mapper = mapper;
       }
-
-      /// <summary>
-      /// Query all Images in SQL DB
-      /// </summary>
-      /// <returns>Images as <see cref="List{Dto.ImageDto}"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<ImageDto> Execute()
-      {
-         var images = _dbContext.Images.ToList();
-         var list = _mapper.Map<List<ImageDto>>(images);
-         return list;
-      }
-
-      /// <summary>
-      /// Query a specific Image in SQL DB by primary key
-      /// </summary>
-      /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns>Image as <see cref="Dto.ImageDto"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public Dto.ImageDto Execute(int id)
-      {
-         var image = _dbContext.Images
-            .FirstOrDefault(r => r.Id == id);
-         var dto = _mapper.Map<ImageDto>(image);
-         return dto;
-      }
+           
 
       /// <summary>
       /// Asynchronously query all Images in SQL DB
       /// </summary>
-      /// <returns>Images as <see cref="Task{List{Dto.ImageDto}}"/></returns>
+      /// <returns>Images as <see cref="Task{List{ImageDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<Dto.ImageDto>> ExecuteAsync()
+      public async Task<List<ImageDto>> Execute()
       {
          var images = await _dbContext.Images.ToListAsync().ConfigureAwait(false);
          var list = _mapper.Map<List<ImageDto>>(images);
@@ -72,9 +47,9 @@ namespace WMS.Business.Image.Queries
       /// Asynchronously query a specific Image in SQL DB by primary key
       /// </summary>
       /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns>Image as <see cref="Task{Dto.ImageDto}"/></returns>
+      /// <returns>Image as <see cref="Task{ImageDto}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<Dto.ImageDto> ExecuteAsync(int id)
+      public async Task<ImageDto> Execute(int id)
       {
          var images = await _dbContext.Images
             .FirstOrDefaultAsync(r => r.Id == id)
@@ -83,24 +58,19 @@ namespace WMS.Business.Image.Queries
          return dto;
       }
 
-      public List<ImageDto> ExecuteByFK(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<ImageDto>> Execute(int start, int length)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public Task<List<ImageDto>> ExecuteByFKAsync(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<ImageDto>> ExecuteByFK(int fk)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public List<ImageDto> ExecuteByUser(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public Task<List<ImageDto>> ExecuteByUserAsync(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-   }
+        public Task<List<ImageDto>> ExecuteByUser(string userId)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

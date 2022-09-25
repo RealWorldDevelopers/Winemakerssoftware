@@ -1,0 +1,104 @@
+﻿@model WMS.Ui.Mvc6.Models.Calculations.GravityTempViewModel
+<div id="metertemppop"></div>
+<div name="calcSugar" class="card">
+   <div class="card-header bg-dark text-light"><h2>Adjust Gravity for Temperature</h2></div>
+   <div class="card-body">
+      <div class="d-flex">
+         <a href="#metertemppop" title="Calibration" data-toggle="popover" data-trigger="click" data-placement="bottom"
+            data-content="An accurate reading takes temperature into consideration. Each hydrometer is marked with a temperature for which it is calibrated.">&#42;Calibration</a>
+      </div>
+
+      <form id="frmGravityTemp">
+
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Brix or Specific Gravity</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="GravityTemp_UseBrix" type="radio" class="form-check-input" name="optUomGravityTemp" value="brix">Brix
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="GravityTemp_UseSG" type="radio" class="form-check-input" name="optUomGravityTemp" checked value="sg">Specific Gravity
+                  </label>
+               </div>
+            </div>
+         </fieldset>
+
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Celsius or Fahrenheit</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="GravityTemp_Metric" type="radio" class="form-check-input" name="optGravityMetric" value="metric">Celsius
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="GravityTemp_Imperial" type="radio" class="form-check-input" name="optGravityMetric" checked value="imperial">Fahrenheit
+                  </label>
+               </div>
+            </div>
+         </fieldset>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="MeasuredGravity"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="MeasuredGravity" required maxlength="5" />
+               <span asp-validation-for="MeasuredGravity" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomGravitySugar">SG</div>
+            </div>
+         </div>
+
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="TempReading"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="TempReading" required maxlength="4" />
+               <span asp-validation-for="TempReading" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomGravityTemp">&#8457;</div>
+            </div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="TempCalibrate"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="TempCalibrate" required maxlength="4" />
+               <span asp-validation-for="TempCalibrate" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomGravityTemp">&#8457;</div>
+            </div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0" asp-for="CorrectedValue"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" type="text" asp-for="CorrectedValue" readonly />
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomGravitySugar">SG</div>
+            </div>
+         </div>
+
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnCalcGravityTemp" class="btn btn-primary" type="button">Calculate</button>
+         </div>
+
+      </form>
+
+   </div>
+</div>

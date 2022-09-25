@@ -1,0 +1,18 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.JournalViewModel
+
+<div class="row">
+   <div class="col-sm-2">@Model.SubmittedBy</div>
+   <div class="col-sm-2">@Model.Vintage - @Model.Variety.Literal</div>
+   <div class="col-sm-4">@Model.Title</div>
+   <div class="col-sm-2">
+      @if (Model.Complete)
+      {<div class="badge badge-success">Complete</div> }
+      else
+      { <div class="badge badge-warning">Open</div>}
+   </div>
+   <div class="col-sm-2 text-right">
+      <button class="btn btn-sm btn-primary" name="editJournalButton" data-id="@Model.Id">Edit</button>
+      <button class="btn btn-sm btn-primary" name="deleteJournalButton" data-id="@Model.Id">DELETE</button>
+   </div>
+</div>

@@ -1,0 +1,131 @@
+﻿@model WMS.Ui.Mvc6.Models.Admin.UserViewModel
+
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>@ViewData["Title"]</h1>
+   </div>
+   <div class="card-body">
+      <form asp-controller="Admin" asp-action="UpdateUser" method="POST" enctype="multipart/form-data">
+         <div asp-validation-summary="ModelOnly"></div>
+
+         <div class="row">
+            <div class="col-sm-11"></div>
+            <div class="col-sm-1">
+               <a asp-area="" asp-controller="Admin" asp-route-id="users" asp-action="Index">Back</a>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-2">
+               <label class="col-form-label" asp-for="UserName"><strong>User Name:</strong></label>
+            </div>
+            <div class="col-sm-10">
+               <input class="form-control" type="text" readonly asp-for="UserName">
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-2">
+               <label class="col-form-label" asp-for="Email"><strong>Email:</strong></label>
+            </div>
+            <div class="col-sm-10">
+               <input class="form-control" inputmode="email" type="email" placeholder="example@domain.com" required asp-for="Email">
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-2">
+               <label class="col-form-label" asp-for="FirstName"><strong>First Name:</strong></label>
+            </div>
+            <div class="col-sm-10">
+               <input class="form-control" type="text" placeholder="First Name" required asp-for="FirstName">
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-2">
+               <label class="col-form-label" asp-for="LastName"><strong>Last Name:</strong></label>
+            </div>
+            <div class="col-sm-10">
+               <input class="form-control" type="text" placeholder="Last Name" required asp-for="LastName">
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-2">
+               <label class="col-form-label" asp-for="LockOutLocalTime"><strong>Lockout Ends:</strong></label>
+            </div>
+            <div class="col-sm-10">
+               <input class="form-control" type="datetime" readonly asp-for="LockOutLocalTime">
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-sm-9"></div>
+            <div class="col-sm-3">
+               <button class="btn btn-primary" type="reset">Cancel</button>
+               <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+         </div>
+
+      </form>
+
+
+      <div class="card">
+         <div class="card-header">
+            <h2>Roles</h2>
+         </div>
+         <div class="card-body">
+            <form asp-controller="Admin" asp-action="AddUserRole" method="POST" enctype="multipart/form-data">
+               <label class="d-none"><input hidden name="UserName" value="@Model.UserName" />Hidden Label</label>
+               <div class="row">
+                  <div class="col-sm-12">
+                     <strong>Add Role Of:</strong>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-sm-3">
+                     <select class="custom-select" aria-label="Select Role" asp-for="NewRole" asp-items="Model.AllRoles"></select>
+                  </div>
+                  <div class="col-sm-9">
+                     <button class="btn btn-primary" type="submit">Add</button>
+                  </div>
+               </div>
+            </form>
+            <form id="frmDeleteUserRole" asp-controller="Admin" asp-action="DeleteUserRole" method="POST" enctype="multipart/form-data">
+               <label class="d-none"><input hidden name="UserName" value="@Model.UserName" />Hidden Label</label>
+               <label class="d-none"><input hidden name="NewRole" id="deleteUserRoleName" />Hidden Label</label>
+            </form>
+            <ul class="list-group-flush">
+               <li class="list-group-item">
+                  <div class="row">
+                     <strong>Member Of:</strong>
+                  </div>
+               </li>
+               @foreach (var role in Model.MemberRoles)
+               {
+                  <li class="list-group-item">
+                     <div class="row">
+                        <div class="col-sm-2">@role</div>
+                        <div class="col-sm-10 text-right">
+                           <button class="btn btn-primary" name="deleteUserRoleButton" data-name="@role">DELETE</button>
+                        </div>
+                     </div>
+                  </li>
+               }
+            </ul>
+         </div>
+         <div class="card-footer"></div>
+      </div>
+
+
+   </div>
+   <div class="card-footer"></div>
+</div>
+
+
+@section Scripts{
+   
+   <environment include="Development">
+      <script src="~/js/admin.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/admin.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

@@ -1,0 +1,140 @@
+﻿@model WMS.Ui.Mvc6.Models.Recipes.RecipeViewModel
+
+<label class="d-none"><input hidden asp-for="HitCounterJwt" />Hidden Label</label>
+<label class="d-none"><input hidden asp-for="RatingJwt" />Hidden Label</label>
+<div class="card">
+
+   <!-- title section -->
+   <div class="card-header bg-secondary text-light">
+      <h1><strong>@Model.Title</strong></h1>
+      <h2>@Model.Description</h2> shared by: @Model.User?.FirstName
+      <fieldset class="rating" id="@Model.Id">
+         <input type="radio" id="star5" name="rating" aria-label="5 stars" value=5 @Model.Rating?.Check5 /><label class="full" for="star5" title="Awesome - 5 stars"></label>
+         <input type="radio" id="star4half" name="rating" value=4.5 @Model.Rating?.Check45 /><label class="half" for="star4half" title="Really good - 4.5 stars"></label>
+         <input type="radio" id="star4" name="rating" value=4 @Model.Rating?.Check4 /><label class="full" for="star4" title="Pretty good - 4 stars"></label>
+         <input type="radio" id="star3half" name="rating" value=3.5 @Model.Rating?.Check35 /><label class="half" for="star3half" title="It's OK - 3.5 stars"></label>
+         <input type="radio" id="star3" name="rating" value=3 @Model.Rating?.Check3 /><label class="full" for="star3" title="Meh - 3 stars"></label>
+         <input type="radio" id="star2half" name="rating" value=2.5 @Model.Rating?.Check25 /><label class="half" for="star2half" title="Not Very fond of it - 2.5 stars"></label>
+         <input type="radio" id="star2" name="rating" value=2 @Model.Rating?.Check2 /><label class="full" for="star2" title="Not Good - 2 stars"></label>
+         <input type="radio" id="star1half" name="rating" value=1.5 @Model.Rating?.Check15 /><label class="half" for="star1half" title="Kinda bad - 1.5 stars"></label>
+         <input type="radio" id="star1" name="rating" value=1 @Model.Rating?.Check1 /><label class="full" for="star1" title="Awful - 1 star"></label>
+         <input type="radio" id="starhalf" name="rating" value=.5 @Model.Rating?.Check /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+      </fieldset>
+   </div>
+
+   <!-- recipe body -->
+   <div class="card-body">
+
+      <div class="d-flex flex-wrap">
+         <div class="p-2 order-md-1">
+            <h3><i>Category</i> : <strong>@Model.Category</strong></h3>
+            <h3><i>Variety</i> : <strong>@Model.Variety</strong></h3>
+            <h3><i>Yeast</i> : <strong>@Model.Yeast</strong></h3>
+            <h4><i>Ingredients:</i></h4>
+            @if (string.IsNullOrWhiteSpace(Model.Ingredients))
+            {
+               <div class="m-3">
+                  <partial name="_DefaultIngredients" />
+               </div>
+            }
+            else
+            {
+               <div class="instructionText m-3">@Model.Ingredients</div>
+            }
+
+            @if (Model.Targets.Count > 0)
+            {
+               <h4><i>Target Values:</i></h4>
+               <div class="m-3">
+                  @foreach (var line in Model.Targets)
+                  {
+                     <div>@line</div>
+                  }
+               </div>
+            }
+         </div>
+
+         <div class="p-2 order-md-3 flex-md-shrink-1">
+            <h4><i>Instructions:</i></h4>
+            @if (string.IsNullOrWhiteSpace(Model.Instructions))
+            {
+               <div class="m-3">
+                  <partial name="_DefaultInstructions" />
+               </div>
+            }
+            else
+            {
+               <div class="instructionText m-3">@Model.Instructions</div>
+            }
+         </div>
+
+         <div class="p-2 ml-auto order-md-2 d-print-none">
+            <!-- sub menu -->
+            <p><a class="printer" href="#"><i class="fa fa-print">&nbsp Printer Friendly Version</i></a></p>
+            <p><a href="/recipes/add"><i class="fa fa-plus">&nbsp Submit New Recipe</i></a></p>
+
+            <form asp-area="" asp-controller="Journal" asp-action="AddFromRecipe" method="post" id="addBatchFromRecipe">
+               <p>
+                  <label class="d-none"><input type="hidden" name="recipeId" value="@Model.Id" />Hidden Label</label>
+                  <label class="d-none"><input type="hidden" name="varietyId" value="@Model.VarietyId" />Hidden Label</label>
+                  <label class="d-none"><input type="hidden" name="targetId" value="@Model.TargetId" />Hidden Label</label>
+                  <label class="d-none"><input type="hidden" name="yeastId" value="@Model.YeastId" />Hidden Label</label>
+                  <button type="submit" class="btn btn-outline-primary btn-sm">Make a Batch</button>                 
+               </p>
+            </form>
+
+            <!-- hit counter -->
+            <div class="card">
+               <div class="card-header">
+                  <strong>Views</strong>
+               </div>
+               <div class="card-body">
+                  <div class="hit">@Model.Hits?.Digit1</div>
+                  <div class="hit">@Model.Hits?.Digit2</div>
+                  <div class="hit">@Model.Hits?.Digit3</div>
+                  <div class="hit">@Model.Hits?.Digit4</div>
+                  <div class="hit">@Model.Hits?.Digit5</div>
+                  <div class="hit">@Model.Hits?.Digit6</div>
+                  <div class="hit">@Model.Hits?.Digit7</div>
+                  <div class="hit">@Model.Hits?.Digit8</div>
+                  <div class="hit">@Model.Hits?.Digit9</div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- recipe images -->
+      <div class="row">
+         @if (Model.Images != null)
+         {
+            @foreach (var img in Model.Images)
+            {
+               <div class="col-sm-4">
+                  <div class="card">
+                     <div class="hovereffect">
+                        <img class="img-fluid rounded border border-secondary" src="@img.Src" alt="@img.Alt" title="@img.Title">
+                        <div class="overlay">
+                           <h2>@img.Caption</h2>
+                           <a id="@img.Id" class="info" data-src="@img.Src" data-alt="@img.Alt" data-title="@img.Title" data-caption="@img.Caption">ZOOM</a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            }
+         }
+      </div>
+
+   </div>
+   <div class="card-footer"></div>
+
+</div>
+
+@section Scripts{
+
+   <environment include="Development">
+      <script src="~/js/recipe.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/recipe.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

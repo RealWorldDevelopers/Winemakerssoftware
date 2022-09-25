@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Recipe.Dto;
 using WMS.Business.Common;
-using WMS.Data;
-using AutoMapper.QueryableExtensions;
+using WMS.Data.SQL;
 
 namespace WMS.Business.Recipe.Queries
 {
@@ -28,40 +26,15 @@ namespace WMS.Business.Recipe.Queries
       {
          _dbContext = dbContext;
          _mapper = mapper;
-      }
-
-      /// <summary>
-      /// Query all Ratings in SQL DB
-      /// </summary>
-      /// <returns>Ratings as <see cref="List{Rating}"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<RatingDto> Execute()
-      {
-         var ratings = _dbContext.Ratings.ToList();
-         var list = _mapper.Map<List<RatingDto>>(ratings);
-         return list;
-      }
-
-      /// <summary>
-      /// Query a specific Rating in SQL DB by primary key
-      /// </summary>
-      /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns>Rating as <see cref="RatingDto"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public RatingDto Execute(int id)
-      {
-         var rating = _dbContext.Ratings
-            .FirstOrDefault(r => r.Id == id);
-         var dto = _mapper.Map<RatingDto>(rating);
-         return dto;
-      }
+      }  
+           
 
       /// <summary>
       /// Asynchronously query all Ratings in SQL DB
       /// </summary>
       /// <returns>Ratings as <see cref="Task{List{RatingDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<RatingDto>> ExecuteAsync()
+      public async Task<List<RatingDto>> Execute()
       {
          var ratings = await _dbContext.Ratings.ToListAsync().ConfigureAwait(false);
          var list = _mapper.Map<List<RatingDto>>(ratings);
@@ -74,7 +47,7 @@ namespace WMS.Business.Recipe.Queries
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns>Rating as <see cref="Task{Rating}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<RatingDto> ExecuteAsync(int id)
+      public async Task<RatingDto> Execute(int id)
       {
          var rating = await _dbContext.Ratings
             .FirstOrDefaultAsync(r => r.Id == id)
@@ -83,24 +56,19 @@ namespace WMS.Business.Recipe.Queries
          return dto;
       }
 
-      public List<RatingDto> ExecuteByFK(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<RatingDto>> Execute(int start, int length)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public Task<List<RatingDto>> ExecuteByFKAsync(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<RatingDto>> ExecuteByFK(int fk)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public List<RatingDto> ExecuteByUser(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public Task<List<RatingDto>> ExecuteByUserAsync(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-   }
+        public Task<List<RatingDto>> ExecuteByUser(string userId)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

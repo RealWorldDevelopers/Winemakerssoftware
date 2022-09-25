@@ -1,0 +1,30 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.MaloCulturesViewModel
+
+<ul class="list-group-flush">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-2"><strong>Brand</strong></div>
+            <div class="col-sm-2"><strong>Trademark</strong></div>
+            <div class="col-sm-2 text-right">
+                <a asp-area="" asp-controller="Admin" asp-action="AddMalolacticCulture"><strong>Add</strong></a>
+            </div>
+        </div>
+    </li>
+
+    @foreach (var culture in Model.Cultures)
+    {
+        <li class="list-group-item">
+            <partial name="_MaloListItem" model="culture" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmEditMalo" asp-controller="Admin" asp-action="EditMalolacticCulture" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="editMaloId" />Hidden Label</label>
+</form>
+
+<form id="frmDeleteMalo" asp-controller="Admin" asp-action="DeleteMalolacticCulture" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="deleteMaloId" />Hidden Label</label>
+</form>

@@ -1,0 +1,13 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.VarietyViewModel;
+
+<div class="row">
+    <div class="col-sm-4">@Model.Literal</div>
+    <div class="col-sm-4">
+        @Model.Parent.Literal        
+    </div>
+    <div class="col-sm-4 text-right">
+        <button class="btn btn-primary" name="editVarietyButton" data-id="@Model.Id">Edit</button>
+        <button class="btn btn-primary" name="deleteVarietyButton" data-id="@Model.Id">DELETE</button>
+    </div>
+</div>

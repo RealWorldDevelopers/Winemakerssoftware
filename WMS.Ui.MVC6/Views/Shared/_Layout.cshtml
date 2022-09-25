@@ -1,0 +1,43 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<partial name="_Header" />
+
+<body>
+
+    <partial name="_Navbar" />
+    <br>    
+
+    <div id="loader" class="loader d-none">Loading...</div>
+
+    <div class="container body-content">
+        <partial name="_AlertsPartial" />
+        <div id="bodyContent" class="animate-bottom">
+
+           <environment include="Development">
+              <span>We are in Dev Environment &nbsp; size: &nbsp;</span>
+              <span class="d-inline d-sm-none">xs</span>
+              <span class="d-none d-sm-inline d-md-none">sm</span>
+              <span class="d-none d-md-inline d-lg-none">md</span>
+              <span class="d-none d-lg-inline d-xl-none">lg</span>
+              <span class="d-none d-xl-inline">xl</span>
+           </environment>
+
+           @RenderBody()
+
+           <partial name="_ModalImage" />
+           <partial name="_ModalYeast" />
+           <partial name="_ModalMessage" />
+           <partial name="_ModalBatchEntry" />
+        </div>
+    </div>
+
+    <partial name="_Footer" />
+
+    <partial name="_Javascripts" />
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

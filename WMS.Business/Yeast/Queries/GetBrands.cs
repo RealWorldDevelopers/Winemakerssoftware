@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
-using WMS.Data;
+using WMS.Data.SQL;
 
 namespace WMS.Business.Yeast.Queries
 {
    /// <inheritdoc cref = "IQuery{T}" />
-   public class GetBrands : IQuery<ICode>
+   public class GetBrands : IQuery<ICodeDto>
    {
       private readonly IMapper _mapper;
       private readonly WMSContext _dbContext;
@@ -23,42 +23,17 @@ namespace WMS.Business.Yeast.Queries
       {
          _dbContext = dbContext;
          _mapper = mapper;
-      }
-
-      /// <summary>
-      /// Query all Brands in SQL DB
-      /// </summary>
-      /// <returns><see cref="List{ICode}"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<ICode> Execute()
-      {
-         var brands = _dbContext.YeastBrand.ToList();
-         var list = _mapper.Map<List<ICode>>(brands);
-         return list;
-      }
-
-      /// <summary>
-      /// Query a Brand in SQL DB by primary key
-      /// </summary>
-      /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns><see cref="ICode"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public ICode Execute(int id)
-      {
-         var brand = _dbContext.YeastBrand.FirstOrDefault(p => p.Id == id);
-         var dto = _mapper.Map<ICode>(brand);
-         return dto;
-      }
+      }             
 
       /// <summary>
       /// Asynchronously query all Brands in SQL DB
       /// </summary>
-      /// <returns><see cref="Task{List{ICode}}"/></returns>
+      /// <returns><see cref="Task{List{ICodeDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<ICode>> ExecuteAsync()
+      public async Task<List<ICodeDto>> Execute()
       {
-         var brands = await _dbContext.YeastBrand.ToListAsync().ConfigureAwait(false);
-         var list = _mapper.Map<List<ICode>>(brands);
+         var brands = await _dbContext.YeastBrands.ToListAsync().ConfigureAwait(false);
+         var list = _mapper.Map<List<ICodeDto>>(brands);
          return list;
       }
 
@@ -68,32 +43,27 @@ namespace WMS.Business.Yeast.Queries
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns><see cref="Task{ICode}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<ICode> ExecuteAsync(int id)
+      public async Task<ICodeDto> Execute(int id)
       {
-         var brand = await _dbContext.YeastBrand
+         var brand = await _dbContext.YeastBrands
             .FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
-         var dto = _mapper.Map<ICode>(brand);
+         var dto = _mapper.Map<ICodeDto>(brand);
          return dto;
       }
 
-      public List<ICode> ExecuteByFK(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<ICodeDto>> Execute(int start, int length)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public Task<List<ICode>> ExecuteByFKAsync(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<ICodeDto>> ExecuteByFK(int fk)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public List<ICode> ExecuteByUser(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public Task<List<ICode>> ExecuteByUserAsync(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-   }
+        public Task<List<ICodeDto>> ExecuteByUser(string userId)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

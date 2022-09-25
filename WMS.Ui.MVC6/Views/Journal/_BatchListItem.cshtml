@@ -1,0 +1,89 @@
+﻿@model WMS.Ui.Mvc6.Models.Journal.BatchListItemViewModel
+   <div class="@(Model.BatchComplete == true ? "multi-collapse collapse" : "")">
+      <div class="card">
+         <div class="card-header bg-dark text-light h5">
+            <div>@Model.Title</div>
+            <div>@Model.Vintage - @Model.Variety</div>
+         </div>
+         <div class="card-body">
+            <div class="@(Model.BatchComplete == true ? "mb-3" : "d-none")">
+               <div class="p-2"><strong>Batch Complete</strong></div>
+               <div class="@(Model.Summary.CommentsOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                  <strong>
+                     @(Model.Summary.CommentsOnDate.HasValue == true ? Model.Summary.CommentsOnDate.Value.ToShortDateString() : "")
+                  </strong>
+                  <span>: @Model.Summary.CommentsOnValue</span>
+               </div>
+            </div>
+            <div class="@(Model.BatchComplete == true ? "d-none" : "mb-3")">
+               <div class="d-flex flex-row">
+                  <div class="@(Model.Summary.BottledOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Bottled</strong><br />
+                     @(Model.Summary.BottledOnDate.HasValue == true ? Model.Summary.BottledOnDate.Value.ToShortDateString() : "")
+                  </div>
+                  <div class="@(Model.Summary.FilteredOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Filtered</strong><br />
+                     @(Model.Summary.FilteredOnDate.HasValue == true ? Model.Summary.FilteredOnDate.Value.ToShortDateString() : "")
+                  </div>
+                  <div class="@(Model.Summary.RackedOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Racked</strong><br />
+                     @(Model.Summary.RackedOnDate.HasValue == true ? Model.Summary.RackedOnDate.Value.ToShortDateString() : "")
+                  </div>
+               </div>
+               <div class="d-flex flex-row">
+                  <div class="@(Model.Summary.SugarOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Sugar</strong>:
+                     <span class="keeptogether">
+                        @(@Model.Summary.SugarOnUom == "SG" ? Model.Summary.SugarOnValue.Value.ToString("0.000") : Model.Summary.SugarOnValue.ToString())
+                        @Model.Summary.SugarOnUom
+                     </span><br />
+                     @(Model.Summary.SugarOnDate.HasValue == true ? Model.Summary.SugarOnDate.Value.ToShortDateString() : "")
+                  </div>
+                  <div class="@(Model.Summary.TempOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>Temp</strong>:
+                     <span class="keeptogether">
+                        @Model.Summary.TempOnValue &deg;@Model.Summary.TempOnUom
+                     </span><br />
+                     @(Model.Summary.TempOnDate.HasValue == true ? Model.Summary.TempOnDate.Value.ToShortDateString() : "")
+                  </div>
+               </div>
+               <div class="d-flex flex-row">
+                  <div class="@(Model.Summary.TaOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>TA</strong>:&nbsp;
+                     @Model.Summary.TaOnValue.ToString() g/L<br />
+                     @(Model.Summary.TaOnDate.HasValue == true ? Model.Summary.TaOnDate.Value.ToShortDateString() : "")
+                  </div>
+                  <div class="@(Model.Summary.pHOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>pH</strong>:&nbsp;
+                     @Model.Summary.pHOnValue.ToString()<br />
+                     @(Model.Summary.pHOnDate.HasValue == true ? Model.Summary.pHOnDate.Value.ToShortDateString() : "")
+                  </div>
+               </div>
+               <div class="d-flex flex-row">
+                  <div class="@(Model.Summary.So2OnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>SO2</strong>:&nbsp;
+                     @Model.Summary.So2OnValue.ToString() mg/L<br />
+                     @(Model.Summary.So2OnDate.HasValue == true ? Model.Summary.So2OnDate.Value.ToShortDateString() : "")
+                  </div>
+               </div>
+               <div class="d-flex">
+                  <div class="@(Model.Summary.CommentsOnDate.HasValue == true ? "p-2" : "p-2 d-none")">
+                     <strong>
+                        @(Model.Summary.CommentsOnDate.HasValue == true ? Model.Summary.CommentsOnDate.Value.ToShortDateString() : "")
+                     </strong>:&nbsp;
+                     @Model.Summary.CommentsOnValue
+                  </div>
+               </div>
+            </div>
+
+            @if (!Model.BatchComplete)
+            {
+               <button class="btn btn-primary" name="showBatchEntryQuickButton" data-id="@Model.Id">Quick Entry</button>
+            }
+
+            <button class="btn btn-primary" name="editBatchDetailsButton" data-id="@Model.Id">Full Details</button>
+
+         </div>
+
+      </div>
+   </div>

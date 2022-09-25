@@ -1,0 +1,37 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.RecipesViewModel
+
+<br />
+<div>
+    <input class="form-control" inputmode="search" type="search" aria-label="Search" placeholder="Search ..." id="recipesSearch" />
+</div>
+
+<br />
+
+<ul class="list-group-flush" id="ulRecipe">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-2"><strong>Category</strong></div>
+            <div class="col-sm-2"><strong>Variety</strong></div>
+            <div class="col-sm-4"><strong>Name</strong></div>
+            <div class="col-sm-2"><strong>Alerts</strong></div>
+            <div class="col-sm-2"></div>
+        </div>
+    </li>
+
+    @foreach (var recipe in Model.Recipes)
+    {
+        <li class="list-group-item">
+            <partial name="_RecipeListItem" model="recipe" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmEditRecipe" asp-controller="Admin" asp-action="EditRecipe" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="editRecipeId" />Hidden Label</label>
+</form>
+
+<form id="frmDeleteRecipe" asp-controller="Admin" asp-action="DeleteRecipe" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="deleteRecipeId" />Hidden Label</label>
+</form>

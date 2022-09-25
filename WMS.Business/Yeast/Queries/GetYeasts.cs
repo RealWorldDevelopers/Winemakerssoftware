@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
-using WMS.Data;
+using WMS.Data.SQL;
 
 namespace WMS.Business.Yeast.Queries
 {
@@ -31,55 +31,13 @@ namespace WMS.Business.Yeast.Queries
          _mapper = mapper;
       }
 
-      /// <summary>
-      /// Query all Yeasts in SQL DB
-      /// </summary>
-      /// <returns><see cref="List{YeastDto}"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<YeastDto> Execute()
-      {
-         var yeast = _dbContext.Yeasts.ToList();
-         var list = _mapper.Map<List<YeastDto>>(yeast);
-         var brands = _dbContext.YeastBrand.ToList();
-         var styles = _dbContext.YeastStyle.ToList();
-
-         foreach (var item in list)
-         {
-            if (item.Brand != null)
-            {
-               var code = brands.SingleOrDefault(a => a.Id == item.Brand.Id);
-               item.Brand.Literal = code.Brand;
-            }
-            if (item.Style != null)
-            {
-               var code = styles.SingleOrDefault(a => a.Id == item.Style.Id);
-               item.Style.Literal = code.Style;
-            }
-         }
-
-         return list;
-      }
-
-      /// <summary>
-      /// Query a Yeast in SQL DB by primary key
-      /// </summary>
-      /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns><see cref="YeastDto"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public YeastDto Execute(int id)
-      {
-         var yeast = _dbContext.Yeasts
-            .FirstOrDefault(y => y.Id == id);
-         var dto = _mapper.Map<YeastDto>(yeast);
-         return dto;
-      }
-
+     
       /// <summary>
       /// Asynchronously query all Yeasts in SQL DB
       /// </summary>
       /// <returns><see cref="Task{List{YeastDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<YeastDto>> ExecuteAsync()
+      public async Task<List<YeastDto>> Execute()
       {
          // using TPL to parallel call gets
          List<Task> tasks = new List<Task>();
@@ -87,11 +45,11 @@ namespace WMS.Business.Yeast.Queries
          tasks.Add(t1);
          var list = _mapper.Map<List<YeastDto>>(await t1.ConfigureAwait(false));
 
-         var t2 = Task.Run(async () => await _dbContext.YeastBrand.ToListAsync().ConfigureAwait(false));
+         var t2 = Task.Run(async () => await _dbContext.YeastBrands.ToListAsync().ConfigureAwait(false));
          tasks.Add(t2);
          var brands = await t2.ConfigureAwait(false);
 
-         var t3 = Task.Run(async () => await _dbContext.YeastStyle.ToListAsync().ConfigureAwait(false));
+         var t3 = Task.Run(async () => await _dbContext.YeastStyles.ToListAsync().ConfigureAwait(false));
          tasks.Add(t3);
          var styles = await t3.ConfigureAwait(false);
 
@@ -122,7 +80,7 @@ namespace WMS.Business.Yeast.Queries
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns><see cref="Task{YeastDto}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<YeastDto> ExecuteAsync(int id)
+      public async Task<YeastDto> Execute(int id)
       {
          var yeast = await _dbContext.Yeasts
             .FirstOrDefaultAsync(y => y.Id == id).ConfigureAwait(false);
@@ -130,24 +88,19 @@ namespace WMS.Business.Yeast.Queries
          return dto;
       }
 
-      public List<YeastDto> ExecuteByFK(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<YeastDto>> Execute(int start, int length)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public Task<List<YeastDto>> ExecuteByFKAsync(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<YeastDto>> ExecuteByFK(int fk)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public List<YeastDto> ExecuteByUser(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public Task<List<YeastDto>> ExecuteByUserAsync(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-   }
+        public Task<List<YeastDto>> ExecuteByUser(string userId)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

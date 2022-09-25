@@ -1,0 +1,40 @@
+﻿@using Newtonsoft.Json
+@*
+    https://jameschambers.com/2014/06/day-14-bootstrap-alerts-and-mvc-framework-tempdata/
+*@
+
+@{
+    var alerts = new List<Alert>();
+    @if (TempData.ContainsKey(Alert.TempDataKey))
+    {
+        var obj = TempData[Alert.TempDataKey];
+        if (obj != null)
+        {
+            var jsonString = obj.ToString();
+            if (!string.IsNullOrWhiteSpace(jsonString))
+            {
+                var lst = JsonConvert.DeserializeObject<List<Alert>>(jsonString);
+                if (lst != null)
+                    alerts.AddRange(lst);
+            }
+        }
+    }
+
+    <div id="alertSection">
+        @if (alerts != null)
+        {
+            foreach (var alert in alerts)
+            {
+                var isDismissable = alert.Dismissable == null ? false : alert.Dismissable.Value;
+                var dismissableClass = isDismissable ? "alert-dismissable" : null;
+                <div class="alert alert-@alert.AlertStyle @dismissableClass">
+                    @if (isDismissable)
+                    {
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    }
+                    @alert.Message
+                </div>
+            }
+        }
+    </div>
+}

@@ -1,0 +1,46 @@
+﻿
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>@ViewData["Title"]</h1>
+   </div>
+   <div class="card-body text-center">
+      <p>
+         <h2>
+            <a href="#aboutModal" data-remote="legal/privacyweb.html" data-toggle="modal" data-target="#aboutModal">Privacy Policy</a>
+         </h2>
+      </p>
+      <p>
+         <h2>
+            <a href="#aboutModal" data-remote="legal/eula.html" data-toggle="modal" data-target="#aboutModal">License Agreements</a>
+         </h2>
+      </p>
+      <p>
+         <a href="https://realworlddevelopers.com">
+            <img class="img-fluid" src="https://realworlddevelopers.com/resources/images/rwdevs-header.jpg"
+                 srcset="https://realworlddevelopers.com/resources/images/rwdevs-header_320x100.jpg 320w,
+                             https://realworlddevelopers.com/resources/images/rwdevs-header_480x160.jpg 480w,
+                             https://realworlddevelopers.com/resources/images/rwdevs-header_768x256.jpg 768w,
+                             https://realworlddevelopers.com/resources/images/rwdevs-header_1024x400.jpg 1024w,
+                             https://realworlddevelopers.com/resources/images/rwdevs-header.jpg 2400w"
+                 sizes="95vw"
+                 alt="Real World Developers Logo">
+         </a>
+      </p>
+      <p><h3>Version @ViewData["Version"]</h3></p>
+      <p><h4>Copyright Real World Developers</h4></p>
+      <p><h5>All Rights Reserved</h5></p>
+
+   </div>
+   <div class="card-footer bg-secondary text-light"></div>
+</div>
+
+
+
+@section Scripts{
+   <environment include="Development">
+      <script src="~/js/about.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/about.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

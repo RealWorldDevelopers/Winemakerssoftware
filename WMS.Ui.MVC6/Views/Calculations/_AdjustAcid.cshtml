@@ -1,0 +1,107 @@
+﻿@model WMS.Ui.Mvc6.Models.Calculations.AdjustAcidViewModel
+ 
+<div name="calcAcid" class="card">
+   <div class="card-header bg-dark text-light"><h2>Adjust Acid</h2></div>
+   <div class="card-body">     
+
+      <form id="frmAdjustAcid">
+         
+         <fieldset>
+            <legend class="sr-only">Unit of Measure Liters or Gallons</legend>
+            <div class="d-flex justify-content-center m-2">
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AdjustAcid_UseMetric" type="radio" class="form-check-input" name="optUomAdjustAcid" checked value="metric">Liters
+                  </label>
+               </div>
+               <div class="form-check-inline mr-4">
+                  <label class="form-check-label">
+                     <input id="AdjustAcid_UseImperial" type="radio" class="form-check-input" name="optUomAdjustAcid" value="imperial">Gallons
+                  </label>
+               </div>
+            </div>
+         </fieldset>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="CurrentTa"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="CurrentTa" required maxlength="4" />
+               <span asp-validation-for="CurrentTa" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0">g/L</div>
+            </div>
+         </div>
+         
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="GoalTa"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="GoalTa" required maxlength="4" />
+               <span asp-validation-for="GoalTa" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0">g/L</div>
+            </div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="Additive"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" type="text" asp-for="Additive" readonly />
+               <span asp-validation-for="Additive" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2"></div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="DoseRateTa"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" type="text" asp-for="DoseRateTa" readonly />
+               <span asp-validation-for="DoseRateTa" class="text-danger"></span>
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomAdjustAcidRate">Grams/Liter</div>
+            </div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="VolumeMustTa"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="VolumeMustTa" required maxlength="4" />
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0" name="lblUomAdjustAcid">Liters</div>
+            </div>
+         </div>
+
+         <div class="row align-items-center">
+            <div class="col p-0 mr-2 text-right">
+               <label class="m-0"  asp-for="TotalAdditive"></label>
+            </div>
+            <div class="col p-0">
+               <input class="form-control text-right" type="text" asp-for="TotalAdditive" readonly />
+            </div>
+            <div class="col p-0 ml-2">
+               <div class="m-0">Grams</div>
+            </div>
+         </div>
+
+         <div class="d-flex justify-content-center align-items-center">
+            <button id="btnAdjustAcid" class="btn btn-primary" type="button">Calculate</button>
+         </div>
+
+      </form>
+
+   </div>
+</div>
+

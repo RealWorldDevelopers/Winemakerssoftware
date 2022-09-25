@@ -1,0 +1,6 @@
+﻿@model WMS.Ui.Mvc6.Models.Yeasts.YeastListItemViewModel
+<li class="list-group-item clickable" name="yeastListItem" data-id="@Model.Id" data-title="@Model.Name" data-style="@Model.Style"
+    data-tempmin="@Model.TempMin" data-tempmax="@Model.TempMax" data-alcohol="@Model.Alcohol" data-note="@Model.Note" data-display="@Model.Display" data-pnote="">
+   <h3 class="card-title">@Model.Name</h3>
+   <p class="card-text">@Model.Display</p>
+</li>

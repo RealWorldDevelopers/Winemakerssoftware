@@ -1,0 +1,25 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.RolesViewModel;
+
+<ul class="list-group-flush">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-6"><strong>Role</strong></div>
+            <div class="col-sm-6 text-right">
+                <a asp-area="" asp-controller="Admin" asp-action="AddRole"><strong>Add</strong></a>
+            </div>
+        </div>
+    </li>
+
+    @foreach (var role in Model.Roles)
+    {
+        <li class="list-group-item">
+            <partial name="_RoleListItem" model="role" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmDeleteRole" asp-controller="Admin" asp-action="DeleteRole" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="roleName" id="deleteRoleName" />Hidden Label</label>
+</form>

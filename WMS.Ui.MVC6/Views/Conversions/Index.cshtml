@@ -1,0 +1,238 @@
+﻿@model WMS.Ui.Mvc6.Models.Conversions.ConversionsViewModel
+
+<div class="card">
+   <div class="card-header bg-secondary text-light">
+      <h1>Conversions</h1>
+   </div>
+   <div class="card-body">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs nav-justified">
+         <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#mass">Mass</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#volume">Volume</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#temp">Temp</a>
+         </li>
+      </ul>
+      <!-- Tab panes -->
+      <div class="tab-content">
+         <div id="mass" class="container tab-pane active">
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Milligrams"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Milligrams" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">mg</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Grams"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Grams" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">g</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Kilograms"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Kilograms" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">kg</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Ounces"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Ounces" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">oz</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Pounds"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Pounds" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">lb</span>
+               </div>
+            </div>
+
+         </div>
+
+
+         <div id="volume" class="container tab-pane fade">
+
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Milliliters"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Milliliters" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">ml</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Liters"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Liters" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">l</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Gallons"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Gallons" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">gal</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="FluidOunces"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="FluidOunces" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">fl_oz</span>
+               </div>
+            </div>
+
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Cups"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Cups" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">cup</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Pints"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Pints" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">pint</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Quarts"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Quarts" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">qrt</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Tablespoons"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Tablespoons" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">tbsp</span>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Teaspoons"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Teaspoons" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">tsp</span>
+               </div>
+            </div>
+
+         </div>
+
+
+         <div id="temp" class="container tab-pane fade">
+
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Fahrenheit"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Fahrenheit" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">°F</span>
+               </div>
+            </div>
+
+            <div class="row">
+               <div class="col-sm-4 text-right">
+                  <label class="col-form-label" asp-for="Celsius"></label>
+               </div>
+               <div class="col-sm-4">
+                  <input class="form-control text-right" inputmode="decimal" pattern="[0-9]*" type="text" asp-for="Celsius" maxlength="10" />
+               </div>
+               <div class="col-sm-4 d-none d-sm-block">
+                  <span class="col-form-label">°C</span>
+               </div>
+            </div>
+
+         </div>
+
+         <br />
+         <div class="row">
+            <div class="col-sm-4 text-right"></div>
+            <div class="col-sm-4 text-right">
+               <a id="btnClear" title="Clear Values" class="btn btn-primary btn-block" href="#">Clear</a>
+            </div>
+            <div class="col-sm-4 text-right"></div>
+         </div>
+
+      </div>
+   </div>
+   <div class="card-footer"></div>
+</div>
+
+@section Scripts{   
+   <environment include="Development">
+      <script src="~/js/conversions.js" asp-append-version="true" type="text/javascript"></script>
+      <script src="~/js/convertFunctions.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+   <environment exclude="Development">
+      <script src="~/js/conversions.min.js" asp-append-version="true" type="text/javascript"></script>
+   </environment>
+}

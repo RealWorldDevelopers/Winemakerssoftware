@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
-using WMS.Data;
-using WMS.Data.Entities;
+using WMS.Business.MaloCulture.Dto;
+using WMS.Data.SQL;
 
 namespace WMS.Business.MaloCulture.Commands
 {
-   public class ModifyMaloCulture : ICommand<Dto.MaloCultureDto>
+   public class ModifyMaloCulture : ICommand<MaloCultureDto>
    {
       private readonly IMapper _mapper;
       private readonly WMSContext _dbContext;
@@ -26,40 +25,17 @@ namespace WMS.Business.MaloCulture.Commands
       }
 
       /// <summary>
-      /// Add a <see cref="Dto.MaloCultureDto"/> to Database
+      /// Add a <see cref="MaloCultureDto"/> to Database
       /// </summary>
-      /// <param name="dto">Data Transfer Object as <see cref="Dto.MaloCultureDto"/></param>
-      /// <returns><see cref="Dto.MaloCultureDto"/></returns>
-      /// <inheritdoc cref="ICommand{T}.Add(T)"/>
-      public Dto.MaloCultureDto Add(Dto.MaloCultureDto dto)
-      {
-         if (dto == null)
-            throw new ArgumentNullException(nameof(dto));
-
-         var entity = _mapper.Map<MaloCultures>(dto);
-
-         // add new recipe
-         _dbContext.MaloCultures.Add(entity);
-
-         // Save changes in database
-         _dbContext.SaveChanges();
-
-         dto.Id = entity.Id;
-         return dto;
-      }
-
-      /// <summary>
-      /// Add a <see cref="Dto.MaloCultureDto"/> to Database
-      /// </summary>
-      /// <param name="dto">Data Transfer Object as <see cref="Dto.MaloCultureDto"/></param>
-      /// <returns><see cref="Task{Dto.MaloCultureDto}"/></returns>
+      /// <param name="dto">Data Transfer Object as <see cref="MaloCultureDto"/></param>
+      /// <returns><see cref="Task{MaloCultureDto}"/></returns>
       /// <inheritdoc cref="ICommand{T}.AddAsync(T)"/>
-      public async Task<Dto.MaloCultureDto> AddAsync(Dto.MaloCultureDto dto)
+      public async Task<Dto.MaloCultureDto> Add(MaloCultureDto dto)
       {
          if (dto == null)
             throw new ArgumentNullException(nameof(dto));
 
-         var entity = _mapper.Map<MaloCultures>(dto);
+         var entity = _mapper.Map<Data.SQL.Entities.MaloCulture>(dto);
 
          // add new recipe
          await _dbContext.MaloCultures.AddAsync(entity);
@@ -72,54 +48,22 @@ namespace WMS.Business.MaloCulture.Commands
       }
 
       /// <summary>
-      /// Update a <see cref="Dto.MaloCultureDto"/> in the Database
+      /// Update a <see cref="MaloCultureDto"/> in the Database
       /// </summary>
-      /// <param name="dto">Data Transfer Object as <see cref="Dto.MaloCultureDto"/></param>
-      /// <returns><see cref="Dto.MaloCultureDto"/></returns>
-      /// <inheritdoc cref="ICommand{T}.Update(T)"/>
-      public Dto.MaloCultureDto Update(Dto.MaloCultureDto dto)
-      {
-         if (dto == null)
-            throw new ArgumentNullException(nameof(dto));
-
-         var entity = _dbContext.MaloCultures.First(r => r.Id == dto.Id);
-         entity.Alcohol = dto.Alcohol;
-         entity.Brand = dto.Brand.Id;
-         entity.Id = dto.Id;
-         entity.Note = dto.Note;
-         entity.Style = dto.Style.Id;
-         entity.TempMax = dto.TempMax;
-         entity.TempMin = dto.TempMin;
-         entity.Trademark = dto.Trademark;
-         entity.So2 = dto.So2;
-         entity.PH = dto.pH;        
-
-         // Update entity in DbSet
-         _dbContext.MaloCultures.Update(entity);
-
-         // Save changes in database
-         _dbContext.SaveChanges();
-
-         return dto;
-      }
-
-      /// <summary>
-      /// Update a <see cref="Dto.MaloCultureDto"/> in the Database
-      /// </summary>
-      /// <param name="dto">Data Transfer Object as <see cref="Dto.MaloCultureDto"/></param>
-      /// <returns><see cref="Task{Dto.MaloCultureDto}"/></returns>
+      /// <param name="dto">Data Transfer Object as <see cref="MaloCultureDto"/></param>
+      /// <returns><see cref="Task{MaloCultureDto}"/></returns>
       /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
-      public async Task<Dto.MaloCultureDto> UpdateAsync(Dto.MaloCultureDto dto)
+      public async Task<MaloCultureDto> Update(MaloCultureDto dto)
       {
          if (dto == null)
             throw new ArgumentNullException(nameof(dto));
 
          var entity = await _dbContext.MaloCultures.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
          entity.Alcohol = dto.Alcohol;
-         entity.Brand = dto.Brand.Id;
-         entity.Id = dto.Id;
+         entity.Brand = dto.Brand?.Id;
+         entity.Id = dto.Id.Value;
          entity.Note = dto.Note;
-         entity.Style = dto.Style.Id;
+         entity.Style = dto.Style?.Id;
          entity.TempMax = dto.TempMax;
          entity.TempMin = dto.TempMin;
          entity.Trademark = dto.Trademark;
@@ -136,31 +80,13 @@ namespace WMS.Business.MaloCulture.Commands
       }
 
       /// <summary>
-      /// Remove a <see cref="Dto.MaloCultureDto"/> to Database
-      /// </summary>
-      /// <param name="dto">Data Transfer Object as <see cref="Dto.MaloCultureDto"/></param>
-      /// <inheritdoc cref="ICommand{T}.Delete(T)"/>
-      public void Delete(Dto.MaloCultureDto dto)
+        /// Remove a <see cref="MaloCultureDto"/> to Database
+        /// </summary>
+        /// <param name="id">Primary Key as <see cref="int"/></param>
+        /// <inheritdoc cref="ICommand{T}.DeleteAsync(T)"/>
+        public async Task Delete(int id)
       {
-         var entity = _dbContext.MaloCultures.FirstOrDefault(v => v.Id == dto.Id);
-         if (entity != null)
-         {
-            // add new recipe
-            _dbContext.MaloCultures.Remove(entity);
-
-            // Save changes in database
-            _dbContext.SaveChanges();
-         }
-      }
-
-      /// <summary>
-      /// Remove a <see cref="Dto.MaloCultureDto"/> to Database
-      /// </summary>
-      /// <param name="dto">Data Transfer Object as <see cref="Dto.MaloCultureDto"/></param>
-      /// <inheritdoc cref="ICommand{T}.DeleteAsync(T)"/>
-      public async Task DeleteAsync(Dto.MaloCultureDto dto)
-      {
-         var entity = await _dbContext.MaloCultures.FirstOrDefaultAsync(v => v.Id == dto.Id).ConfigureAwait(false);
+         var entity = await _dbContext.MaloCultures.FirstOrDefaultAsync(v => v.Id == id).ConfigureAwait(false);
          if (entity != null)
          {
             // add new recipe

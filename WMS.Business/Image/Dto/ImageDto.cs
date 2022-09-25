@@ -5,43 +5,39 @@ namespace WMS.Business.Image.Dto
     /// Data Transfer Object representing a Image Table Entity
     /// </summary>
     public class ImageDto
-    {
-        private readonly byte[] _thumbnail;
-        private readonly byte[] _data;
-
-        public ImageDto(byte[] thumbnail, byte[] data)
-        {
-            _thumbnail = thumbnail;
-            _data = data;
-        }
+    {       
+        public ImageDto() { }               
 
         /// <summary>
         /// Primary Key
         /// </summary>
-        public int Id { get; set; }       
+        public int? Id { get; set; }
+
+        /// <summary>
+        /// Foreign Key to a <see cref="RecipeDto"/>
+        /// </summary>
+        public int? RecipeId { get; set; }
 
         /// <summary>
         /// Image File Name
         /// </summary>
-        public string FileName { get; set; }
+        public string? FileName { get; set; }
 
         /// <summary>
         /// Image Header Name
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Image Content
         /// </summary>
-        public byte[] Data () 
-        { return (byte[])_data.Clone(); }
+        public byte[]? Data { get; set; }      
 
         /// <summary>
         /// Thumbnail Content
         /// </summary>
-        public byte[] Thumbnail () 
-        { return (byte[])_thumbnail.Clone(); }
-
+        public byte[]? Thumbnail { get; set; }
+       
         /// <summary>
         /// Size Property in Bytes
         /// </summary>
@@ -50,7 +46,7 @@ namespace WMS.Business.Image.Dto
         /// <summary>
         /// Image Type
         /// </summary>
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
     }
 

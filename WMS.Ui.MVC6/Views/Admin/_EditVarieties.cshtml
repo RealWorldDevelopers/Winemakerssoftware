@@ -1,0 +1,30 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.VarietiesViewModel;
+
+<ul class="list-group-flush">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-4"><strong>Variety</strong></div>
+            <div class="col-sm-4"><strong>Parent</strong></div>
+            <div class="col-sm-4 text-right">
+                <a asp-area="" asp-controller="Admin" asp-action="AddVariety"><strong>Add</strong></a>
+            </div>
+        </div>
+    </li>
+
+    @foreach (var variety in Model.Varieties)
+    {
+        <li class="list-group-item">
+            <partial name="_VarietyListItem" model="variety" />
+        </li>
+    }
+
+</ul>
+
+<form id="frmEditVariety" asp-controller="Admin" asp-action="EditVariety" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="editVarietyId" />Hidden Label</label>
+</form>
+
+<form id="frmDeleteVariety" asp-controller="Admin" asp-action="DeleteVariety" method="POST" enctype="multipart/form-data">
+    <label class="d-none"><input hidden name="Id" id="deleteVarietyId" />Hidden Label</label>
+</form>

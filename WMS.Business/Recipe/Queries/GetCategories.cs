@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
-using WMS.Data;
+using WMS.Data.SQL;
 
 namespace WMS.Business.Recipe.Queries
 {
@@ -13,7 +11,7 @@ namespace WMS.Business.Recipe.Queries
    /// Categories Query Instance
    /// </summary>
    /// <inheritdoc cref="IQuery{T}"/>
-   public class GetCategories : IQuery<ICode>
+   public class GetCategories : IQuery<ICodeDto>
    {
 
       private readonly IMapper _mapper;
@@ -29,42 +27,16 @@ namespace WMS.Business.Recipe.Queries
          _dbContext = dbContext;
          _mapper = mapper;
       }
-
-      /// <summary>
-      /// Query all Categories in SQL DB
-      /// </summary>
-      /// <returns>Categories as <see cref="List{ICode}"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<ICode> Execute()
-      {
-         var categories = _dbContext.Categories.ToList();
-         var list = _mapper.Map<List<ICode>>(categories);
-         return list;
-      }
-
-      /// <summary>
-      /// Query a specific Category in SQL DB by primary key
-      /// </summary>
-      /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns>Category as <see cref="ICode"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public ICode Execute(int id)
-      {
-         var category = _dbContext.Categories
-            .FirstOrDefault(r => r.Id == id);
-         var dto = _mapper.Map<ICode>(category);
-         return dto;
-      }
-
+      
       /// <summary>
       /// Asynchronously query all Categories in SQL DB
       /// </summary>
-      /// <returns>Categories as <see cref="Task{List{ICode}}"/></returns>
+      /// <returns>Categories as <see cref="Task{List{ICodeDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<ICode>> ExecuteAsync()
+      public async Task<List<ICodeDto>> Execute()
       {
          var categories = await _dbContext.Categories.ToListAsync().ConfigureAwait(false);
-         var list = _mapper.Map<List<ICode>>(categories);
+         var list = _mapper.Map<List<ICodeDto>>(categories);
          return list;
       }
 
@@ -74,33 +46,28 @@ namespace WMS.Business.Recipe.Queries
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns>Category as <see cref="Task{ICode}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<ICode> ExecuteAsync(int id)
+      public async Task<ICodeDto> Execute(int id)
       {
          var category = await _dbContext.Categories
             .FirstOrDefaultAsync(r => r.Id == id)
             .ConfigureAwait(false);
-         var dto = _mapper.Map<ICode>(category);
+         var dto = _mapper.Map<ICodeDto>(category);
          return dto;
       }
 
-      public List<ICode> ExecuteByFK(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<ICodeDto>> Execute(int start, int length)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public Task<List<ICode>> ExecuteByFKAsync(int fk)
-      {
-         throw new System.NotImplementedException();
-      }
+        public Task<List<ICodeDto>> ExecuteByFK(int fk)
+        {
+            throw new System.NotImplementedException();
+        }
 
-      public List<ICode> ExecuteByUser(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public Task<List<ICode>> ExecuteByUserAsync(string userId)
-      {
-         throw new System.NotImplementedException();
-      }
-   }
+        public Task<List<ICodeDto>> ExecuteByUser(string userId)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

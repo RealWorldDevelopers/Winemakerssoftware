@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WMS.Business.Common;
 using WMS.Business.Journal.Dto;
-using WMS.Data;
+using WMS.Data.SQL;
 
 namespace WMS.Business.Journal.Queries
 {
@@ -20,38 +20,14 @@ namespace WMS.Business.Journal.Queries
          _dbContext = dbContext;
          _mapper = mapper;
       }
-
-      /// <summary>
-      /// Query all Targets in SQL DB
-      /// </summary>
-      /// <returns>Targets as <see cref="List{TargetDto}"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute()"/>
-      public List<TargetDto> Execute()
-      {
-         var targets = _dbContext.Targets.ToList();
-         var list = _mapper.Map<List<TargetDto>>(targets);
-         return list;
-      }
-
-      /// <summary>
-      /// Query a specific Target in SQL DB by primary key
-      /// </summary>
-      /// <param name="id">Primary Key as <see cref="int"/></param>
-      /// <returns>Batch as <see cref="TargetDto"/></returns>
-      /// <inheritdoc cref="IQuery{T}.Execute(int)"/>
-      public TargetDto Execute(int id)
-      {
-         var target = _dbContext.Targets.FirstOrDefault(r => r.Id == id);
-         var dto = _mapper.Map<TargetDto>(target);
-         return dto;
-      }
+          
 
       /// <summary>
       /// Asynchronously query all Targets in SQL DB
       /// </summary>
       /// <returns>Targets as <see cref="Task{List{TargetDto}}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync"/>
-      public async Task<List<TargetDto>> ExecuteAsync()
+      public async Task<List<TargetDto>> Execute()
       {
          var targets = await _dbContext.Targets.ToListAsync().ConfigureAwait(false);
          var list = _mapper.Map<List<TargetDto>>(targets);
@@ -64,7 +40,7 @@ namespace WMS.Business.Journal.Queries
       /// <param name="id">Primary Key as <see cref="int"/></param>
       /// <returns>Batch as <see cref="Task{TargetDto}"/></returns>
       /// <inheritdoc cref="IQuery{T}.ExecuteAsync(int)"/>
-      public async Task<TargetDto> ExecuteAsync(int id)
+      public async Task<TargetDto> Execute(int id)
       {
          var target = await _dbContext.Targets
             .FirstOrDefaultAsync(r => r.Id == id)
@@ -73,24 +49,19 @@ namespace WMS.Business.Journal.Queries
          return dto;
       }
 
-      public List<TargetDto> ExecuteByFK(int fk)
-      {
-         throw new NotImplementedException();
-      }
+        public Task<List<TargetDto>> Execute(int start, int length)
+        {
+            throw new NotImplementedException();
+        }
 
-      public Task<List<TargetDto>> ExecuteByFKAsync(int fk)
-      {
-         throw new NotImplementedException();
-      }
+        public Task<List<TargetDto>> ExecuteByFK(int fk)
+        {
+            throw new NotImplementedException();
+        }
 
-      public List<TargetDto> ExecuteByUser(string userId)
-      {
-         throw new NotImplementedException();
-      }
-
-      public Task<List<TargetDto>> ExecuteByUserAsync(string userId)
-      {
-         throw new NotImplementedException();
-      }
-   }
+        public Task<List<TargetDto>> ExecuteByUser(string userId)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

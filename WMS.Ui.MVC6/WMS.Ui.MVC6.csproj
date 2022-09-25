@@ -1,0 +1,116 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TypeScriptTarget>ES6</TypeScriptTarget>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TypeScriptTarget>ES6</TypeScriptTarget>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>57b2856a-5f7e-441e-8981-8ea3bce5fdfc</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="appsettings.Production.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="wwwroot\lib\chartjs\Chart.bundle.js" />
+		<None Include="wwwroot\lib\chartjs\Chart.bundle.min.js" />
+		<None Include="wwwroot\lib\chartjs\Chart.js" />
+		<None Include="wwwroot\lib\chartjs\Chart.min.js" />
+		<None Include="wwwroot\lib\popper.js\esm\popper-utils.js" />
+		<None Include="wwwroot\lib\popper.js\esm\popper-utils.js.map" />
+		<None Include="wwwroot\lib\popper.js\esm\popper-utils.min.js" />
+		<None Include="wwwroot\lib\popper.js\esm\popper-utils.min.js.map" />
+		<None Include="wwwroot\lib\popper.js\esm\popper.js" />
+		<None Include="wwwroot\lib\popper.js\esm\popper.js.map" />
+		<None Include="wwwroot\lib\popper.js\esm\popper.min.js" />
+		<None Include="wwwroot\lib\popper.js\esm\popper.min.js.map" />
+		<None Include="wwwroot\lib\popper.js\popper-utils.js" />
+		<None Include="wwwroot\lib\popper.js\popper-utils.js.map" />
+		<None Include="wwwroot\lib\popper.js\popper-utils.min.js" />
+		<None Include="wwwroot\lib\popper.js\popper-utils.min.js.map" />
+		<None Include="wwwroot\lib\popper.js\popper.js" />
+		<None Include="wwwroot\lib\popper.js\popper.js.map" />
+		<None Include="wwwroot\lib\popper.js\popper.min.js" />
+		<None Include="wwwroot\lib\popper.js\popper.min.js.map" />
+		<None Include="wwwroot\lib\popper.js\umd\popper-utils.js" />
+		<None Include="wwwroot\lib\popper.js\umd\popper-utils.js.map" />
+		<None Include="wwwroot\lib\popper.js\umd\popper-utils.min.js" />
+		<None Include="wwwroot\lib\popper.js\umd\popper-utils.min.js.map" />
+		<None Include="wwwroot\lib\popper.js\umd\popper.js" />
+		<None Include="wwwroot\lib\popper.js\umd\popper.js.map" />
+		<None Include="wwwroot\lib\popper.js\umd\popper.min.js" />
+		<None Include="wwwroot\lib\popper.js\umd\popper.min.js.map" />
+		<None Include="wwwroot\lib\sw-toolbox\sw-toolbox.js" />
+		<None Include="wwwroot\lib\sw-toolbox\sw-toolbox.js.map" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+		<PackageReference Include="Azure.Identity" Version="1.7.0" />
+		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.9">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="RWD.Toolbox.Conversion" Version="2.0.1" />
+		<PackageReference Include="RWD.Toolbox.Logging.Infrastructure" Version="1.0.0" />
+		<PackageReference Include="RWD.Toolbox.SMTP" Version="2.0.1" />
+		<PackageReference Include="RWD.Toolbox.Ui.Middleware.CspHeader" Version="2.0.1" />
+		<PackageReference Include="RWD.Toolbox.Ui.Middleware.SecurityHeaders" Version="2.0.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
+		<PackageReference Include="Tinify" Version="1.5.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\WMS.Communications\WMS.Communications.csproj" />
+		<ProjectReference Include="..\WMS.Domain\WMS.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Update="bundleconfig.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

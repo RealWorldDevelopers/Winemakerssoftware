@@ -1,0 +1,22 @@
+﻿
+@model WMS.Ui.Mvc6.Models.Admin.CategoryViewModel;
+
+<div class="row">
+    <div class="col-sm-2">@Model.Literal</div>
+    <div class="col-sm-6">
+        @for (int i = 0; i < Model.Varieties.Count; i++)
+        {
+            <a href="#" name="editVarietyButton" data-id="@Model.Varieties[i].Id">
+                @Model.Varieties[i].Literal
+            </a>
+            @if (i < Model.Varieties.Count - 1)
+            {
+                <span>|</span>
+            }
+        }
+    </div>
+    <div class="col-sm-4 text-right">
+        <button class="btn btn-primary" name="editCategoryButton" data-id="@Model.Id">Edit</button>
+        <button class="btn btn-primary" name="deleteCategoryButton" data-id="@Model.Id">DELETE</button>
+    </div>
+</div>
