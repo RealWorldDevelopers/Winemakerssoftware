@@ -75,12 +75,12 @@ namespace WMS.Business.Recipe.Dto
         /// <summary>
         /// States if recipe able to be view and used
         /// </summary>
-        public bool? Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// States if recipe needs to go through the approval process
         /// </summary>
-        public bool? NeedsApproved { get; set; }
+        public bool NeedsApproved { get; set; } = true;
 
         /// <summary>
         /// Number of time recipe has been viewed online
@@ -94,14 +94,26 @@ namespace WMS.Business.Recipe.Dto
 
     }
 
-
-    // TODO add fluent validation
+    // TODO How to Validate and Test
+    // TODO add fluent validation https://docs.fluentvalidation.net/en/latest/custom-validators.html
     public class RecipeDtoValidator : AbstractValidator<RecipeDto>
     {
-        //public RecipeDtoValidator()
-        //{
-        //    RuleFor(model => model.Title).NotEmpty();
-        //}
+        public RecipeDtoValidator()
+        {
+            RuleFor(dto => dto.Title).NotEmpty();
+            RuleFor(dto => dto.Description).NotEmpty();
+            RuleFor(dto => dto.NeedsApproved).NotEmpty();
+
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+            RuleFor(dto => dto.Category).SetValidator(new CodeDtoValidator());
+            RuleFor(dto => dto.Variety).SetValidator(new CodeDtoValidator()); 
+            RuleFor(dto => dto.Yeast).SetValidator(new YeastDtoValidator());
+            RuleFor(dto => dto.Target).SetValidator(new TargetDtoValidator());
+            RuleFor(dto => dto.Rating).SetValidator(new RatingDtoValidator());
+            RuleForEach(dto => dto.ImageFiles).SetValidator(new ImageDtoValidator());
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
+        }
     }
 
 }

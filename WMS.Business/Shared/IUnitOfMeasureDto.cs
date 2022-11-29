@@ -20,17 +20,17 @@ namespace WMS.Business.Common
       /// <summary>
       /// Literal Name of Code
       /// </summary>
-      string? Name { get; set; }
+      string Name { get; set; }
 
       /// <summary>
       /// Description of Code
       /// </summary>
-      string? Description { get; set; }
+      string Description { get; set; }
 
       /// <summary>
       /// Enabled for Use
       /// </summary>
-      bool? Enabled { get; set; }
+      bool Enabled { get; set; }
 
 
 

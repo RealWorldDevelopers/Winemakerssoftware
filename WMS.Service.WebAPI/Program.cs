@@ -1,10 +1,19 @@
 
 using Azure.Identity;
+using FluentValidation;
 using FluentValidation.AspNetCore;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using RWD.Toolbox.Logging.Infrastructure.Middleware;
 using RWD.Toolbox.Ui.Middleware.CspHeader;
 using RWD.Toolbox.Ui.Middleware.SecurityHeaders;
+using Serilog;
+using System.Data.SqlClient;
+using System.Reflection;
+using WMS.Business.Recipe.Dto;
 using WMS.Service.WebAPI;
 using WMS.Service.WebAPI.Extensions;
 
@@ -22,6 +31,28 @@ builder.Configuration.GetSection("ApplicationSettings").Bind(appSettings);
 
 // app config settings
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("ApplicationSettings"));
+
+// setup logging
+var name = Assembly.GetExecutingAssembly().GetName();
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    //.MinimumLevel.Debug() 
+    //.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    //.Enrich.WithAspnetcoreHttpcontext(serviceProvider)
+    //.Enrich.FromLogContext()
+    //.Enrich.WithExceptionDetails()
+    //.Enrich.WithMachineName()
+    //.Enrich.WithEnvironmentName()
+    //.Enrich.WithEnvironmentUserName()
+    .Enrich.WithProperty("Assembly", $"{name.Name}")
+    .Enrich.WithProperty("Version", $"{name.Version}")
+    //.WriteTo.File(new RenderedCompactJsonFormatter(), @"E:\Testing\error.json", shared: true)
+    // .WriteTo.MSSqlServer(connectionString: AppSettings.ConnString,
+    //                      sinkOptions: new MSSqlServerSinkOptions { TableName = "Log_Error", AutoCreateSqlTable = true, BatchPostingLimit = 1 },
+    //                      columnOptions: Logger.GetSqlColumnOptions())
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 // add cors settings
 builder.Services.AddCors(options =>
@@ -41,10 +72,15 @@ builder.Services.AddCors(options =>
 // auth
 //https://www.c-sharpcorner.com/article/jwt-authentication-and-authorization-in-net-6-0-with-identity-framework/
 
-// Add Validatiors
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<WMS.Business.Recipe.Dto.RecipeDtoValidator>());
 
+builder.Services.AddControllers();
+
+// TODO https://code-maze.com/fluentvalidation-in-aspnet/
+// TODO validator test project
+// Add Validatiors
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<RecipeDtoValidator>(ServiceLifetime.Transient);
+//builder.Services.AddTransient<IValidator<RecipeDto>, RecipeDtoValidator>();
 
 // Configure the API versioning properties of the project. 
 builder.Services.AddApiVersioningConfigured();
@@ -99,11 +135,20 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// security headers            
+// TODO un comment when web api is completed
+// Return custom safe API errors in production
+//app.UseApiExceptionHandler(options =>
+//{
+//    options.AddResponseDetails = UpdateApiErrorResponse;
+//    options.DetermineLogLevel = DetermineLogLevel;
+//});
+
+
+// TODO security headers            
 app.UseSecurityHeadersMiddleware(new SecurityHeadersBuilder()
-               .RemoveServerHeader()
-               .AddStrictTransportSecurity()
-               );
+               .RemoveServerHeader());
+
+app.UseHsts();
 
 app.UseCors();
 
@@ -115,3 +160,25 @@ app.MapControllers();
 
 app.Run();
 
+
+// Determine how to classify error
+LogLevel DetermineLogLevel(Exception ex)
+{
+    if (ex.Message.StartsWith("cannot open database", StringComparison.InvariantCultureIgnoreCase) ||
+        ex.Message.StartsWith("a network-related", StringComparison.InvariantCultureIgnoreCase))
+    {
+        return LogLevel.Critical;
+    }
+
+    return LogLevel.Error;
+}
+
+
+// Add Custom Notes to Errors
+void UpdateApiErrorResponse(HttpContext context, Exception ex, ApiError error)
+{
+    if (ex.GetType().Name == nameof(SqlException))
+    {
+        error.Detail = "Exception was a database exception!";
+    }
+}

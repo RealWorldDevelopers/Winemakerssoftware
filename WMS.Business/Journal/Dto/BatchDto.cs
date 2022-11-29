@@ -1,6 +1,9 @@
 ﻿
+using FluentValidation;
 using System.Collections.Generic;
 using WMS.Business.Common;
+using WMS.Business.Image.Dto;
+using WMS.Business.Recipe.Dto;
 using WMS.Business.Yeast.Dto;
 
 namespace WMS.Business.Journal.Dto
@@ -23,12 +26,12 @@ namespace WMS.Business.Journal.Dto
         /// <summary>
         /// The name given to this Batch
         /// </summary>
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Brief description of Batch
         /// </summary>
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Size of Batch
@@ -78,9 +81,31 @@ namespace WMS.Business.Journal.Dto
         /// <summary>
         /// Is Batch Completed
         /// </summary>
-        public bool? Complete { get; set; }
+        public bool Complete { get; set; } = false;
 
         public List<BatchEntryDto>? Entries { get; }
 
     }
+
+    // TODO How to Validate and Test
+    // TODO add fluent validation https://docs.fluentvalidation.net/en/latest/custom-validators.html
+    public class BatchDtoValidator : AbstractValidator<BatchDto>
+    {
+        public BatchDtoValidator()
+        {
+            RuleFor(dto => dto.Title).NotEmpty();
+            RuleFor(dto => dto.Description).NotEmpty();
+            RuleFor(dto => dto.Complete).NotEmpty();
+
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+            RuleFor(dto => dto.VolumeUom).SetValidator(new UnitOfMeasureDtoValidator());
+            RuleFor(dto => dto.Variety).SetValidator(new CodeDtoValidator());
+            RuleFor(dto => dto.Target).SetValidator(new TargetDtoValidator());
+            RuleFor(dto => dto.Yeast).SetValidator(new YeastDtoValidator());
+            RuleForEach(dto => dto.Entries).SetValidator(new BatchEntryDtoValidator());
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
+        }
+    }
+
 }

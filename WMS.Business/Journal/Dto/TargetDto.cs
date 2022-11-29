@@ -1,4 +1,6 @@
-﻿using WMS.Business.Common;
+﻿using FluentValidation;
+using WMS.Business.Common;
+using WMS.Business.Yeast.Dto;
 
 namespace WMS.Business.Journal.Dto
 {
@@ -54,5 +56,22 @@ namespace WMS.Business.Journal.Dto
         /// </summary>
         public UnitOfMeasureDto? EndSugarUom { get; set; }
 
+
     }
+
+    // TODO how to validate require or test ?
+    // TODO validator https://docs.fluentvalidation.net/en/latest/custom-validators.html
+    public class TargetDtoValidator : AbstractValidator<TargetDto>
+    {
+        public TargetDtoValidator()
+        {            
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+            RuleFor(dto => dto.StartSugarUom).SetValidator(new UnitOfMeasureDtoValidator());
+            RuleFor(dto => dto.TempUom).SetValidator(new UnitOfMeasureDtoValidator());
+            RuleFor(dto => dto.EndSugarUom).SetValidator(new UnitOfMeasureDtoValidator());
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
+        }
+    }
+
 }

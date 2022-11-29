@@ -14,13 +14,10 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class MaloCultureController : ControllerBase
     {
-        private readonly ILogger<MaloCultureController> _logger;
-
         private readonly Business.MaloCulture.IFactory _factory;
 
-        public MaloCultureController(Business.MaloCulture.IFactory maloCultureQryFactory, ILogger<MaloCultureController> logger)
+        public MaloCultureController(Business.MaloCulture.IFactory maloCultureQryFactory)
         {
-            _logger = logger;
             _factory = maloCultureQryFactory;
         }
 
@@ -30,6 +27,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="List{MaloCultureDto}"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -37,6 +35,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet(Name = "GetAllCultures")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -44,16 +43,9 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                var qry = _factory.CreateMaloCulturesQuery();
-                var dto = await qry.Execute().ConfigureAwait(false);
-                return Ok(dto);             
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var qry = _factory.CreateMaloCulturesQuery();
+            var dto = await qry.Execute().ConfigureAwait(false);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -62,6 +54,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="List{MaloCultureDto}"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -69,6 +62,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("{start:int}/{length:int}", Name = "GetAllCulturesPaginated")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -76,16 +70,9 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int start, int length)
         {
-            try
-            {
-                var qry = _factory.CreateMaloCulturesQuery();
-                var dto = await qry.Execute(start, length).ConfigureAwait(false);
-                return Ok(dto);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var qry = _factory.CreateMaloCulturesQuery();
+            var dto = await qry.Execute(start, length).ConfigureAwait(false);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -95,6 +82,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="MaloCultureDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -103,6 +91,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("{id:int}", Name = "GetCultureById")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -123,6 +112,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="MaloCultureDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -131,6 +121,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpPost(Name = "AddCulture")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -151,6 +142,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="MaloCultureDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -159,6 +151,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpPut("{id:int}", Name = "UpdateCulture")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -179,6 +172,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -187,6 +181,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpDelete("{id:int}", Name = "DeleteCultureById")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -206,6 +201,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="List{ICodeDto}"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -213,6 +209,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("brands", Name = "GetAllMaloBrands")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -220,25 +217,19 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetBrands()
         {
-            try
-            {
-                var qry = _factory.CreateBrandsQuery();
-                var dto = await qry.Execute().ConfigureAwait(false);
-                return Ok(dto);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var qry = _factory.CreateBrandsQuery();
+            var dto = await qry.Execute().ConfigureAwait(false);
+            return Ok(dto);
         }
-              
-       
+
+
         /// <summary>
         /// Get a list of All Styles 
         /// </summary>
         /// <returns><see cref="List{ICodeDto}"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -246,6 +237,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("styles", Name = "GetAllMaloStyles")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -253,19 +245,12 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetStyles()
         {
-            try
-            {
-                var qry = _factory.CreateStylesQuery();
-                var dto = await qry.Execute().ConfigureAwait(false);
-                return Ok(dto);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var qry = _factory.CreateStylesQuery();
+            var dto = await qry.Execute().ConfigureAwait(false);
+            return Ok(dto);
         }
-               
-        
+
+
     }
 
 }

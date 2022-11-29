@@ -13,12 +13,10 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class ImagesController : ControllerBase
     {
-        private readonly ILogger<ImagesController> _logger;
         private readonly Business.Image.IFactory _factory;
 
-        public ImagesController(Business.Image.IFactory ImagesQryFactory, ILogger<ImagesController> logger)
+        public ImagesController(Business.Image.IFactory ImagesQryFactory)
         {
-            _logger = logger;
             _factory = ImagesQryFactory;
         }
 
@@ -28,6 +26,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="List{ImageDto}"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -35,6 +34,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet(Name = "GetAllImages")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -42,16 +42,9 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                var qry = _factory.CreateImagesQuery();
-                var dto = await qry.Execute().ConfigureAwait(false);
-                return Ok(dto);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var qry = _factory.CreateImagesQuery();
+            var dto = await qry.Execute().ConfigureAwait(false);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -60,6 +53,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="List{ImageDto}"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -67,6 +61,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("{start:int}/{length:int}", Name = "GetAllImagesPaginated")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -74,16 +69,9 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int start, int length)
         {
-            try
-            {
-                var qry = _factory.CreateImagesQuery();
-                var dto = await qry.Execute(start, length).ConfigureAwait(false);
-                return Ok(dto);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var qry = _factory.CreateImagesQuery();
+            var dto = await qry.Execute(start, length).ConfigureAwait(false);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -93,6 +81,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="ImageDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -101,6 +90,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("{id:int}", Name = "GetImageById")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -121,6 +111,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="ImageDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -129,6 +120,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpPost(Name = "AddImage")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -149,6 +141,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="ImageDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -157,6 +150,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpPut("{id:int}", Name = "UpdateImage")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -177,6 +171,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -185,6 +180,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpDelete("{id:int}", Name = "DeleteImageById")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]

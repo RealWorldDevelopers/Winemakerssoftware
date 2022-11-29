@@ -14,13 +14,10 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class TargetsController : ControllerBase
     {
-        private readonly ILogger<TargetsController> _logger;
-
         private readonly Business.Journal.IFactory _factory;
 
-        public TargetsController(Business.Journal.IFactory TargetsQryFactory, ILogger<TargetsController> logger)
+        public TargetsController(Business.Journal.IFactory TargetsQryFactory)
         {
-            _logger = logger;
             _factory = TargetsQryFactory;
         }
 
@@ -32,6 +29,7 @@ namespace WMS.Service.WebAPI.Controllers
         ///// <returns><see cref="List{TargetDto}"/></returns>
         ///// <response code = "200" > Returns items in collection</response>
         ///// <response code = "204" > If items collection is null</response>
+        ///// <response code = "400" > If access is Bad Request</response>
         ///// <response code = "401" > If access is Unauthorized</response>
         ///// <response code = "403" > If access is Forbidden</response>
         ///// <response code = "405" > If access is Not Allowed</response>
@@ -39,6 +37,7 @@ namespace WMS.Service.WebAPI.Controllers
         //[HttpGet("fk/{TargetId:int}", Name = "GetAllTargetsByTargetId")]
         //[SwaggerResponse(StatusCodes.Status200OK)]
         //[SwaggerResponse(StatusCodes.Status201Created)]
+        //[SwaggerResponse(StatusCodes.Status400BadRequest)]
         //[SwaggerResponse(StatusCodes.Status401Unauthorized)]
         //[SwaggerResponse(StatusCodes.Status403Forbidden)]
         //[SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -46,16 +45,9 @@ namespace WMS.Service.WebAPI.Controllers
         //[SwaggerResponse(StatusCodes.Status500InternalServerError)]
         //public async Task<IActionResult> GetByFK(int TargetId)
         //{
-        //    try
-        //    {
         //        var qry = _factory.CreateTargetsQuery();
         //        var dto = await qry.ExecuteByFK(TargetId).ConfigureAwait(false);
         //        return Ok(dto);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
         //}
 
         ///// <summary>
@@ -64,6 +56,7 @@ namespace WMS.Service.WebAPI.Controllers
         ///// <returns><see cref="List{TargetDto}"/></returns>
         ///// <response code = "200" > Returns items in collection</response>
         ///// <response code = "204" > If items collection is null</response>
+        ///// <response code = "400" > If access is Bad Request</response>
         ///// <response code = "401" > If access is Unauthorized</response>
         ///// <response code = "403" > If access is Forbidden</response>
         ///// <response code = "405" > If access is Not Allowed</response>
@@ -71,6 +64,7 @@ namespace WMS.Service.WebAPI.Controllers
         //[HttpGet("fk/{TargetId:int},{start:int}/{length:int}", Name = "GetAllTargetsPaginated")]
         //[SwaggerResponse(StatusCodes.Status200OK)]
         //[SwaggerResponse(StatusCodes.Status201Created)]
+        //[SwaggerResponse(StatusCodes.Status400BadRequest)]
         //[SwaggerResponse(StatusCodes.Status401Unauthorized)]
         //[SwaggerResponse(StatusCodes.Status403Forbidden)]
         //[SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -78,16 +72,9 @@ namespace WMS.Service.WebAPI.Controllers
         //[SwaggerResponse(StatusCodes.Status500InternalServerError)]
         //public async Task<IActionResult> GetByFK(int TargetId, int start, int length)
         //{
-        //    try
-        //    {
         //        var qry = _factory.CreateTargetsQuery();
         //        var dto = await qry.Execute(start, length).ConfigureAwait(false);
         //        return Ok(dto);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
         //}
 
         /// <summary>
@@ -97,6 +84,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="TargetDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -105,6 +93,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpGet("{id:int}", Name = "GetTargetById")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -125,6 +114,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="TargetDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -133,6 +123,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpPost(Name = "AddTarget")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -153,6 +144,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns><see cref="TargetDto"/></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -161,6 +153,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpPut("{id:int}", Name = "UpdateTarget")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -181,6 +174,7 @@ namespace WMS.Service.WebAPI.Controllers
         /// <returns></returns>
         /// <response code = "200" > Returns items in collection</response>
         /// <response code = "204" > If items collection is null</response>
+        /// <response code = "400" > If access is Bad Request</response>
         /// <response code = "401" > If access is Unauthorized</response>
         /// <response code = "403" > If access is Forbidden</response>
         /// <response code = "405" > If access is Not Allowed</response>
@@ -189,6 +183,7 @@ namespace WMS.Service.WebAPI.Controllers
         [HttpDelete("{id:int}", Name = "DeleteTargetById")]
         [SwaggerResponse(StatusCodes.Status200OK)]
         [SwaggerResponse(StatusCodes.Status201Created)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
         [SwaggerResponse(StatusCodes.Status401Unauthorized)]
         [SwaggerResponse(StatusCodes.Status403Forbidden)]
         [SwaggerResponse(StatusCodes.Status404NotFound)]

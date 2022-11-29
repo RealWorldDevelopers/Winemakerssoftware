@@ -64,7 +64,7 @@ namespace WMS.Business.Journal
                 Variety = variety,
                 Target = target,
                 RecipeId = recipeId,
-                Complete = complete
+                Complete = complete ?? false
             };
 
             return dto;
@@ -110,9 +110,9 @@ namespace WMS.Business.Journal
                 So2 = so2,
                 Additions = additions,
                 Comments = comments,
-                Racked = racked,
-                Filtered = filtered,
-                Bottled = bottled
+                Racked = racked ?? false,
+                Filtered = filtered ?? false,
+                Bottled = bottled ?? false
             };
 
             return dto;

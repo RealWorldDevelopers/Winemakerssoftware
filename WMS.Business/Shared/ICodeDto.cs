@@ -19,19 +19,17 @@
       /// <summary>
       /// Literal Name of Code
       /// </summary>
-      string? Literal { get; set; }
+      string Literal { get; set; }
 
       /// <summary>
       /// Description of Code
       /// </summary>
-      string? Description { get; set; }
+      string Description { get; set; }
 
       /// <summary>
       /// Enabled for Use
       /// </summary>
-      bool? Enabled { get; set; }
-
-
+      bool Enabled { get; set; }
 
    }
 
