@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Diagnostics;
 using WMS.Business.Journal.Dto;
 
 namespace WMS.Service.WebAPI.Controllers
@@ -49,35 +48,36 @@ namespace WMS.Service.WebAPI.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Get a list of All Batch Entries by Batch Id Paginated
-        /// </summary>
-        /// <returns><see cref="List{BatchEntryDto}"/></returns>
-        /// <response code = "200" > Returns items in collection</response>
-        /// <response code = "204" > If items collection is null</response>
-        /// <response code = "400" > If access is Bad Request</response>
-        /// <response code = "401" > If access is Unauthorized</response>
-        /// <response code = "403" > If access is Forbidden</response>
-        /// <response code = "405" > If access is Not Allowed</response>
-        /// <response code = "500" > If unhandled error</response>    
-        [HttpGet("fk/{batchId:int},{start:int}/{length:int}", Name = "GetAllBatchEntriesPaginated")]
-        [SwaggerResponse(StatusCodes.Status200OK)]
-        [SwaggerResponse(StatusCodes.Status201Created)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest)]
-        [SwaggerResponse(StatusCodes.Status401Unauthorized)]
-        [SwaggerResponse(StatusCodes.Status403Forbidden)]
-        [SwaggerResponse(StatusCodes.Status404NotFound)]
-        [SwaggerResponse(StatusCodes.Status405MethodNotAllowed)]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByFK(int batchId, int start, int length)
-        {
-            // TODO either fix or delete, not used yet
-            Debug.Assert(false);
+        // TODO either fix or delete, not used yet
+        ///// <summary>
+        ///// Get a list of All Batch Entries by Batch Id Paginated
+        ///// </summary>
+        ///// <returns><see cref="List{BatchEntryDto}"/></returns>
+        ///// <response code = "200" > Returns items in collection</response>
+        ///// <response code = "204" > If items collection is null</response>
+        ///// <response code = "400" > If access is Bad Request</response>
+        ///// <response code = "401" > If access is Unauthorized</response>
+        ///// <response code = "403" > If access is Forbidden</response>
+        ///// <response code = "405" > If access is Not Allowed</response>
+        ///// <response code = "500" > If unhandled error</response>    
+        //[HttpGet("fk/{batchId:int},{start:int}/{length:int}", Name = "GetAllBatchEntriesPaginated")]
+        //[SwaggerResponse(StatusCodes.Status200OK)]
+        //[SwaggerResponse(StatusCodes.Status201Created)]
+        //[SwaggerResponse(StatusCodes.Status400BadRequest)]
+        //[SwaggerResponse(StatusCodes.Status401Unauthorized)]
+        //[SwaggerResponse(StatusCodes.Status403Forbidden)]
+        //[SwaggerResponse(StatusCodes.Status404NotFound)]
+        //[SwaggerResponse(StatusCodes.Status405MethodNotAllowed)]
+        //[SwaggerResponse(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetByFK(int batchId, int start, int length)
+        //{
+            
+        //    Debug.Assert(false);
 
-            var qry = _factory.CreateBatchEntriesQuery();
-            var dto = await qry.Execute(start, length).ConfigureAwait(false);
-            return Ok(dto);
-        }
+        //    var qry = _factory.CreateBatchEntriesQuery();
+        //    var dto = await qry.Execute(start, length).ConfigureAwait(false);
+        //    return Ok(dto);
+        //}
 
         /// <summary>
         /// Get a Batch Entry by Primary Key

@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Diagnostics;
 using WMS.Business.Journal.Dto;
 
 namespace WMS.Service.WebAPI.Controllers
@@ -132,8 +131,8 @@ namespace WMS.Service.WebAPI.Controllers
         public async Task<IActionResult> Post(TargetDto target)
         {
             var cmd = _factory.CreateTargetsCommand();
-            target = await cmd.Add(target).ConfigureAwait(false);
-            return Ok(target);
+            var dto = await cmd.Add(target).ConfigureAwait(false);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -163,8 +162,8 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateTargetsCommand();
             target.Id = id;
-            target = await cmd.Update(target).ConfigureAwait(false);
-            return Ok(target);
+            var dto = await cmd.Update(target).ConfigureAwait(false);
+            return Ok(dto);
         }
 
         /// <summary>
@@ -191,9 +190,6 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(int id)
         {
-            // TODO Delete if not used
-            Debug.Assert(false);
-
             var cmd = _factory.CreateTargetsCommand();
             await cmd.Delete(id).ConfigureAwait(false);
             return Ok();

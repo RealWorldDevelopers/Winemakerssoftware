@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using WMS.Business.Recipe.Dto;
 
@@ -13,11 +15,17 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class RecipesController : ControllerBase
     {
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private const string getAllRecipesCacheKey = "getAllRecipes";
         private readonly Business.Recipe.IFactory _factory;
+        private readonly IMemoryCache _cache;
+        private readonly AppSettings _appSettings;
 
-        public RecipesController(Business.Recipe.IFactory recipesQryFactory)
+        public RecipesController(Business.Recipe.IFactory factory, IOptions<AppSettings> appSettings, IMemoryCache cache)
         {
-            _factory = recipesQryFactory;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _appSettings = appSettings.Value;
         }
 
 
@@ -43,8 +51,41 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var qry = _factory.CreateRecipesQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+            // check cache
+            if (!_cache.TryGetValue(getAllRecipesCacheKey, out IEnumerable<RecipeDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllRecipesCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateRecipesQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllRecipesCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
+
             return Ok(dto);
         }
 
@@ -130,8 +171,12 @@ namespace WMS.Service.WebAPI.Controllers
         public async Task<IActionResult> Post(RecipeDto recipe)
         {
             var cmd = _factory.CreateRecipesCommand();
-            recipe = await cmd.Add(recipe).ConfigureAwait(false);
-            return Ok(recipe);
+            var dto = await cmd.Add(recipe).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllRecipesCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -161,8 +206,12 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateRecipesCommand();
             recipe.Id = id;
-            recipe = await cmd.Update(recipe).ConfigureAwait(false);
-            return Ok(recipe);
+            var dto = await cmd.Update(recipe).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllRecipesCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -191,6 +240,10 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateRecipesCommand();
             await cmd.Delete(id).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllRecipesCacheKey);
+
             return Ok();
         }
 

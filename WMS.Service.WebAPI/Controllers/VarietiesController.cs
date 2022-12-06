@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using WMS.Business.Common;
 
@@ -12,11 +14,17 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class VarietiesController : ControllerBase
     {
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private const string getAllVarietiesCacheKey = "getAllVarieties";
         private readonly Business.Recipe.IFactory _factory;
+        private readonly IMemoryCache _cache;
+        private readonly AppSettings _appSettings;
 
-        public VarietiesController(Business.Recipe.IFactory recipesQryFactory)
+        public VarietiesController(Business.Recipe.IFactory factory, IOptions<AppSettings> appSettings, IMemoryCache cache)
         {
-            _factory = recipesQryFactory;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _appSettings = appSettings.Value;
         }
 
 
@@ -42,8 +50,40 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var qry = _factory.CreateVarietiesQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+            // check cache
+            if (!_cache.TryGetValue(getAllVarietiesCacheKey, out IEnumerable<ICodeDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllVarietiesCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateVarietiesQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllVarietiesCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
             return Ok(dto);
         }
 
@@ -103,8 +143,12 @@ namespace WMS.Service.WebAPI.Controllers
         public async Task<IActionResult> Post(CodeDto variety)
         {
             var cmd = _factory.CreateVarietiesCommand();
-            var cat = await cmd.Add(variety).ConfigureAwait(false);
-            return Ok(cat);
+            var dto = await cmd.Add(variety).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllVarietiesCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -134,8 +178,12 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateVarietiesCommand();
             variety.Id = id;
-            var cat = await cmd.Update(variety).ConfigureAwait(false);
-            return Ok(cat);
+            var dto = await cmd.Update(variety).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllVarietiesCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -164,6 +212,10 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateVarietiesCommand();
             await cmd.Delete(id).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllVarietiesCacheKey);
+
             return Ok();
         }
 

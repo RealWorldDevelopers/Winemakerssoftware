@@ -1,6 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
+using WMS.Business.Common;
 using WMS.Business.Journal.Dto;
 
 namespace WMS.Service.WebAPI.Controllers
@@ -13,11 +16,17 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class JournalController : ControllerBase
     {
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private const string getAllBatchesCacheKey = "getAllBatches";
         private readonly Business.Journal.IFactory _factory;
+        private readonly IMemoryCache _cache;
+        private readonly AppSettings _appSettings;
 
-        public JournalController(Business.Journal.IFactory journalQryFactory)
+        public JournalController(Business.Journal.IFactory factory, IOptions<AppSettings> appSettings, IMemoryCache cache)
         {
-            _factory = journalQryFactory;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _appSettings = appSettings.Value;
         }
 
         /// <summary>
@@ -42,8 +51,40 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var qry = _factory.CreateBatchesQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+            // check cache
+            if (!_cache.TryGetValue(getAllBatchesCacheKey, out IEnumerable<BatchDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllBatchesCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateBatchesQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllBatchesCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
             return Ok(dto);
         }
 
@@ -156,8 +197,12 @@ namespace WMS.Service.WebAPI.Controllers
         public async Task<IActionResult> Post(BatchDto batch)
         {
             var cmd = _factory.CreateBatchesCommand();
-            batch = await cmd.Add(batch).ConfigureAwait(false);
-            return Ok(batch);
+            var dto = await cmd.Add(batch).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllBatchesCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -187,8 +232,12 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateBatchesCommand();
             batch.Id = id;
-            batch = await cmd.Update(batch).ConfigureAwait(false);
-            return Ok(batch);
+            var dto = await cmd.Update(batch).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllBatchesCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -217,6 +266,10 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateBatchesCommand();
             await cmd.Delete(id).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllBatchesCacheKey);
+
             return Ok();
         }
 

@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
+using WMS.Business.Common;
 using WMS.Business.Recipe.Dto;
 
 namespace WMS.Service.WebAPI.Controllers
@@ -12,11 +15,17 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class RatingsController : ControllerBase
     {
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private const string getAllRatingsCacheKey = "getAllRatings";
         private readonly Business.Recipe.IFactory _factory;
+        private readonly IMemoryCache _cache;
+        private readonly AppSettings _appSettings;
 
-        public RatingsController(Business.Recipe.IFactory factory)
+        public RatingsController(Business.Recipe.IFactory factory, IOptions<AppSettings> appSettings, IMemoryCache cache)
         {
-            _factory = factory;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _appSettings = appSettings.Value;
         }
 
         /// <summary>
@@ -41,8 +50,41 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var qry = _factory.CreateRatingsQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+            // check cache
+            if (!_cache.TryGetValue(getAllRatingsCacheKey, out IEnumerable<RatingDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllRatingsCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateRatingsQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllRatingsCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
+
             return Ok(dto);
         }
 
@@ -72,6 +114,10 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateRatingsCommand();
             var dto = await cmd.Add(rating).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllRatingsCacheKey);
+
             return Ok(dto);
         }
 
@@ -104,6 +150,10 @@ namespace WMS.Service.WebAPI.Controllers
             var cmd = _factory.CreateRatingsCommand();
             rating.Id = id;
             var dto = await cmd.Update(rating).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllRatingsCacheKey);
+
             return Ok(dto);
         }
 

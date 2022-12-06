@@ -2,13 +2,11 @@
 using Azure.Identity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Azure;
+using RWD.Toolbox.Logging.Infrastructure.Filters;
 using RWD.Toolbox.Logging.Infrastructure.Middleware;
-using RWD.Toolbox.Ui.Middleware.CspHeader;
 using RWD.Toolbox.Ui.Middleware.SecurityHeaders;
 using Serilog;
 using System.Data.SqlClient;
@@ -31,6 +29,7 @@ builder.Configuration.GetSection("ApplicationSettings").Bind(appSettings);
 
 // app config settings
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("ApplicationSettings"));
+
 
 // setup logging
 var name = Assembly.GetExecutingAssembly().GetName();
@@ -72,8 +71,15 @@ builder.Services.AddCors(options =>
 // auth
 //https://www.c-sharpcorner.com/article/jwt-authentication-and-authorization-in-net-6-0-with-identity-framework/
 
+// add cache options
+builder.Services.AddMemoryCache();
 
-builder.Services.AddControllers();
+// add controllers
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(typeof(TrackActionPerformanceFilter));
+    options.Filters.Add(typeof(TrackActionUsageFilter));
+});
 
 // TODO https://code-maze.com/fluentvalidation-in-aspnet/
 // TODO validator test project

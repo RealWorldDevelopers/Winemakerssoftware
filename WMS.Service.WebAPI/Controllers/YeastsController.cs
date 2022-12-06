@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using WMS.Business.Common;
 using WMS.Business.Yeast.Dto;
@@ -13,11 +15,20 @@ namespace WMS.Service.WebAPI.Controllers
     [Produces("application/json")]
     public class YeastsController : ControllerBase
     {
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private const string getAllYeastsCacheKey = "getAllYeasts";
+        private const string getAllYeastPairsCacheKey = "getAllYeastPairsCacheKey";
+        private const string getAllYeastBrandsCacheKey = "getAllYeastBrandsCacheKey";
+        private const string getAllYeastStylesCacheKey = "getAllYeastStylesCacheKey";
         private readonly Business.Yeast.IFactory _factory;
+        private readonly IMemoryCache _cache;
+        private readonly AppSettings _appSettings;
 
-        public YeastsController(Business.Yeast.IFactory factory)
+        public YeastsController(Business.Yeast.IFactory factory, IOptions<AppSettings> appSettings, IMemoryCache cache)
         {
-            _factory = factory;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _appSettings = appSettings.Value;
         }
 
         /// <summary>
@@ -42,8 +53,40 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetYeasts()
         {
-            var qry = _factory.CreateYeastsQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+            // check cache
+            if (!_cache.TryGetValue(getAllYeastsCacheKey, out IEnumerable<YeastDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllYeastsCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateYeastsQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllYeastsCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
             return Ok(dto);
         }
 
@@ -104,8 +147,12 @@ namespace WMS.Service.WebAPI.Controllers
         public async Task<IActionResult> Post(YeastDto yeast)
         {
             var cmd = _factory.CreateYeastsCommand();
-            var yst = await cmd.Add(yeast).ConfigureAwait(false);
-            return Ok(yst);
+            var dto = await cmd.Add(yeast).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllYeastsCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -135,8 +182,12 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateYeastsCommand();
             yeast.Id = id;
-            var yst = await cmd.Update(yeast).ConfigureAwait(false);
-            return Ok(yst);
+            var dto = await cmd.Update(yeast).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllYeastsCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -165,6 +216,10 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateYeastsCommand();
             await cmd.Delete(id).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllYeastsCacheKey);
+
             return Ok();
         }
 
@@ -195,8 +250,41 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetYeastPairs()
         {
-            var qry = _factory.CreateYeastPairQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+            // check cache
+            if (!_cache.TryGetValue(getAllYeastPairsCacheKey, out IEnumerable<YeastPairDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllYeastPairsCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateYeastPairQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllYeastPairsCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
+
             return Ok(dto);
         }
 
@@ -255,8 +343,12 @@ namespace WMS.Service.WebAPI.Controllers
         public async Task<IActionResult> PostYeastPair(YeastPairDto pair)
         {
             var cmd = _factory.CreateYeastPairCommand();
-            var ystPair = await cmd.Add(pair).ConfigureAwait(false);
-            return Ok(ystPair);
+            var dto = await cmd.Add(pair).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllYeastPairsCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -286,8 +378,12 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateYeastPairCommand();
             pair.Id = id;
-            var ystPair = await cmd.Update(pair).ConfigureAwait(false);
-            return Ok(ystPair);
+            var dto = await cmd.Update(pair).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllYeastPairsCacheKey);
+
+            return Ok(dto);
         }
 
         /// <summary>
@@ -316,6 +412,10 @@ namespace WMS.Service.WebAPI.Controllers
         {
             var cmd = _factory.CreateYeastPairCommand();
             await cmd.Delete(id).ConfigureAwait(false);
+
+            // set cache to update
+            _cache.Remove(getAllYeastPairsCacheKey);
+
             return Ok();
         }
 
@@ -346,8 +446,42 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetBrands()
         {
-            var qry = _factory.CreateBrandsQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+
+            // check cache
+            if (!_cache.TryGetValue(getAllYeastBrandsCacheKey, out IEnumerable<ICodeDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllYeastBrandsCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateBrandsQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllYeastBrandsCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
+
             return Ok(dto);
         }
 
@@ -373,8 +507,42 @@ namespace WMS.Service.WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetStyles()
         {
-            var qry = _factory.CreateStylesQuery();
-            var dto = await qry.Execute().ConfigureAwait(false);
+
+            // check cache
+            if (!_cache.TryGetValue(getAllYeastStylesCacheKey, out IEnumerable<ICodeDto> dto))
+            {
+                try
+                {
+                    // lock inputs
+                    await semaphore.WaitAsync();
+
+                    // double check cache
+                    if (!_cache.TryGetValue(getAllYeastStylesCacheKey, out dto))
+                    {
+                        // fetch data
+                        var qry = _factory.CreateStylesQuery();
+                        dto = await qry.Execute().ConfigureAwait(false);
+
+                        // cash options
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(_appSettings.DefaultSlidingCacheMinutes))
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_appSettings.DefaultAbosoluteCacheMinutes))
+                            .SetPriority(CacheItemPriority.Normal)
+                            .SetSize(1024);
+
+                        // cache data
+                        _cache.Set(getAllYeastStylesCacheKey, dto, cacheEntryOptions);
+                    }
+
+                }
+                finally
+                {
+                    // remove lock
+                    semaphore.Release();
+                }
+
+            }
+
             return Ok(dto);
         }
 
