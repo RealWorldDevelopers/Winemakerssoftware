@@ -65,10 +65,10 @@ namespace WMS.Business.Journal.Commands
             entity.EntryDateTime = dto.EntryDateTime;
             entity.ActionDateTime = dto.ActionDateTime;
             entity.Temp = dto.Temp;
-            entity.TempUomId = dto.TempUom.Id;
+            entity.TempUomId = dto.TempUom?.Id;
             entity.PH = dto.pH;
             entity.Sugar = dto.Sugar;
-            entity.SugarUomId = dto.SugarUom.Id;
+            entity.SugarUomId = dto.SugarUom?.Id;
             entity.Ta = dto.Ta;
             entity.So2 = dto.So2;
             entity.Additions = dto.Additions;

@@ -57,7 +57,7 @@ namespace WMS.Business.Yeast.Commands
         /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
         public async Task<YeastDto> Update(YeastDto dto)
         {
-            if (dto == null)
+            if (dto?.Id == null)
                 throw new ArgumentNullException(nameof(dto));
 
             var entity = await _dbContext.Yeasts.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);

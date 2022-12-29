@@ -50,14 +50,14 @@ namespace WMS.Service.WebAPI
                     dest = new Business.Image.Dto.ImageDto()
                     {
                         Id = src.Id,
-                        ContentType = src.ContentType,
-                        FileName = src.FileName,
+                        ContentType = src.ContentType ?? string.Empty,
+                        FileName = src.FileName ?? string.Empty,
                         Length = src.Length ?? 0,
                         Name = src.Name,
                         Data = src.Data,
                         Thumbnail = src.Thumbnail
                     };
-                });            
+                });
 
             CreateMap<WMS.Data.SQL.Entities.UnitsOfMeasure, Business.Common.IUnitOfMeasureDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UnitOfMeasure));
@@ -95,10 +95,10 @@ namespace WMS.Service.WebAPI
                .ForMember(dest => dest.Variety, opt => opt.Ignore())
                .ForMember(dest => dest.Yeast, opt => opt.Ignore())
                .ForMember(dest => dest.Target, opt => opt.Ignore())
-               .ForMember(dest => dest.VolumeUomId, opt => opt.MapFrom(src => src.VolumeUom.Id))
-               .ForMember(dest => dest.VarietyId, opt => opt.MapFrom(src => src.Variety.Id))
-               .ForMember(dest => dest.YeastId, opt => opt.MapFrom(src => src.Yeast.Id))
-               .ForMember(dest => dest.TargetId, opt => opt.MapFrom(src => src.Target.Id));
+               .ForMember(dest => dest.VolumeUomId, opt => opt.MapFrom(src => src.VolumeUom != null ? src.VolumeUom.Id : null))
+               .ForMember(dest => dest.VarietyId, opt => opt.MapFrom(src => src.Variety != null ? src.Variety.Id : null))
+               .ForMember(dest => dest.YeastId, opt => opt.MapFrom(src => src.Yeast != null ? src.Yeast.Id : null))
+               .ForMember(dest => dest.TargetId, opt => opt.MapFrom(src => src.Target != null ? src.Target.Id : null));
 
             CreateMap<WMS.Data.SQL.Entities.Target, Business.Journal.Dto.TargetDto>()
                .ForMember(dest => dest.TempUom, opt => opt.Ignore())
@@ -112,9 +112,9 @@ namespace WMS.Service.WebAPI
                .ForMember(dest => dest.TempUom, opt => opt.Ignore())
                .ForMember(dest => dest.StartSugarUom, opt => opt.Ignore())
                .ForMember(dest => dest.EndSugarUom, opt => opt.Ignore())
-               .ForMember(dest => dest.TempUomId, opt => opt.MapFrom(src => src.TempUom.Id))
-               .ForMember(dest => dest.StartSugarUomId, opt => opt.MapFrom(src => src.StartSugarUom.Id))
-               .ForMember(dest => dest.EndSugarUomId, opt => opt.MapFrom(src => src.EndSugarUom.Id));
+               .ForMember(dest => dest.TempUomId, opt => opt.MapFrom(src => src.TempUom != null ? src.TempUom.Id : null))
+               .ForMember(dest => dest.StartSugarUomId, opt => opt.MapFrom(src => src.StartSugarUom != null ? src.StartSugarUom.Id : null))
+               .ForMember(dest => dest.EndSugarUomId, opt => opt.MapFrom(src => src.EndSugarUom != null ? src.EndSugarUom.Id : null));
 
 
 
@@ -170,8 +170,8 @@ namespace WMS.Service.WebAPI
                 .AfterMap((src, dest) => { dest.Brand = src.Brand.HasValue ? new Business.Common.CodeDto { Id = src.Brand.Value } : null; })
                 .AfterMap((src, dest) => { dest.Style = src.Style.HasValue ? new Business.Common.CodeDto { Id = src.Style.Value } : null; });
             CreateMap<Business.Yeast.Dto.YeastDto, WMS.Data.SQL.Entities.Yeast>()
-                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Id))
-                .ForMember(dest => dest.Style, opt => opt.MapFrom(src => src.Style.Id));
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Id: null))
+                .ForMember(dest => dest.Style, opt => opt.MapFrom(src => src.Style != null ? src.Style.Id: null));
 
             CreateMap<WMS.Data.SQL.Entities.MaloCulture, Business.MaloCulture.Dto.MaloCultureDto>()
               .ForMember(dest => dest.Brand, opt => opt.Ignore())
@@ -179,8 +179,8 @@ namespace WMS.Service.WebAPI
               .AfterMap((src, dest) => { dest.Brand = src.Brand.HasValue ? new Business.Common.CodeDto { Id = src.Brand.Value } : null; })
               .AfterMap((src, dest) => { dest.Style = src.Style.HasValue ? new Business.Common.CodeDto { Id = src.Style.Value } : null; });
             CreateMap<Business.MaloCulture.Dto.MaloCultureDto, WMS.Data.SQL.Entities.MaloCulture>()
-                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Id))
-                .ForMember(dest => dest.Style, opt => opt.MapFrom(src => src.Style.Id));
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Id : null))
+                .ForMember(dest => dest.Style, opt => opt.MapFrom(src => src.Style != null ? src.Style.Id : null));
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace WMS.Service.WebAPI
             {
                 var entity = new WMS.Data.SQL.Entities.Recipe
                 {
-                    Title = source.Title,
+                    Title = source.Title ?? string.Empty,
                     VarietyId = source.Variety?.Id,
                     YeastId = source.Yeast?.Id,
                     TargetId = source.Target?.Id,

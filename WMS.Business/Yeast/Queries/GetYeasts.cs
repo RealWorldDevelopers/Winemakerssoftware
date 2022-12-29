@@ -31,7 +31,7 @@ namespace WMS.Business.Yeast.Queries
          _mapper = mapper;
       }
 
-     
+
       /// <summary>
       /// Asynchronously query all Yeasts in SQL DB
       /// </summary>
@@ -60,12 +60,12 @@ namespace WMS.Business.Yeast.Queries
             if (item.Brand != null)
             {
                var code = brands.SingleOrDefault(a => a.Id == item.Brand.Id);
-               item.Brand.Literal = code.Brand;
+               if (code?.Brand != null) item.Brand.Literal = code.Brand;
             }
             if (item.Style != null)
             {
                var code = styles.SingleOrDefault(a => a.Id == item.Style.Id);
-               item.Style.Literal = code.Style;
+               if (code?.Style != null) item.Style.Literal = code.Style;
             }
          }
 
@@ -88,19 +88,19 @@ namespace WMS.Business.Yeast.Queries
          return dto;
       }
 
-        public Task<List<YeastDto>> Execute(int start, int length)
-        {
-            throw new System.NotImplementedException();
-        }
+      public Task<List<YeastDto>> Execute(int start, int length)
+      {
+         throw new System.NotImplementedException();
+      }
 
-        public Task<List<YeastDto>> ExecuteByFK(int fk)
-        {
-            throw new System.NotImplementedException();
-        }
+      public Task<List<YeastDto>> ExecuteByFK(int fk)
+      {
+         throw new System.NotImplementedException();
+      }
 
-        public Task<List<YeastDto>> ExecuteByUser(string userId)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+      public Task<List<YeastDto>> ExecuteByUser(string userId)
+      {
+         throw new System.NotImplementedException();
+      }
+   }
 }

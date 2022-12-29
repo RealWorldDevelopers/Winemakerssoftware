@@ -90,7 +90,7 @@ namespace WMS.Business.Recipe.Dto
         /// <summary>
         /// List of Image File Data <see cref="ImageFileDto"/>
         /// </summary>
-        public List<ImageDto>? ImageFiles { get; }
+        public List<ImageDto> ImageFiles { get; }
 
     }
 

@@ -55,7 +55,7 @@ namespace WMS.Business.MaloCulture.Commands
       /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
       public async Task<MaloCultureDto> Update(MaloCultureDto dto)
       {
-         if (dto == null)
+         if (dto?.Id == null)
             throw new ArgumentNullException(nameof(dto));
 
          var entity = await _dbContext.MaloCultures.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);

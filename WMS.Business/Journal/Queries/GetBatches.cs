@@ -68,7 +68,7 @@ namespace WMS.Business.Journal.Queries
                 if (item.Variety != null)
                 {
                     var code = varieties.SingleOrDefault(a => a.Id == item.Variety.Id);
-                    item.Variety.Literal = code.Variety1;
+                    if (code != null) item.Variety.Literal = code.Variety1;
                 }
                 if (item.Yeast != null)
                 {
@@ -163,7 +163,7 @@ namespace WMS.Business.Journal.Queries
                 if (item.Variety != null)
                 {
                     var code = varieties.SingleOrDefault(a => a.Id == item.Variety.Id);
-                    item.Variety.Literal = code.Variety1;
+                    if (code != null) item.Variety.Literal = code.Variety1;
                 }
                 if (item.Yeast != null)
                 {

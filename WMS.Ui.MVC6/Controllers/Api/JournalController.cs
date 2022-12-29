@@ -32,14 +32,14 @@ namespace WMS.Ui.Mvc6.Controllers.Api
             _targetAgent = targetAgent;
         }
 
-       
+
         [HttpPost("batchEntry/{id}")]
         public async Task<IActionResult> DeleteBatchEntry(int id)
         {
             try
             {
                 var entryDto = await _journalAgent.GetBatchEntry(id).ConfigureAwait(false);
-                if (entryDto != null)
+                if (entryDto?.Id != null)
                 {
                     await _journalAgent.DeleteBatchEntry(entryDto.Id.Value).ConfigureAwait(false);
                 }
@@ -128,9 +128,12 @@ namespace WMS.Ui.Mvc6.Controllers.Api
                     {
                         if (entry.Temp.HasValue && entry.Sugar.HasValue)
                         {
-                            var tDate = entry.ActionDateTime.HasValue ?
-                               entry.ActionDateTime.Value.ToLocalTime() :
-                               entry.EntryDateTime.Value.ToLocalTime();
+                            var tDate = DateTime.Now.ToLocalTime();
+
+                            if (entry.ActionDateTime.HasValue)
+                                entry.ActionDateTime.Value.ToLocalTime();
+                            else if (entry.EntryDateTime.HasValue)
+                                entry.EntryDateTime.Value.ToLocalTime();
 
                             chartData.Times.Add(tDate.ToShortDateString());
 
@@ -138,7 +141,7 @@ namespace WMS.Ui.Mvc6.Controllers.Api
                             if (entry.TempUom?.Abbreviation == "C")
                             {
                                 var f = RWD.Toolbox.Conversion.Temperature.ConvertCelsiusToFahrenheit(entry.Temp.Value);
-                                chartData.Temp.Add(f.Value);
+                                if (f != null) chartData.Temp.Add(f.Value);
                             }
                             else
                             {
@@ -146,7 +149,7 @@ namespace WMS.Ui.Mvc6.Controllers.Api
                             }
 
                             // make sure is in SG
-                            if (entry.SugarUom?.Abbreviation.ToUpper(CultureInfo.CurrentCulture) != "SG")
+                            if (entry.SugarUom?.Abbreviation?.ToUpper(CultureInfo.CurrentCulture) != "SG")
                             {
                                 var brix = entry.Sugar.Value;
                                 var sg = brix / (258.6 - brix / 258.2 * 227.1) + 1;

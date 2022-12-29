@@ -60,8 +60,11 @@ namespace WMS.Business.Recipe.Commands
         /// <inheritdoc cref="ICommand{T}.UpdateAsync(T)"/>
         public async Task<RatingDto> Update(RatingDto dto)
         {
+            if(dto==null)
+                throw new ArgumentNullException(nameof(dto));
+
             var entity = await _dbContext.Ratings.FirstAsync(r => r.Id == dto.Id).ConfigureAwait(false);
-            entity.OriginIp = dto?.OriginIp;
+            entity.OriginIp = dto.OriginIp;
             entity.TotalValue = dto.TotalValue;
             entity.TotalVotes = dto.TotalVotes;
 
