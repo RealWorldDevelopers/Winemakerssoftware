@@ -12,6 +12,7 @@ using RWD.Toolbox.Logging.Infrastructure.Filters;
 using RWD.Toolbox.Logging.Infrastructure.Middleware;
 using RWD.Toolbox.Ui.Middleware.SecurityHeaders;
 using Serilog;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Reflection;
 using WMS.Business.Recipe.Dto;
@@ -108,6 +109,8 @@ builder.Services.AddDbContext<WMS.Data.SQL.WMSContext>(options =>
                      errorNumbersToAdd: null);
       });
 });
+
+builder.Services.AddAppStorageConfiguration(builder.Configuration);
 
 // add Cosmos DB repositories
 builder.Services.AddCosmosDBServices();
