@@ -21,6 +21,7 @@
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
 		<PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="RWD.Toolbox.Logging.Infrastructure" Version="1.0.0" />
@@ -38,6 +39,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\WMS.Business\WMS.Business.csproj" />
+	  <ProjectReference Include="..\WMS.Data.CosmoDB\WMS.Data.CosmosDB.csproj" />
 	  <ProjectReference Include="..\WMS.Data.SQL\WMS.Data.SQL.csproj" />
 	</ItemGroup>
 

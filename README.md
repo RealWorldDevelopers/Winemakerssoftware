@@ -42,6 +42,10 @@ This site is also my sandbox for trying new coding techniques and architechure.
 > - Azure Managed SQL
 > - Entity Framework Core v6
 
+## WMS.Data.Cosmo - NET 6
+> ### Utilizing
+> - Azure Cosmos DB NoSQL
+
 ### Release Notes
 - v3.0.0.0 - Live Version
 	- Initial Release

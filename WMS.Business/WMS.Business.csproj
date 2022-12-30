@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WMS.Data.CosmoDB\WMS.Data.CosmosDB.csproj" />
     <ProjectReference Include="..\WMS.Data.SQL\WMS.Data.SQL.csproj" />
   </ItemGroup>
 

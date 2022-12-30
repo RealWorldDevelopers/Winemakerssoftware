@@ -109,6 +109,9 @@ builder.Services.AddDbContext<WMS.Data.SQL.WMSContext>(options =>
       });
 });
 
+// add Cosmos DB repositories
+builder.Services.AddCosmosDBServices();
+
 // Query Factories
 builder.Services.AddTransient<WMS.Business.Journal.IFactory, WMS.Business.Journal.Factory>();
 builder.Services.AddTransient<WMS.Business.Recipe.IFactory, WMS.Business.Recipe.Factory>();
@@ -150,7 +153,7 @@ if (app.Environment.IsDevelopment())
       //options.OAuthClientSecret("EOE8Q~2o2SKeS8xwv4B~2J45~lPp4pHXXF1Nmb83");      
       //options.OAuthUseBasicAuthenticationWithAccessCodeGrant();
 
-     
+
    });
 }
 
