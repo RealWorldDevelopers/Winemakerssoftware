@@ -97,19 +97,21 @@ builder.Services.AddApiVersioningConfigured();
 // Add a Swagger generator and Automatic Request and Response annotations:
 builder.Services.AddSwaggerSwashbuckleConfigured(openAPISettings);
 
-// Add dbContext for Recipe Database
-builder.Services.AddDbContext<WMS.Data.SQL.WMSContext>(options =>
-{
-   options.UseSqlServer(builder.Configuration.GetConnectionString("RecipeDatabase"),
-      sqlServerOptionsAction: sqlOptions =>
-      {
-         sqlOptions.EnableRetryOnFailure(
-                     maxRetryCount: 10,
-                     maxRetryDelay: TimeSpan.FromSeconds(30),
-                     errorNumbersToAdd: null);
-      });
-});
+// TODO DELETE Moved to AddAppStorageConfiguration
+// dbContext for Recipe Database
+//builder.Services.AddDbContext<WMS.Data.SQL.WMSContext>(options =>
+//{
+//   options.UseSqlServer(builder.Configuration.GetConnectionString("RecipeDatabase"),
+//      sqlServerOptionsAction: sqlOptions =>
+//      {
+//         sqlOptions.EnableRetryOnFailure(
+//                     maxRetryCount: 10,
+//                     maxRetryDelay: TimeSpan.FromSeconds(30),
+//                     errorNumbersToAdd: null);
+//      });
+//});
 
+// add storage options 
 builder.Services.AddAppStorageConfiguration(builder.Configuration);
 
 // add Cosmos DB repositories

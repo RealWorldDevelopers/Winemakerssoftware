@@ -1,3 +1,6 @@
+### Work on this project has stopped
+
+
 # The Solution for [WinemakersSoftware.com](https://winemakerssoftware.com)
 
 A realworlddevelopers site that used by wine making hobbies.
@@ -52,4 +55,6 @@ This site is also my sandbox for trying new coding techniques and architechure.
 	- NET 3.1
 - v3.0.0.0 - In Development
 	- NET 6
+	- Use of Cosmos DB started but incomplete
+    	- idea modeled from https://techmindfactory.com/Cars-Island-Car-Rental-On-Azure-Cloud/
   

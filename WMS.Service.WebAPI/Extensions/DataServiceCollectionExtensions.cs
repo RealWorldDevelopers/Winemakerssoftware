@@ -1,5 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using WMS.Data.CosmosDB.Data;
+using WMS.Data.CosmosDB.Entities;
 using WMS.Data.CosmosDB.Interfaces;
 
 namespace WMS.Service.WebAPI.Extensions
@@ -16,10 +18,10 @@ namespace WMS.Service.WebAPI.Extensions
             CosmosClient cosmosClient = new CosmosClient(cosmoDbConfiguration.ConnectionString);
             Database database = cosmosClient.CreateDatabaseIfNotExistsAsync(cosmoDbConfiguration.DatabaseName).GetAwaiter().GetResult();
 
-            // TODO Left Off
-            //database.CreateContainerIfNotExistsAsync(
-            //    cosmoDbConfiguration.CarContainerName,
-            //    cosmoDbConfiguration.CarContainerPartitionKeyPath, 400).GetAwaiter().GetResult();
+            // TODO
+            database.CreateContainerIfNotExistsAsync(
+                cosmoDbConfiguration.YeastBrandContainerName,
+                cosmoDbConfiguration.YeastBrandContainerPartitionKeyPath, 400).GetAwaiter().GetResult();
 
             //database.CreateContainerIfNotExistsAsync(
             //    cosmoDbConfiguration.EnquiryContainerName,
@@ -32,11 +34,10 @@ namespace WMS.Service.WebAPI.Extensions
             return cosmosClient;
          });
 
-         // TODO Left Off
-         //services.AddSingleton<IDataRepository<Car>, CarRepository>();
+         // TODO
+         services.AddSingleton<IDataRepository<YeastBrand>, YeastBrandRepository>();
          //services.AddSingleton<IDataRepository<Enquiry>, EnquiryRepository>();
          //services.AddSingleton<ICarReservationRepository, CarReservationRepository>();
-
          //services.AddSingleton<ICarReservationService, CarReservationService>();
 
          return services;

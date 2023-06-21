@@ -14,11 +14,11 @@ namespace WMS.Business.CarReservation.Queries
    public class CarReservations : ICarReservations
    {
       private readonly ICarReservationRepository _carReservationRepository;
-      private readonly IDataRepository<Car> _carRepository;
+      private readonly IDataRepository<YeastBrand> _carRepository;
       private readonly IIdentityService _identityService;
 
       public CarReservations(ICarReservationRepository carReservationRepository,
-                                   IDataRepository<Car> carRepository,
+                                   IDataRepository<YeastBrand> carRepository,
                                    IIdentityService identityService)
       {
 

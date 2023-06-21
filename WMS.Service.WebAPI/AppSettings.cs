@@ -1,4 +1,6 @@
-﻿namespace WMS.Service.WebAPI
+﻿using WMS.Data.CosmosDB.Interfaces;
+
+namespace WMS.Service.WebAPI
 {
    /// <summary>
    /// Values from secrets and vault for OpenAPI Validation
@@ -12,18 +14,18 @@
       public string OpenIdClientId { get; set; }
    }
 
-   public class CosmosDbSettings
-   {
-      // TODO left off
-      public string ConnectionString { get; set; }
-      public string DatabaseName { get; set; }
-      public string CarContainerName { get; set; }
-      public string CarContainerPartitionKeyPath { get; set; }
-      public string EnquiryContainerName { get; set; }
-      public string EnquiryContainerPartitionKeyPath { get; set; }
-      public string CarReservationContainerName { get; set; }
-      public string CarReservationPartitionKeyPath { get; set; }
-   }
+   //public class CosmosDbSettings: ICosmosDbConfiguration
+   //{
+   //   // TODO only if needed
+   //   public string ConnectionString { get; set; }
+   //   public string DatabaseName { get; set; }
+   //   public string YeastBrandContainerName { get; set; }
+   //   public string YeastBrandContainerPartitionKeyPath { get; set; }
+   //   //public string EnquiryContainerName { get; set; }
+   //   //public string EnquiryContainerPartitionKeyPath { get; set; }
+   //   //public string CarReservationContainerName { get; set; }
+   //   //public string CarReservationPartitionKeyPath { get; set; }
+   //}
 
    /// <summary>
    /// Values from appsettings.json
