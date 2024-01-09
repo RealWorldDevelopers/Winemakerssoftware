@@ -71,7 +71,7 @@
 		<PackageReference Include="RWD.Toolbox.SMTP" Version="2.0.1" />
 		<PackageReference Include="RWD.Toolbox.Ui.Middleware.CspHeader" Version="2.0.1" />
 		<PackageReference Include="RWD.Toolbox.Ui.Middleware.SecurityHeaders" Version="2.0.0" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
 		<PackageReference Include="Tinify" Version="1.5.3" />
 	</ItemGroup>
 
